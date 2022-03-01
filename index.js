@@ -65,6 +65,14 @@ app.get('/', (req, res) => {
   res.render('index', {isLoggedIn: req.session.isLoggedIn});
 }); 
 
+app.get('/createUser', (req, res) => {
+    res.render('createUser', {isLoggedIn: req.session.isLoggedIn});
+});
+
+app.get('/changePassword', (req, res) => {
+    res.render('changePassword', {isLoggedIn: req.session.isLoggedIn});
+});
+
 /* app.get('/balance', (req, res) => {
   if (req.session.isLoggedIn === true) {
     res.send('Your account balance is $1234.52');
