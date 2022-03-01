@@ -1,4 +1,5 @@
 const express = require('express');
+const router  = express.Router();
 const mysql = require('mysql');
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -24,7 +25,7 @@ conn.connect(function(err) {
 });
 
 /** Handle login display and form submit */
-app.get('/login', (req, res) => {
+ app.get('/login', (req, res) => {
   if (req.session.isLoggedIn === true) {
     return res.redirect('/');
   }
@@ -51,20 +52,20 @@ app.post('/login', (req, res) => {
 		res.send('Please enter Username and Password!');
 		res.end();
 	}
-});
+}); 
 
 /** Handle logout function */
 app.get('/logout', (req, res) => {
   req.session.isLoggedIn = false;
   res.redirect('/');
-});
+}); 
 
 /** Simulated bank functionality */
 app.get('/', (req, res) => {
   res.render('index', {isLoggedIn: req.session.isLoggedIn});
-});
+}); 
 
-app.get('/balance', (req, res) => {
+/* app.get('/balance', (req, res) => {
   if (req.session.isLoggedIn === true) {
     res.send('Your account balance is $1234.52');
   } else {
@@ -78,11 +79,11 @@ app.get('/account', (req, res) => {
   } else {
     res.redirect('/login?redirect_url=/account');
   }
-});
+}); 
 
 app.get('/contact', (req, res) => {
   res.send('Our address : 321 Main Street, Beverly Hills.');
-});
+}); */
 
 /** App listening on port */
 app.listen(port, () => {
