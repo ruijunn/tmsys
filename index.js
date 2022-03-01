@@ -65,10 +65,23 @@ app.get('/', (req, res) => {
   res.render('index', {isLoggedIn: req.session.isLoggedIn});
 }); 
 
+/** Handle create user function */
 app.get('/createUser', (req, res) => {
     res.render('createUser', {isLoggedIn: req.session.isLoggedIn});
 });
 
+/* app.post('/createUser', (req, res) => {
+    const {username, password, email} = req.body;
+    if (username && password && email) { // check input fields are not empty
+		var sql = "INSERT INTO accounts (username, password, emaill) VALUES ('?', '?', '?')";
+        conn.query(sql, function (err, result) {
+            if (err) throw err;
+            console.log("1 record inserted");
+        });
+    }
+}); 
+ */
+/** Handle change password function */
 app.get('/changePassword', (req, res) => {
     res.render('changePassword', {isLoggedIn: req.session.isLoggedIn});
 });
@@ -95,5 +108,5 @@ app.get('/contact', (req, res) => {
 
 /** App listening on port */
 app.listen(port, () => {
-  console.log(`MyBank app listening at http://localhost:${port}`);
+  console.log(`Task Management System listening at http://localhost:${port}`);
 });
