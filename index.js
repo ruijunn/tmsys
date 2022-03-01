@@ -34,7 +34,7 @@ conn.connect(function(err) {
 
 app.post('/login', (req, res) => {
     const {username, password} = req.body;
-    if (username && password) {
+    if (username && password) { // check input fields are not empty
 		// Execute SQL query that'll select the account from the database based on the specified username and password
 		conn.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
 			if (error) throw error; // If there is an issue with the query, output the error
