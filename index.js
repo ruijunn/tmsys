@@ -89,6 +89,26 @@ app.get('/changePassword', (req, res) => {
   res.render('changePassword', {isLoggedIn: req.session.isLoggedIn});
 });
 
+/* app.post('/changePassword', (req, res) => {
+  const {password} = req.body;
+  if (password) { // check input fields are not empty
+		var sql = "UPDATE accounts SET password = ? WHERE id = ";
+    conn.query(sql, [password], function (error, result) {
+      if (error) throw error;
+      console.log("Password updated successfully!");
+      res.redirect('/');
+    });
+  }
+  else {
+    res.render('changePassword', {error: 'Password failed to update!'});
+  }
+});  */
+
+/** Handle update email function */
+app.get('/updateEmail', (req, res) => {
+  res.render('updateEmail', {isLoggedIn: req.session.isLoggedIn});
+});
+
 /* app.get('/balance', (req, res) => {
   if (req.session.isLoggedIn === true) {
     res.send('Your account balance is $1234.52');
