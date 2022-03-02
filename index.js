@@ -109,25 +109,20 @@ app.get('/updateEmail', (req, res) => {
   res.render('updateEmail', {isLoggedIn: req.session.isLoggedIn});
 });
 
-/* app.get('/balance', (req, res) => {
-  if (req.session.isLoggedIn === true) {
-    res.send('Your account balance is $1234.52');
-  } else {
-    res.redirect('/login?redirect_url=/balance');
+/* app.post('/updateEmail', (req, res) => {
+  const {email} = req.body;
+  if (email) { // check input fields are not empty
+		var sql = "UPDATE accounts SET email = ? WHERE username = '' ";
+    conn.query(sql, [email], function (error, result) {
+      if (error) throw error;
+      console.log("Email updated successfully!");
+      res.redirect('/');
+    });
   }
-});
-
-app.get('/account', (req, res) => {
-  if (req.session.isLoggedIn === true) {
-    res.send('Your account number is ACL9D42294');
-  } else {
-    res.redirect('/login?redirect_url=/account');
+  else {
+    res.render('updateEmail', {error: 'Email failed to update!'});
   }
-}); 
-
-app.get('/contact', (req, res) => {
-  res.send('Our address : 321 Main Street, Beverly Hills.');
-}); */
+});  */
 
 /** App listening on port */
 app.listen(port, () => {
