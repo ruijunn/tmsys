@@ -36,17 +36,19 @@ app.post('/login', (req, res) => {
   const {username, password} = req.body;
   if (username && password) { // check input fields are not empty
 	  // retrieve account from the database based on the specified username and password
-	  conn.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
-		if (error) throw error; // If there is an issue with the query, output the error
-		if (results.length > 0) {   // If the account exists
-			// Authenticate the user
-			req.session.isLoggedIn = true;
-			req.session.username = username;
-      res.redirect('/');  // redirect to index page
-		} else {
+    var sql = "SELECT * FROM accounts WHERE username = ? AND password = ?";
+    conn.query(sql, [username, password], function (error, results, fields) {
+		  if (error) throw error; // If there is an issue with the query, output the error
+		  if (results.length > 0) {   // If the account exists
+			  // Authenticate the user
+			  req.session.isLoggedIn = true;
+			  req.session.username = username;
+        console.log("Login Successful!");
+        res.redirect('/');  // redirect to index page
+		  } else {
       res.render('login', {error: 'Incorrect Username and/or Password!'});
-		}			
-		res.end();
+		  }			
+		  res.end();
 	  });
 	} else {
     res.render('login', {error: 'Please enter Username and Password!'});
@@ -74,9 +76,9 @@ app.post('/createUser', (req, res) => {
   if (username && password && email) { // check input fields are not empty
 		var sql = "INSERT INTO accounts (username, password, email) VALUES (?, ?, ?)";
     conn.query(sql, [username, password, email], function (error, result) {
-      if (error) throw error;
-      console.log("1 record inserted");
-      res.redirect('/');
+      if (error) throw error; // If there is an issue with the query, output the error
+      console.log("New user created successfully!");
+      res.redirect('/'); // redirect to index page
     });
   }
   else {
@@ -109,20 +111,20 @@ app.get('/updateEmail', (req, res) => {
   res.render('updateEmail', {isLoggedIn: req.session.isLoggedIn});
 });
 
-/* app.post('/updateEmail', (req, res) => {
+app.post('/updateEmail', (req, res) => {
   const {email} = req.body;
   if (email) { // check input fields are not empty
-		var sql = "UPDATE accounts SET email = ? WHERE username = '' ";
-    conn.query(sql, [email], function (error, result) {
-      if (error) throw error;
+		var sql = "UPDATE accounts SET email = ? WHERE username = ?"; // update user email based on username
+    conn.query(sql, [email, req.session.username], function (error, result) {
+      if (error) throw error; // If there is an issue with the query, output the error
       console.log("Email updated successfully!");
-      res.redirect('/');
+      res.redirect('/'); // redirect to index page
     });
   }
   else {
     res.render('updateEmail', {error: 'Email failed to update!'});
   }
-});  */
+});  
 
 /** App listening on port */
 app.listen(port, () => {
