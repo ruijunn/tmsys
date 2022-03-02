@@ -6,19 +6,19 @@ html
     div(class="container")
       h2(class="pb-2 border-bottom")="Task Management System"
         if isLoggedIn
-            small 
-              a(href="/logout")="Logout"
-            div.navbar.navbar-expand.navbar-light
-                ul.navbar-nav.mb-2
+          small 
+            a(href="/logout")="Logout"
+          div.navbar.navbar-expand.navbar-light
+              ul.navbar-nav.mb-2
+                li.nav-item
+                  a.nav-link(href="/") User Management
+                li.nav-item.dropdown
                   li.nav-item
-                    a.nav-link(href="/") User Management
-                  li.nav-item.dropdown
-                    li.nav-item
-                      a.nav-link(href="/createUser") Create New User
-                    li.nav-item
-                      a.nav-link(href="/changePassword") Change Password
-                    li.nav-item
-                      a.nav-link(href="/updateEmail") Update Email
+                    a.nav-link(href="/createUser") Create New User
+                  li.nav-item
+                    a.nav-link(href="/changePassword") Change Password
+                  li.nav-item
+                    a.nav-link(href="/updateEmail") Update Email
         else
           div(class="container")
           a(href="/login")="Login"

@@ -1,5 +1,4 @@
 const express = require('express');
-const router  = express.Router();
 const mysql = require('mysql');
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -91,20 +90,6 @@ app.get('/changePassword', (req, res) => {
   res.render('changePassword', {isLoggedIn: req.session.isLoggedIn});
 });
 
-/* app.post('/changePassword', (req, res) => {
-  const {password} = req.body;
-  if (password) { // check input fields are not empty
-		var sql = "UPDATE accounts SET password = ? WHERE username = ?"; // update user password based on username
-    conn.query(sql, [password, req.session.username], function (error, result) {
-      if (error) throw error; // If there is an issue with the query, output the error
-      console.log("Password updated successfully!");
-      res.redirect('/'); // redirect to index page
-    });
-  }
-  else {
-    res.render('changePassword', {error: 'Failed to update password!'});
-  }
-});   */
 
 /** Handle update email function */
 app.get('/updateEmail', (req, res) => {
