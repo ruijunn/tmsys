@@ -102,7 +102,7 @@ app.get('/changePassword', (req, res) => {
     });
   }
   else {
-    res.render('updateEmail', {error: 'Failed to update password!'});
+    res.render('changePassword', {error: 'Failed to update password!'});
   }
 });   */
 
