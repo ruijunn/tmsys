@@ -42,7 +42,7 @@ app.post('/login', (req, res) => {
 				// Authenticate the user
 				req.session.isLoggedIn = true;
 				req.session.username = username;
-                res.redirect(req.query.redirect_url ? req.query.redirect_url : '/');
+        res.redirect(req.query.redirect_url ? req.query.redirect_url : '/');
 			} else {
 				res.send('Incorrect Username and/or Password!');
 			}			
@@ -70,17 +70,22 @@ app.get('/createUser', (req, res) => {
     res.render('createUser', {isLoggedIn: req.session.isLoggedIn});
 });
 
-/* app.post('/createUser', (req, res) => {
-    const {username, password, email} = req.body;
-    if (username && password && email) { // check input fields are not empty
-		var sql = "INSERT INTO accounts (username, password, emaill) VALUES ('?', '?', '?')";
-        conn.query(sql, function (err, result) {
-            if (err) throw err;
-            console.log("1 record inserted");
-        });
-    }
+app.post('/createUser', (req, res) => {
+  const {username, password, email} = req.body;
+  if (username && password && email) { // check input fields are not empty
+		var sql = "INSERT INTO accounts (username, password, email) VALUES (?, ?, ?)";
+    conn.query(sql, [username, password, email], function (err, result) {
+        if (err) throw err;
+        console.log("1 record inserted");
+        res.redirect('/');
+    });
+  }
+  else {
+    res.send('Please insert all details!');
+		res.end();
+  }
 }); 
- */
+ 
 /** Handle change password function */
 app.get('/changePassword', (req, res) => {
     res.render('changePassword', {isLoggedIn: req.session.isLoggedIn});

@@ -5,18 +5,18 @@ html
   body 
     div(class="container")
       h2(class="pb-2 border-bottom")="Create New User"
-      if error 
+      if error
         p(class="alert alert-danger")=error
 
       form(class="row g-3" method="post" action="")
         div(class="col-auto")
-            input(type="text" class="form-control" name="username" placeholder="Username")
+          input(type="text" class="form-control" name="username" placeholder="Username")
          
         div(class="col-auto")
-            input( type="password" class="form-control" name="password" placeholder="Password")
+          input( type="password" class="form-control" name="password" placeholder="Password")
  
         div(class="col-auto")
-            input( type="text" class="form-control" name="email" placeholder="email")
+          input( type="text" class="form-control" name="email" placeholder="email")
 
         div(class="col-auto")
-            button(type="submit" class="btn btn-primary mb-3")="Create"
+          button(type="submit" class="btn btn-primary mb-3")="Create"
