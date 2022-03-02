@@ -94,17 +94,17 @@ app.get('/changePassword', (req, res) => {
 /* app.post('/changePassword', (req, res) => {
   const {password} = req.body;
   if (password) { // check input fields are not empty
-		var sql = "UPDATE accounts SET password = ? WHERE id = ";
-    conn.query(sql, [password], function (error, result) {
-      if (error) throw error;
+		var sql = "UPDATE accounts SET password = ? WHERE username = ?"; // update user password based on username
+    conn.query(sql, [password, req.session.username], function (error, result) {
+      if (error) throw error; // If there is an issue with the query, output the error
       console.log("Password updated successfully!");
-      res.redirect('/');
+      res.redirect('/'); // redirect to index page
     });
   }
   else {
-    res.render('changePassword', {error: 'Password failed to update!'});
+    res.render('updateEmail', {error: 'Failed to update password!'});
   }
-});  */
+});   */
 
 /** Handle update email function */
 app.get('/updateEmail', (req, res) => {
@@ -122,7 +122,7 @@ app.post('/updateEmail', (req, res) => {
     });
   }
   else {
-    res.render('updateEmail', {error: 'Email failed to update!'});
+    res.render('updateEmail', {error: 'Failed to update email!'});
   }
 });  
 
