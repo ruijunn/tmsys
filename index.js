@@ -13,19 +13,19 @@ app.use(session({secret: 'super-secret'})); // Session setup
 
 /* Database connection */
 var conn = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "password",
-    database: "nodelogin"
+  host: "localhost",
+  user: "root",
+  password: "password",
+  database: "nodelogin"
 });
   
 conn.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
+  if (err) throw err;
+  console.log("Connected!");
 });
 
 /** Handle login display and form submit */
- app.get('/login', (req, res) => {
+app.get('/login', (req, res) => {
   if (req.session.isLoggedIn === true) {
     return res.redirect('/');
   }
@@ -33,24 +33,23 @@ conn.connect(function(err) {
 });
 
 app.post('/login', (req, res) => {
-    const {username, password} = req.body;
-    if (username && password) { // check input fields are not empty
-		// Execute SQL query that'll select the account from the database based on the specified username and password
-		conn.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
-			if (error) throw error; // If there is an issue with the query, output the error
-			if (results.length > 0) {   // If the account exists
-				// Authenticate the user
-				req.session.isLoggedIn = true;
-				req.session.username = username;
-        res.redirect(req.query.redirect_url ? req.query.redirect_url : '/');
-			} else {
-				res.send('Incorrect Username and/or Password!');
-			}			
-			res.end();
-		});
-	} else {
-		res.send('Please enter Username and Password!');
+  const {username, password} = req.body;
+  if (username && password) { // check input fields are not empty
+	  // retrieve account from the database based on the specified username and password
+	  conn.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
+		if (error) throw error; // If there is an issue with the query, output the error
+		if (results.length > 0) {   // If the account exists
+			// Authenticate the user
+			req.session.isLoggedIn = true;
+			req.session.username = username;
+      res.redirect('/');  // redirect to index page
+		} else {
+      res.render('login', {error: 'Incorrect Username and/or Password!'});
+		}			
 		res.end();
+	  });
+	} else {
+    res.render('login', {error: 'Please enter Username and Password!'});
 	}
 }); 
 
@@ -67,28 +66,27 @@ app.get('/', (req, res) => {
 
 /** Handle create user function */
 app.get('/createUser', (req, res) => {
-    res.render('createUser', {isLoggedIn: req.session.isLoggedIn});
+  res.render('createUser', {isLoggedIn: req.session.isLoggedIn});
 });
 
 app.post('/createUser', (req, res) => {
   const {username, password, email} = req.body;
   if (username && password && email) { // check input fields are not empty
 		var sql = "INSERT INTO accounts (username, password, email) VALUES (?, ?, ?)";
-    conn.query(sql, [username, password, email], function (err, result) {
-        if (err) throw err;
-        console.log("1 record inserted");
-        res.redirect('/');
+    conn.query(sql, [username, password, email], function (error, result) {
+      if (error) throw error;
+      console.log("1 record inserted");
+      res.redirect('/');
     });
   }
   else {
-    res.send('Please insert all details!');
-		res.end();
+    res.render('createUser', {error: 'Please enter all user details!'});
   }
 }); 
  
 /** Handle change password function */
 app.get('/changePassword', (req, res) => {
-    res.render('changePassword', {isLoggedIn: req.session.isLoggedIn});
+  res.render('changePassword', {isLoggedIn: req.session.isLoggedIn});
 });
 
 /* app.get('/balance', (req, res) => {
