@@ -35,21 +35,15 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
   const {username, password} = req.body;
-  console.log(username);
-  console.log(password);
-  /* const test = bcrypt.hashSync(password,bcrypt.genSaltSync(10));
-  console.log(test); */
   if (username) { // check input fields are not empty
 	  // retrieve account from the database based on the specified username and password
     var sql = "SELECT * FROM accounts WHERE username = ?";
     conn.query(sql, [username], function (error, results, fields) {
 		  if (error) throw error; // If there is an issue with the query, output the error
 		  if (results.length > 0) {   // If the account exists
-        /* bcrypt.compareSync(password, results[0].password).then(res => {
-          console.log(res); // res = true
-        })   */
-        var test = bcrypt.compareSync(password, results[0].password);
-        console.log(test);
+        // compare entered password with the stored encrypted password
+        var test = bcrypt.compareSync(password, results[0].password); 
+        console.log(test); // true
         // Authenticate the user
 			  req.session.isLoggedIn = true;
 			  req.session.username = username;
@@ -83,8 +77,9 @@ app.get('/createUser', (req, res) => {
 
 app.post('/createUser', (req, res) => {
   const {username, password, email} = req.body;
-  const hashedPwd = bcrypt.hashSync(password,bcrypt.genSaltSync(10));
+  const hashedPwd = bcrypt.hashSync(password,bcrypt.genSaltSync(10)); // store hash in database
   if (username && password && email) { // check input fields are not empty
+    // insert username, hashedpwd and email to database
 		var sql = "INSERT INTO accounts (username, password, email) VALUES (?, ?, ?)";
     conn.query(sql, [username, hashedPwd, email], function (error, result) {
       if (error) throw error; // If there is an issue with the query, output the error
