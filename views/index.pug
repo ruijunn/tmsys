@@ -3,23 +3,22 @@ html
     title="Task Management System"
     link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet")
     link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
-  body
+  body(style="font-family: sans-serif; width: 55%; margin: auto") 
     div(class="container")
-      h2(class="pb-2 border-bottom")="Task Management System"
+       h2(class="pb-2 border-bottom" style="text-align: center; padding-top: 1%; padding-bottom: 1%;")="Task Management System"
+       h2(style="text-align: center;")="User Management"
         if isLoggedIn
-          small 
+          ul(style="text-align: center; background-color: #f8e5e7; margin:15; padding: 10; border: 2px solid black;")
+            li(style="display:inline-block; margin: 0; padding: 10; text-decoration: none;")
+            a(href="/createUser")="Create New User"
+            li(style="display:inline-block; margin: 0; padding: 10; text-decoration: none;")
+            a(href="/changePassword")="Change Password"
+            li(style="display:inline-block; margin: 0; padding: 10; text-decoration: none;")
+            a(href="/updateEmail")="Update Email"
+          br
+          |
+          small
             a(href="/logout")="Logout"
-          div.navbar.navbar-expand.navbar-light
-              ul.navbar-nav.mb-2
-                li.nav-item
-                  a.nav-link(href="/") User Management
-                li.nav-item.dropdown
-                  li.nav-item
-                    a.nav-link(href="/createUser") Create New User
-                  li.nav-item
-                    a.nav-link(href="/changePassword") Change Password
-                  li.nav-item
-                    a.nav-link(href="/updateEmail") Update Email
         else
           div(class="container")
           a(href="/login")="Login"
