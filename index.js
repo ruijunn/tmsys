@@ -3,7 +3,6 @@ const mysql = require('mysql');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
-const e = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -65,7 +64,7 @@ app.get('/logout', (req, res) => {
   res.redirect('/');
 }); 
 
-/** Simulated bank functionality */
+/** Simulated app functionality */
 app.get('/', (req, res) => {
   res.render('index', {isLoggedIn: req.session.isLoggedIn});
 }); 
@@ -100,7 +99,7 @@ app.get('/changePassword', (req, res) => {
 app.post('/changePassword', (req, res) => {
   const {currentpwd, newpwd} = req.body;
   const hashedPwd2 = bcrypt.hashSync(newpwd,bcrypt.genSaltSync(10)); // store hash in database
-  if (oldpwd && newpwd) { // check input fields are not empty
+  if (currentpwd && newpwd) { // check input fields are not empty
     if (currentpwd == newpwd) { 
       res.render('changePassword', {error: 'Current password cannot be the same as new password!'});
     }

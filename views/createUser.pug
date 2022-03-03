@@ -14,10 +14,15 @@ html
           input(type="text" class="form-control" name="username" placeholder="Username")
          
         div(class="form-group")
-          input( type="password" class="form-control" name="password" placeholder="Password")
+          input( type="password" class="form-control" name="password" placeholder="Password" 
+          pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,10}")
           
         div(class="form-group")
           input( type="email" class="form-control" name="email" placeholder="Email")
+
+        span="Password must"
+        li Have 8 characters and maximum 10 characters
+        li Have alphabets, numbers, special characters
 
         div(class="form-group")
           button(type="submit" class="btn btn-primary mb-3")="Create"
