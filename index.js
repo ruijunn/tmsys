@@ -97,6 +97,28 @@ app.get('/changePassword', (req, res) => {
   res.render('changePassword', {isLoggedIn: req.session.isLoggedIn});
 });
 
+app.post('/changePassword', (req, res) => {
+  const {currentpwd, newpwd} = req.body;
+  const hashedPwd2 = bcrypt.hashSync(newpwd,bcrypt.genSaltSync(10)); // store hash in database
+  if (oldpwd && newpwd) { // check input fields are not empty
+    if (currentpwd == newpwd) { 
+      res.render('changePassword', {error: 'Current password cannot be the same as new password!'});
+    }
+    else {
+      // update user current password with new encrypted password based on username
+      var sql = "UPDATE accounts SET password = ? WHERE username = ?";
+      conn.query(sql, [hashedPwd2, req.session.username], function (error, result) {
+        if (error) throw error; // If there is an issue with the query, output the error
+        console.log("Password updated successfully!");
+        res.redirect('/'); // redirect to index page
+      });
+    }
+  }
+  else {
+    res.render('changePassword', {error: 'Please enter current password and new password!'});
+  }
+}); 
+
 
 /** Handle update email function */
 app.get('/updateEmail', (req, res) => {
