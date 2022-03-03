@@ -2,6 +2,8 @@ const express = require('express');
 const mysql = require('mysql');
 const session = require('express-session');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt');
+const e = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -33,19 +35,28 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
   const {username, password} = req.body;
-  if (username && password) { // check input fields are not empty
+  console.log(username);
+  console.log(password);
+  /* const test = bcrypt.hashSync(password,bcrypt.genSaltSync(10));
+  console.log(test); */
+  if (username) { // check input fields are not empty
 	  // retrieve account from the database based on the specified username and password
-    var sql = "SELECT * FROM accounts WHERE username = ? AND password = ?";
-    conn.query(sql, [username, password], function (error, results, fields) {
+    var sql = "SELECT * FROM accounts WHERE username = ?";
+    conn.query(sql, [username], function (error, results, fields) {
 		  if (error) throw error; // If there is an issue with the query, output the error
 		  if (results.length > 0) {   // If the account exists
-			  // Authenticate the user
+        /* bcrypt.compareSync(password, results[0].password).then(res => {
+          console.log(res); // res = true
+        })   */
+        var test = bcrypt.compareSync(password, results[0].password);
+        console.log(test);
+        // Authenticate the user
 			  req.session.isLoggedIn = true;
 			  req.session.username = username;
         console.log("Login Successful!");
         res.redirect('/');  // redirect to index page
 		  } else {
-      res.render('login', {error: 'Incorrect Username and/or Password!'});
+        res.render('login', {error: 'Incorrect Username and/or Password!'});
 		  }			
 		  res.end();
 	  });
@@ -72,9 +83,10 @@ app.get('/createUser', (req, res) => {
 
 app.post('/createUser', (req, res) => {
   const {username, password, email} = req.body;
+  const hashedPwd = bcrypt.hashSync(password,bcrypt.genSaltSync(10));
   if (username && password && email) { // check input fields are not empty
 		var sql = "INSERT INTO accounts (username, password, email) VALUES (?, ?, ?)";
-    conn.query(sql, [username, password, email], function (error, result) {
+    conn.query(sql, [username, hashedPwd, email], function (error, result) {
       if (error) throw error; // If there is an issue with the query, output the error
       console.log("New user created successfully!");
       res.redirect('/'); // redirect to index page
