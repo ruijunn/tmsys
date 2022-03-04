@@ -61,6 +61,7 @@ app.post('/login', (req, res) => {
 /** Handle logout function */
 app.get('/logout', (req, res) => {
   req.session.isLoggedIn = false;
+  console.log("Logout Successful!")
   res.redirect('/');
 }); 
 
