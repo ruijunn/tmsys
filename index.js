@@ -47,7 +47,7 @@ app.post('/login', (req, res) => {
 			  req.session.isLoggedIn = true;
 			  req.session.username = username;
         console.log("Login Successful!");
-        res.redirect('/');  // redirect to index page
+        res.redirect('/'); // redirect to index page
 		  } else {
         res.render('login', {error: 'Incorrect Username and/or Password!'});
 		  }			
