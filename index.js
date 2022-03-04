@@ -21,7 +21,7 @@ var conn = mysql.createConnection({
   
 conn.connect(function(err) {
   if (err) throw err;
-  console.log("Connected!");
+  console.log("Connected to database!");
 });
 
 /** Handle login display and form submit */
