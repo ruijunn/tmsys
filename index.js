@@ -34,7 +34,7 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
   const {username, password} = req.body;
-  if (username) { // check input fields are not empty
+  if (username && password) { // check input fields are not empty
 	  // retrieve account from the database based on the specified username and password
     var sql = "SELECT * FROM accounts WHERE username = ?";
     conn.query(sql, [username], function (error, results, fields) {
