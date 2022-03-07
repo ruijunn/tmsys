@@ -126,8 +126,8 @@ app.post('/changePassword', (req, res) => {
     }
     else {
       // update user current password with new encrypted password based on username
-      var sql = "UPDATE accounts SET password = ? WHERE username = ?";
-      conn.query(sql, [hashedPwd2, req.session.username], function (error, result) {
+      var sql = "UPDATE accounts SET password = ? WHERE id = ?";
+      conn.query(sql, [hashedPwd2, req.session.userID], function (error, result) {
         if (error) throw error; // If there is an issue with the query, output the error
         console.log("Password updated successfully!");
         res.redirect('/'); // redirect to index page
@@ -148,8 +148,8 @@ app.get('/updateEmail', (req, res) => {
 app.post('/updateEmail', (req, res) => {
   const {email} = req.body;
   if (email) { // check input fields are not empty
-		var sql = "UPDATE accounts SET email = ? WHERE username = ?"; // update user email based on username
-    conn.query(sql, [email, req.session.username], function (error, result) {
+		var sql = "UPDATE accounts SET email = ? WHERE id = ?"; // update user email based on username
+    conn.query(sql, [email, req.session.userID], function (error, result) {
       if (error) throw error; // If there is an issue with the query, output the error
       console.log("Email updated successfully!");
       res.redirect('/'); // redirect to index page
