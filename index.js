@@ -120,7 +120,7 @@ app.get('/changePassword', (req, res) => {
 app.post('/changePassword', (req, res) => {
   const {currentpwd, newpwd} = req.body;
   const hashedPwd2 = bcrypt.hashSync(newpwd,bcrypt.genSaltSync(10)); // store hash in database
-  if (currentpwd && newpwd) { // check input fields are not empty
+  if (currentpwd && newpwd) { // check input fields are not 
     if (currentpwd == newpwd) { 
       res.render('changePassword', {error: 'Current password cannot be the same as new password!'});
     }
