@@ -15,7 +15,7 @@ html
           style="padding:12px; border-radius: 4px; margin: 5px 0; opacity: 0.85; display: inline-block; font-size: 17px; line-height: 20px;")
          
         div(class="form-group")
-          input( type="password" class="form-control" name="password" placeholder="Password" 
+          input(type="password" class="form-control" name="password" placeholder="Password" 
           pattern="^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,10}$" 
           style="padding:12px; border-radius: 4px; margin: 5px 0; opacity: 0.85; display: inline-block; font-size: 17px; line-height: 20px;")
           
@@ -26,6 +26,15 @@ html
         span="Password must"
         li Have 8 characters and maximum 10 characters
         li Have alphabets, numbers, special characters
+        
+        //span="Type of User:"
+        //div(class="form-check form-check-inline")
+          input(type="radio" class="form-check-input" name="grpName" value="admin")
+          label(class="form-check-label")="Admin"
+
+        //div(class="form-check form-check-inline")
+          input(type="radio" class="form-check-input" name="grpName" value="user")
+          label(class="form-check-label")="User"
 
         div(class="form-group")
           button(type="submit" class="btn btn mb-3" 
