@@ -46,7 +46,10 @@ app.post('/login', (req, res) => {
         // Authenticate the user
 			  req.session.isLoggedIn = true;
 			  req.session.username = username;
+        req.session.userID = results[0].id;
+        var userid = req.session.userID;
         console.log("Login Successful!");
+        console.log(userid);
         res.redirect('/'); // redirect to index page
 		  } else {
         res.render('login', {error: 'Incorrect Username and/or Password!'});
@@ -72,7 +75,24 @@ app.get('/', (req, res) => {
 
 /** Handle create user function */
 app.get('/createUser', (req, res) => {
-  res.render('createUser', {isLoggedIn: req.session.isLoggedIn});
+  var sql = "SELECT role FROM accounts WHERE id = ?";
+  conn.query(sql, [req.session.userID], function (error, results, fields) {
+    if (error) throw error;
+    if (results.length > 0) {
+      if (results[0].role == "admin") { // check if role is admin
+        console.log("User is an admin");
+        res.render('createUser', {isLoggedIn: req.session.isLoggedIn});
+      }
+      else if (results[0].role == "user") { // check if role is user
+        console.log("User is not an admin, not authorized!");
+        res.redirect('/'); // redirect to index page
+      }
+      else { // check if user does not belong to any group
+        console.log("User is not part of the group!");
+        res.redirect('/'); // redirect to index page
+      }
+    }
+  });
 });
 
 app.post('/createUser', (req, res) => {
