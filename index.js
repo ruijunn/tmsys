@@ -1,5 +1,6 @@
 const express = require('express');
-const mysql = require('mysql');
+const mysql = require('mysql'); 
+require('./dbServer');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
@@ -18,12 +19,7 @@ var conn = mysql.createConnection({
   password: "password",
   database: "nodelogin"
 });
-  
-conn.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected to database!");
-});
-
+ 
 /** Handle login display and form submit */
 app.get('/login', (req, res) => {
   if (req.session.isLoggedIn === true) {
