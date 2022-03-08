@@ -44,16 +44,22 @@ app.post('/login', (req, res) => {
 		  if (error) throw error; // If there is an issue with the query, output the error
 		  if (results.length > 0) {   // If the account exists
         // compare entered password with the stored encrypted password
-        var test = bcrypt.compareSync(password, results[0].password); 
-        console.log(test); // true
-        // Authenticate the user
-			  req.session.isLoggedIn = true;
-			  req.session.username = username;
-        req.session.userID = results[0].id;
-        var userid = req.session.userID;
-        console.log("Login Successful!");
-        console.log(userid);
-        res.redirect('/'); // redirect to index page
+        var validPwd = bcrypt.compareSync(password, results[0].password); 
+        console.log(validPwd); // true
+        if (validPwd) {
+          if (results[0].status === 1) { // status = 1 means account is active
+            req.session.isLoggedIn = true;
+            req.session.username = username;
+            req.session.userID = results[0].id;
+            var userid = req.session.userID;
+            console.log("Login Successful!");
+            console.log(userid);
+            res.redirect('/') // redirect to index page
+          }
+          else { // status = 0 means account is disabled
+            res.render('login', {error: 'Your account has been disabled!'});
+          }
+        }
 		  } else {
         res.render('login', {error: 'Incorrect Username and/or Password!'});
 		  }			
@@ -86,12 +92,8 @@ app.get('/createUser', (req, res) => {
         console.log("User is an admin");
         res.render('createUser', {isLoggedIn: req.session.isLoggedIn});
       }
-      else if (results[0].role === "user") { // check if role is user
+      else { // check if role is user
         console.log("User is not an admin, not authorized!");
-        res.redirect('/'); // redirect to index page
-      }
-      else { // check if user does not belong to any group
-        console.log("User is not part of the group!");
         res.redirect('/'); // redirect to index page
       }
     }
