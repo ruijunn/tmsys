@@ -8,7 +8,9 @@ html
       h2(style="text-align: center;")="Create New User"
       if error
         p(class="alert alert-danger")=error
-      
+      if success
+        p(class="alert alert-success")=success
+
       form(class="row g-3" method="post")
         div(class="form-group")
           input(type="text" class="form-control" name="username" placeholder="Username" 
