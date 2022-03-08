@@ -48,9 +48,10 @@ app.post('/login', (req, res) => {
         console.log(validPwd); // true
         if (validPwd) {
           if (results[0].status === 1) { // status = 1 means account is active
+            // Authenticate the user
             req.session.isLoggedIn = true;
-            req.session.username = username;
-            req.session.userID = results[0].id;
+            req.session.username = username; // store the username in session
+            req.session.userID = results[0].id; // store the id in session
             var userid = req.session.userID;
             console.log("Login Successful!");
             console.log(userid);
