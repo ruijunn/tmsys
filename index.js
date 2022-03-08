@@ -75,7 +75,7 @@ app.post('/login', (req, res) => {
 app.get('/logout', (req, res) => {
   req.session.isLoggedIn = false;
   console.log("Logout Successful!")
-  res.redirect('/');
+  res.redirect('/login'); // after logout redirect to login page
 }); 
 
 /** Simulated app functionality */
