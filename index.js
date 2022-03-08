@@ -82,11 +82,11 @@ app.get('/createUser', (req, res) => {
   conn.query(sql, [req.session.userID], function (error, results, fields) {
     if (error) throw error;
     if (results.length > 0) {
-      if (results[0].role == "admin") { // check if role is admin
+      if (results[0].role === "admin") { // check if role is admin
         console.log("User is an admin");
         res.render('createUser', {isLoggedIn: req.session.isLoggedIn});
       }
-      else if (results[0].role == "user") { // check if role is user
+      else if (results[0].role === "user") { // check if role is user
         console.log("User is not an admin, not authorized!");
         res.redirect('/'); // redirect to index page
       }
