@@ -12,12 +12,19 @@ app.set('view engine', 'pug'); // Setup the pug
 app.use(bodyParser.urlencoded({extended: true})); // Setup the body parser to handle form submits
 app.use(session({secret: 'super-secret'})); // Session setup
 
+const DB_HOST = process.env.DB_HOST;
+const DB_USER = process.env.DB_USER;
+const DB_PASSWORD = process.env.DB_PASSWORD;
+const DB_DATABASE = process.env.DB_DATABASE;
+const DB_PORT = process.env.DB_PORT;
+
 /* Database connection */
 var conn = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "password",
-  database: "nodelogin"
+  host: DB_HOST,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_DATABASE,
+  port: DB_PORT
 });
  
 /** Handle login display and form submit */
@@ -99,8 +106,7 @@ app.post('/createUser', (req, res) => {
 		var sql = "INSERT INTO accounts (username, password, email, role) VALUES (?, ?, ?, ?)";
     conn.query(sql, [username, hashedPwd, email, grpName], function (error, result) {
       if (error) throw error; // If there is an issue with the query, output the error
-      console.log("New user created successfully!");
-      res.redirect('/'); // redirect to index page
+      res.render('createUser', {success: 'New user created successfully!'});
     });
   }
   else {
@@ -125,8 +131,7 @@ app.post('/changePassword', (req, res) => {
       var sql = "UPDATE accounts SET password = ? WHERE id = ?";
       conn.query(sql, [hashedPwd2, req.session.userID], function (error, result) {
         if (error) throw error; // If there is an issue with the query, output the error
-        console.log("Password updated successfully!");
-        res.redirect('/'); // redirect to index page
+        res.render('changePassword', {success: 'Password updated successfully!'});
       });
     }
   }
@@ -147,8 +152,7 @@ app.post('/updateEmail', (req, res) => {
 		var sql = "UPDATE accounts SET email = ? WHERE id = ?"; // update user email based on username
     conn.query(sql, [email, req.session.userID], function (error, result) {
       if (error) throw error; // If there is an issue with the query, output the error
-      console.log("Email updated successfully!");
-      res.redirect('/'); // redirect to index page
+      res.render('updateEmail', {success: 'Email updated successfully!'});
     });
   }
   else {
