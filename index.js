@@ -91,7 +91,7 @@ app.get('/createUser', (req, res) => {
     if (results.length > 0) {
       if (results[0].role === "admin") { // check if role is admin
         console.log("User is an admin");
-        res.render('createUser', {isLoggedIn: req.session.isLoggedIn});
+        res.render('createUser', {isLoggedIn: req.session.isLoggedIn}); // redirect to create user page
       }
       else { // check if role is user
         console.log("User is not an admin, not authorized!");
