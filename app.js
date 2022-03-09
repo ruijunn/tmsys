@@ -55,7 +55,7 @@ app.post('/login', (req, res) => {
             var userid = req.session.userID;
             console.log("Login Successful!");
             console.log(userid);
-            res.redirect('/') // redirect to index page
+            res.redirect('/home') // redirect to index page
           }
           else { // status = 0 means account is disabled
             res.render('login', {error: 'Your account has been disabled!'});
@@ -75,7 +75,7 @@ app.post('/login', (req, res) => {
 app.get('/logout', (req, res) => {
   req.session.isLoggedIn = false;
   console.log("Logout Successful!")
-  res.redirect('/login'); // after logout redirect to login page
+  res.redirect('/');
 }); 
 
 /** Simulated app functionality */
@@ -95,7 +95,7 @@ app.get('/createUser', (req, res) => {
       }
       else { // check if role is user
         console.log("User is not an admin, not authorized!");
-        res.redirect('/'); // redirect to index page
+        res.redirect('/home'); // redirect to index page
       }
     }
   });
