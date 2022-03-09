@@ -26,13 +26,13 @@ var conn = mysql.createConnection({
   database: DB_DATABASE,
   port: DB_PORT
 });
- 
+
 /** Handle login display and form submit */
 app.get('/login', (req, res) => {
   if (req.session.isLoggedIn === true) {
     return res.redirect('/');
   }
-  res.render('login', {error: false});
+  res.render('login', {error: false}); 
 });
 
 app.post('/login', (req, res) => {
