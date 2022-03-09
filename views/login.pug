@@ -9,7 +9,7 @@ html
       if error 
         p(class="alert alert-danger")=error
 
-      form(class="row g-3" method="post")
+      form(class="row g-3" method="post" action="/login")
         div(class="form-group")
           input(type="text" class="form-control" name="username" placeholder="Username" 
           style="padding:12px; border-radius: 4px; margin: 5px 0; opacity: 0.85; display: inline-block; font-size: 17px; line-height: 20px;")

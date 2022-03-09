@@ -28,9 +28,9 @@ var conn = mysql.createConnection({
 });
 
 /** Handle login display and form submit */
-app.get('/login', (req, res) => {
+app.get('/', (req, res) => {
   if (req.session.isLoggedIn === true) {
-    return res.redirect('/');
+    return res.redirect('/home');
   }
   res.render('login', {error: false}); 
 });
@@ -79,7 +79,7 @@ app.get('/logout', (req, res) => {
 }); 
 
 /** Simulated app functionality */
-app.get('/', (req, res) => {
+app.get('/home', (req, res) => {
   res.render('index', {isLoggedIn: req.session.isLoggedIn});
 }); 
 
