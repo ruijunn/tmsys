@@ -21,14 +21,15 @@ const db = mysql.createConnection({
   port: process.env.DB_PORT
 });
 
-/** Handle login display and form submit */
+/** Display login page */
 app.get('/', (req, res) => {
   if (req.session.isLoggedIn === true) {
-    return res.redirect('/home');
+    return res.redirect('/home'); // redirect to home page once login successful
   }
   res.render('login', {error: false}); 
 });
 
+/** Handle form submit for login */
 app.post('/login', (req, res) => {
   const {username, password} = req.body;
   if (username && password) { // check input fields are not empty
@@ -69,32 +70,58 @@ app.post('/login', (req, res) => {
 app.get('/logout', (req, res) => {
   req.session.isLoggedIn = false;
   console.log("Logout Successful!")
-  res.redirect('/');
+  res.redirect('/'); // redirect back to login page
 }); 
 
-/** Simulated app functionality */
+/** Display home page */
 app.get('/home', (req, res) => {
   res.render('index', {isLoggedIn: req.session.isLoggedIn});
 }); 
 
-/** Handle create user function */
+/** Create a function to check if user is in a group */
+async function checkGroup (id, groupname) {
+	return new Promise((resolve, reject) => {
+		try {
+      const sql = "SELECT groupName FROM usergrp WHERE id = ?";
+      db.query(sql, [id, groupname], (err, result) => {
+        if (err) throw err;
+        if (result.length > 0) {
+          if (result[0].grpName === groupname) {
+            resolve(true);
+          }
+          else {
+            resolve(false);
+          }
+        }
+      });
+    }
+    catch (error) {
+      reject(console.log(error));
+    }
+	})
+};
+
+/** Display Create User Page */
 app.get('/createUser', (req, res) => {
   const sql = "SELECT role FROM accounts WHERE id = ?";
   db.query(sql, [req.session.userID], function (error, results, fields) {
     if (error) throw error;
     if (results.length > 0) {
-      if (results[0].role === "admin") { // check if role is admin
-        console.log("User is an admin");
-        res.render('createUser', {isLoggedIn: req.session.isLoggedIn}); // redirect to create user page
-      }
-      else { // check if role is user
-        console.log("User is not an admin, not authorized!");
-        res.redirect('/home'); // redirect to index page
+      if (checkGroup(results[0].id, results[0].role)) {
+        if (results[0].role === "admin") { // check if role is admin
+          console.log("User is an admin");
+          res.render('createUser', {isLoggedIn: req.session.isLoggedIn}); // redirect to create user page
+        }
+        else { // check if role is user
+          console.log("User is not an admin, not authorized!");
+          res.redirect('/home'); // redirect to home page
+        }
       }
     }
   });
 });
 
+/** Handle create user function */
 app.post('/createUser', (req, res) => {
   const {username, password, email, grpName} = req.body;
   const hashedPwd = bcrypt.hashSync(password,bcrypt.genSaltSync(10)); // store hash in database
@@ -102,7 +129,7 @@ app.post('/createUser', (req, res) => {
     // insert username, hashedpwd and email to database
 		const sql = "INSERT INTO accounts (username, password, email, role) VALUES (?, ?, ?, ?)";
     db.query(sql, [username, hashedPwd, email, grpName], function (error, result) {
-      if (error) throw error; // If there is an issue with the query, output the error
+      if (error) throw error; 
       res.render('createUser', {success: 'New user created successfully!'});
     });
   }
@@ -111,15 +138,16 @@ app.post('/createUser', (req, res) => {
   }
 }); 
  
-/** Handle change password function */
+/** Display change password page */
 app.get('/changePassword', (req, res) => {
   res.render('changePassword', {isLoggedIn: req.session.isLoggedIn});
 });
 
+/** Handle change password function */
 app.post('/changePassword', (req, res) => {
   const {currentpwd, newpwd} = req.body;
   const hashedPwd2 = bcrypt.hashSync(newpwd,bcrypt.genSaltSync(10)); // store hash in database
-  if (currentpwd && newpwd) { // check input fields are not 
+  if (currentpwd && newpwd) { // check input fields are not empty
     if (currentpwd == newpwd) { 
       res.render('changePassword', {error: 'Current password cannot be the same as new password!'});
     }
@@ -127,7 +155,7 @@ app.post('/changePassword', (req, res) => {
       // update user current password with new encrypted password based on username
       const sql = "UPDATE accounts SET password = ? WHERE id = ?";
       db.query(sql, [hashedPwd2, req.session.userID], function (error, result) {
-        if (error) throw error; // If there is an issue with the query, output the error
+        if (error) throw error; 
         res.render('changePassword', {success: 'Password updated successfully!'});
       });
     }
@@ -138,17 +166,18 @@ app.post('/changePassword', (req, res) => {
 }); 
 
 
-/** Handle update email function */
+/** Display update email page */
 app.get('/updateEmail', (req, res) => {
   res.render('updateEmail', {isLoggedIn: req.session.isLoggedIn});
 });
 
+/** Handle update email function */
 app.post('/updateEmail', (req, res) => {
   const {email} = req.body;
   if (email) { // check input fields are not empty
 		const sql = "UPDATE accounts SET email = ? WHERE id = ?"; // update user email based on username
     db.query(sql, [email, req.session.userID], function (error, result) {
-      if (error) throw error; // If there is an issue with the query, output the error
+      if (error) throw error; 
       res.render('updateEmail', {success: 'Email updated successfully!'});
     });
   }
