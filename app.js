@@ -12,19 +12,13 @@ app.set('view engine', 'pug'); // Setup the pug
 app.use(bodyParser.urlencoded({extended: true})); // Setup the body parser to handle form submits
 app.use(session({secret: 'super-secret'})); // Session setup
 
-const DB_HOST = process.env.DB_HOST;
-const DB_USER = process.env.DB_USER;
-const DB_PASSWORD = process.env.DB_PASSWORD;
-const DB_DATABASE = process.env.DB_DATABASE;
-const DB_PORT = process.env.DB_PORT;
-
 /* Database connection */
-var conn = mysql.createConnection({
-  host: DB_HOST,
-  user: DB_USER,
-  password: DB_PASSWORD,
-  database: DB_DATABASE,
-  port: DB_PORT
+const db = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  port: process.env.DB_PORT
 });
 
 /** Handle login display and form submit */
@@ -40,11 +34,11 @@ app.post('/login', (req, res) => {
   if (username && password) { // check input fields are not empty
 	  // retrieve account from the database based on the specified username and password
     var sql = "SELECT * FROM accounts WHERE username = ?";
-    conn.query(sql, [username], function (error, results, fields) {
+    db.query(sql, [username], function (error, results, fields) {
 		  if (error) throw error; // If there is an issue with the query, output the error
 		  if (results.length > 0) {   // If the account exists
         // compare entered password with the stored encrypted password
-        var validPwd = bcrypt.compareSync(password, results[0].password); 
+        const validPwd = bcrypt.compareSync(password, results[0].password); 
         console.log(validPwd); // true
         if (validPwd) {
           if (results[0].status === 1) { // status = 1 means account is active
@@ -52,7 +46,7 @@ app.post('/login', (req, res) => {
             req.session.isLoggedIn = true;
             req.session.username = username; // store the username in session
             req.session.userID = results[0].id; // store the id in session
-            var userid = req.session.userID;
+            const userid = req.session.userID;
             console.log("Login Successful!");
             console.log(userid);
             res.redirect('/home') // redirect to index page
@@ -85,8 +79,8 @@ app.get('/home', (req, res) => {
 
 /** Handle create user function */
 app.get('/createUser', (req, res) => {
-  var sql = "SELECT role FROM accounts WHERE id = ?";
-  conn.query(sql, [req.session.userID], function (error, results, fields) {
+  const sql = "SELECT role FROM accounts WHERE id = ?";
+  db.query(sql, [req.session.userID], function (error, results, fields) {
     if (error) throw error;
     if (results.length > 0) {
       if (results[0].role === "admin") { // check if role is admin
@@ -106,8 +100,8 @@ app.post('/createUser', (req, res) => {
   const hashedPwd = bcrypt.hashSync(password,bcrypt.genSaltSync(10)); // store hash in database
   if (username && password && email && grpName) { // check input fields are not empty
     // insert username, hashedpwd and email to database
-		var sql = "INSERT INTO accounts (username, password, email, role) VALUES (?, ?, ?, ?)";
-    conn.query(sql, [username, hashedPwd, email, grpName], function (error, result) {
+		const sql = "INSERT INTO accounts (username, password, email, role) VALUES (?, ?, ?, ?)";
+    db.query(sql, [username, hashedPwd, email, grpName], function (error, result) {
       if (error) throw error; // If there is an issue with the query, output the error
       res.render('createUser', {success: 'New user created successfully!'});
     });
@@ -131,8 +125,8 @@ app.post('/changePassword', (req, res) => {
     }
     else {
       // update user current password with new encrypted password based on username
-      var sql = "UPDATE accounts SET password = ? WHERE id = ?";
-      conn.query(sql, [hashedPwd2, req.session.userID], function (error, result) {
+      const sql = "UPDATE accounts SET password = ? WHERE id = ?";
+      db.query(sql, [hashedPwd2, req.session.userID], function (error, result) {
         if (error) throw error; // If there is an issue with the query, output the error
         res.render('changePassword', {success: 'Password updated successfully!'});
       });
@@ -152,8 +146,8 @@ app.get('/updateEmail', (req, res) => {
 app.post('/updateEmail', (req, res) => {
   const {email} = req.body;
   if (email) { // check input fields are not empty
-		var sql = "UPDATE accounts SET email = ? WHERE id = ?"; // update user email based on username
-    conn.query(sql, [email, req.session.userID], function (error, result) {
+		const sql = "UPDATE accounts SET email = ? WHERE id = ?"; // update user email based on username
+    db.query(sql, [email, req.session.userID], function (error, result) {
       if (error) throw error; // If there is an issue with the query, output the error
       res.render('updateEmail', {success: 'Email updated successfully!'});
     });
