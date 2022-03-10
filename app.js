@@ -36,7 +36,7 @@ app.post('/login', (req, res) => {
 	  // retrieve account from the database based on the specified username and password
     var sql = "SELECT * FROM accounts WHERE username = ?";
     db.query(sql, [username], function (error, results, fields) {
-		  if (error) throw error; // If there is an issue with the query, output the error
+		  if (error) throw error;
 		  if (results.length > 0) {   // If the account exists
         // compare entered password with the stored encrypted password
         const validPwd = bcrypt.compareSync(password, results[0].password); 
@@ -50,18 +50,19 @@ app.post('/login', (req, res) => {
             const userid = req.session.userID;
             console.log("Login Successful!");
             console.log(userid);
-            res.redirect('/home') // redirect to index page
+            res.redirect('/home') // redirect to home page
           }
           else { // status = 0 means account is disabled
             res.render('login', {error: 'Your account has been disabled!'});
           }
         }
-		  } else {
-        res.render('login', {error: 'Incorrect Username and/or Password!'});
-		  }			
-		  res.end();
+		    else {
+          res.render('login', {error: 'Incorrect Username and/or Password!'});
+		    }			
+		  }
 	  });
-	} else {
+	} 
+  else {
     res.render('login', {error: 'Please enter Username and Password!'});
 	}
 }); 
@@ -85,12 +86,13 @@ async function checkGroup (id, groupname) {
       const sql = "SELECT groupName FROM usergrp WHERE id = ?";
       db.query(sql, [id, groupname], (err, result) => {
         if (err) throw err;
-        if (result.length > 0) {
-          if (result[0].grpName === groupname) {
-            resolve(true);
+        if (result.length > 0) { // if group name exists
+          const gname = result[0].grpName;
+          if (gname === groupname) {
+            return resolve(true);
           }
           else {
-            resolve(false);
+            return resolve(false);
           }
         }
       });
@@ -107,7 +109,8 @@ app.get('/createUser', (req, res) => {
   db.query(sql, [req.session.userID], function (error, results, fields) {
     if (error) throw error;
     if (results.length > 0) {
-      if (checkGroup(results[0].id, results[0].role)) {
+      const checkUsrGrp = checkGroup(results[0].id, results[0].role);
+      if (checkUsrGrp) {
         if (results[0].role === "admin") { // check if role is admin
           console.log("User is an admin");
           res.render('createUser', {isLoggedIn: req.session.isLoggedIn}); // redirect to create user page
