@@ -162,3 +162,46 @@ body {
 .createUser form .userOptions .floatBlock input[type="radio"] {
     margin-right: 10px;
 }
+
+/* css for change password */
+
+.changePassword {
+    width: 500px; 
+    background-color: #ffffff; 
+    box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3); 
+    margin: 30px auto;
+}
+
+.changePassword form {
+    display: flex; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+    padding: 25px;
+}
+
+.changePassword form input[type="password"] {
+    padding:12px; 
+    border-radius: 4px; 
+    margin: 5px 0; 
+    opacity: 0.85; 
+    display: inline-block; 
+    font-size: 17px; 
+    line-height: 20px;
+}
+
+.changePassword form button[type="submit"], .createUser form button[type="button"] {
+    color: black; 
+    font-weight: bold; 
+    width: 100%; 
+    padding: 14px 20px; 
+    margin: auto; 
+    cursor: pointer;
+}
+
+.changePassword form button[type="submit"] {
+    background-color: #f8e5e7; 
+}
+
+.changePassword form button[type="button"] {
+    background-color: #98fb98; 
+}
