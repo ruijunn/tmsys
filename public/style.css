@@ -2,10 +2,8 @@
 
 body {
     font-family: Poppins;
-    font-size: 22px;
+    font-size: 20px;
 }
-
-/* css for login */
 
 .container h2 {
     text-align: center;
@@ -15,6 +13,8 @@ body {
     width: 45%; 
     margin: auto;
 }
+
+/* css for login */
 
 .login {
     width: 500px; 
