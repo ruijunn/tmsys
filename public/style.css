@@ -1,7 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap'); 
+
+body {
+    font-family: Poppins;
+    font-size: 22px;
+}
+
 /* css for login */
 
 .container h2 {
     text-align: center;
+}
+
+.container p {
+    width: 45%; 
+    margin: auto;
 }
 
 .login {
@@ -36,4 +48,117 @@
     padding: 14px 20px; 
     margin: auto; 
     cursor: pointer;
+}
+
+/* css for home page */
+
+.container nav {
+    background-color: #f8e5e7;
+}
+
+/* css for update email */
+
+.updateEmail {
+    width: 500px; 
+    background-color: #ffffff; 
+    box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3); 
+    margin: 30px auto;
+}
+
+.updateEmail form {
+    display: flex; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+    padding: 25px;
+}
+
+.updateEmail form input[type="text"] {
+    padding:12px; 
+    border-radius: 4px; 
+    margin: 5px 0; 
+    opacity: 0.85; 
+    display: inline-block; 
+    font-size: 17px; 
+    line-height: 20px;
+}
+
+.updateEmail form button[type="submit"], .updateEmail form button[type="button"] {
+    color: black; 
+    font-weight: bold; 
+    width: 100%; 
+    padding: 14px 20px; 
+    margin: auto; 
+    cursor: pointer;
+}
+
+.updateEmail form button[type="submit"] {
+    background-color: #f8e5e7; 
+}
+
+.updateEmail form button[type="button"] {
+    background-color: #98fb98; 
+}
+
+/* css for create user */
+
+.createUser {
+    width: 500px; 
+    background-color: #ffffff; 
+    box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3); 
+    margin: 30px auto;
+}
+
+.createUser form {
+    display: flex; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+    padding: 25px;
+}
+
+.createUser form input[type="text"], .createUser form input[type="password"], .createUser form input[type="email"] {
+    padding:12px; 
+    border-radius: 4px; 
+    margin: 5px 0; 
+    opacity: 0.85; 
+    display: inline-block; 
+    font-size: 17px; 
+    line-height: 20px;
+}
+
+.createUser form button[type="submit"], .createUser form button[type="button"] {
+    color: black; 
+    font-weight: bold; 
+    width: 100%; 
+    padding: 14px 20px; 
+    margin: auto; 
+    cursor: pointer;
+}
+
+.createUser form button[type="submit"] {
+    background-color: #f8e5e7; 
+}
+
+.createUser form button[type="button"] {
+    background-color: #98fb98; 
+}
+
+.createUser form .userOptions {
+    border: none;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	break-before: always;
+    margin: 0;
+}
+
+.createUser form .userOptions .floatBlock {
+    margin: 0 1.81em 0 0;
+}
+
+.createUser form .userOptions .floatBlock label {
+    display: inline-block;
+}
+
+.createUser form .userOptions .floatBlock input[type="radio"] {
+    margin-right: 10px;
 }
