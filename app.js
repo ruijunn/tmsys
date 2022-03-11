@@ -9,6 +9,7 @@ const port = process.env.PORT || 3000;
 
 // Inititalize the app and add middleware
 app.set('view engine', 'pug'); // Setup the pug
+app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({extended: true})); // Setup the body parser to handle form submits
 app.use(session({secret: 'super-secret'})); // Session setup
 
@@ -129,9 +130,9 @@ app.post('/createUser', (req, res) => {
   const {username, password, email, grpName} = req.body;
   const hashedPwd = bcrypt.hashSync(password,bcrypt.genSaltSync(10)); // store hash in database
   if (username && password && email && grpName) { // check input fields are not empty
-    // insert username, hashedpwd and email to database
-		const sql = "INSERT INTO accounts (username, password, email, role) VALUES (?, ?, ?, ?)";
-    db.query(sql, [username, hashedPwd, email, grpName], function (error, result) {
+    // insert username, hashedpwd, email and role to database
+		const sql2 = "INSERT INTO accounts (username, password, email, role) VALUES (?, ?, ?, ?)";
+    db.query(sql2, [username, hashedPwd, email, grpName], function (error, result) {
       if (error) throw error; 
       res.render('createUser', {success: 'New user created successfully!'});
     });

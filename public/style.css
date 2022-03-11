@@ -1,0 +1,39 @@
+/* css for login */
+
+.container h2 {
+    text-align: center;
+}
+
+.login {
+    width: 500px; 
+    background-color: #ffffff; 
+    box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3); 
+    margin: 30px auto;
+}
+
+.login form {
+    display: flex; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+    padding: 25px;
+}
+
+.login form input[type="text"], .login form input[type="password"] {
+    padding: 12px; 
+    border-radius: 4px; 
+    margin: 5px 0; 
+    opacity: 0.85; 
+    display: inline-block; 
+    font-size: 17px; 
+    line-height: 20px;
+}
+
+.login form button[type="submit"] {
+    background-color: #f8e5e7; 
+    color: black; 
+    font-weight: bold; 
+    width: 100%; 
+    padding: 14px 20px; 
+    margin: auto; 
+    cursor: pointer;
+}
