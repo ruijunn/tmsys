@@ -189,7 +189,7 @@ body {
     line-height: 20px;
 }
 
-.changePassword form button[type="submit"], .createUser form button[type="button"] {
+.changePassword form button[type="submit"], .changePassword form button[type="button"] {
     color: black; 
     font-weight: bold; 
     width: 100%; 

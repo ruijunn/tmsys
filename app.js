@@ -130,8 +130,8 @@ app.post('/createUser', (req, res) => {
   const {username, password, email, grpName} = req.body;
   const hashedPwd = bcrypt.hashSync(password,bcrypt.genSaltSync(10)); // store hash in database
   if (username && password && email && grpName) { // check input fields are not empty
-    // insert username, hashedpwd, email and role to database
-		const sql2 = "INSERT INTO accounts (username, password, email, role) VALUES (?, ?, ?, ?)";
+    // insert username, hashedpwd, email, role and status to database
+		const sql2 = "INSERT INTO accounts (username, password, email, role, status) VALUES (?, ?, ?, ?, 1)";
     db.query(sql2, [username, hashedPwd, email, grpName], function (error, result) {
       if (error) throw error; 
       res.render('createUser', {success: 'New user created successfully!'});
