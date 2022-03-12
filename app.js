@@ -190,6 +190,29 @@ app.post('/updateEmail', (req, res) => {
   }
 });  
 
+app.get('/person', function(req, res) {
+	var userList = [];
+	db.query('SELECT * FROM accounts', function(err, rows, fields) {
+	  	if (err) {
+	  		console.log(err);
+	  	} else {
+	  		// Loop check on each row
+	  		for (var i = 0; i < rows.length; i++) {
+	  			// Create an object to save current row's data
+		  		var user = {
+		  			'id': rows[i].id,
+		  			'username': rows[i].username,
+		  			'role': rows[i].role,
+		  			'status': rows[i].status
+		  		}
+		  		// Add object into array
+		  		userList.push(user);
+	  	}
+	  	res.render('details', {"userList": userList}); // Render details.pug page using array 
+	  	}
+	});
+});
+
 /** App listening on port */
 app.listen(port, () => {
   console.log(`Task Management System listening at http://localhost:${port}`);
