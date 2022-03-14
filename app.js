@@ -191,28 +191,80 @@ app.post('/updateEmail', (req, res) => {
 });  
 
 app.get('/details', function(req, res) {
-	var userList = [];
-	db.query('SELECT * FROM accounts', function(err, rows, fields) {
-	  	if (err) {
-	  		console.log(err);
-	  	} else {
-	  		// Loop check on each row
-	  		for (var i = 0; i < rows.length; i++) {
-	  			// Create an object to save current row's data
-		  		var user = {
-		  			'id': rows[i].id,
-		  			'username': rows[i].username,
-		  			'role': rows[i].role,
-		  			'status': rows[i].status
-		  		}
-		  		// Add object into array
-		  		userList.push(user);
-	  	}
-	  	res.render('details', {
-        isLoggedIn: req.session.isLoggedIn, 
-        "userList": userList}); // Render details.pug page using array 
-	  	}
-	});
+  const sql = "SELECT role FROM accounts WHERE id = ?";
+  db.query(sql, [req.session.userID], function (error, results, fields) {
+    if (error) throw error;
+    if (results.length > 0) {
+      const checkUsrGrp = checkGroup(results[0].id, results[0].role);
+      if (checkUsrGrp) {
+        if (results[0].role === "admin") { // check if role is admin
+          var userList = [];
+          db.query('SELECT * FROM accounts', function(err, rows, fields) {
+              if (err) {
+                console.log(err);
+              } else {
+                // Loop check on each row
+                for (var i = 0; i < rows.length; i++) {
+                  // Create an object to save current row's data
+                  var user = {
+                    'id': rows[i].id,
+                    'username': rows[i].username,
+                    'email': rows[i].email,
+                    'role': rows[i].role,
+                    'status': rows[i].status
+                  }
+                  // Add object into array
+                  userList.push(user);
+              }
+              res.render('details', {
+                isLoggedIn: req.session.isLoggedIn, 
+                "userList": userList}); // Render details.pug page using array 
+              }
+          });
+        }
+        else { // check if role is user
+          console.log("User is not an admin, not authorized!");
+          res.redirect('/home'); // redirect to home page
+        }
+      }
+    }
+  });
+});
+
+app.get('/editUser/:id', (req, res) => {
+  db.query('SELECT * FROM accounts WHERE id = ' + req.params.id, function(err, rows, fields) {
+    var person;
+    if (err) {
+      console.log(err);
+    } else {
+      // Loop check on each row
+      for (var i = 0; i < rows.length; i++) {
+        // Create an object to save current row's data
+        var person = {
+          'id': rows[i].id,
+          'username': rows[i].username,
+          'email': rows[i].email,
+          'role': rows[i].role,
+          'status': rows[i].status
+        }
+    }
+    res.render('editUser', {isLoggedIn: req.session.isLoggedIn, "person": person}) };
+  });
+});
+
+app.post('/update', (req, res) => {
+  const { userid, password, email, status } = req.body;
+  const hashedPassword = bcrypt.hashSync(password,bcrypt.genSaltSync(10));
+  console.log(userid);
+  db.query("UPDATE accounts SET password = ?, email = ?, status = ? WHERE id = ?", 
+  [hashedPassword, email, status, userid], function(err, rows, fields) {
+    if (err) {
+      console.log(err);
+    }
+    else {
+      res.render('editUser', {success: 'Account edited successfully!'});
+    }
+  });
 });
 
 /** App listening on port */
