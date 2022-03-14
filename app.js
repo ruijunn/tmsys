@@ -190,7 +190,7 @@ app.post('/updateEmail', (req, res) => {
   }
 });  
 
-app.get('/person', function(req, res) {
+app.get('/details', function(req, res) {
 	var userList = [];
 	db.query('SELECT * FROM accounts', function(err, rows, fields) {
 	  	if (err) {
@@ -208,7 +208,9 @@ app.get('/person', function(req, res) {
 		  		// Add object into array
 		  		userList.push(user);
 	  	}
-	  	res.render('details', {"userList": userList}); // Render details.pug page using array 
+	  	res.render('details', {
+        isLoggedIn: req.session.isLoggedIn, 
+        "userList": userList}); // Render details.pug page using array 
 	  	}
 	});
 });
