@@ -35,15 +35,18 @@ html
       div(class="createUser")
         form(class="row g-3" method="post")
           div(class="form-group")
+            label="Username:"
             input(type="text" class="form-control" name="username" placeholder="Username")
           
           div(class="form-group")
+            label="Password:"
             input(type="password" class="form-control" name="password" placeholder="Password" 
             pattern="^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,10}$"
             title="Must contain alphabets, numbers, special characters, and at least 8 to 10 characters")
             
           div(class="form-group")
-            input(type="email" class="form-control" name="email" placeholder="Email")
+            label="Email:"
+            input(type="email" class="form-control" name="email" placeholder="email@email.com")
 
           p(style="margin-left: 5px;")="Type of User:"
           div(class="userOptions")

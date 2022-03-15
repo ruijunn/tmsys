@@ -32,20 +32,22 @@ body
               each user in userA 
                 div(class="form-group row")
                     input(type="hidden" name="id" value=`${user.id}`)
-                div(class="form-group row")
-                    label(class="col-sm-2 col-form-label")="Username"
-                    input(type="text" class="form-control" name="username" placeholder="username" value=`${user.username}` readonly)
-                div(class="form-group row")
-                    label(class="col-sm-2 col-form-label")="Password"
-                    input(type="password" class="form-control" name="password" placeholder="Password" value=`${user.password}`)
-                div(class="form-group row")
-                    label(class="col-sm-2 col-form-label")="Email"
-                    input(type="email" class="form-control" name="email" placeholder="Email" value=`${user.email}`)
-                div(class="form-group row")
-                    label(class="col-sm-2 col-form-label")="Status"
-                    input(type="text" class="form-control" name="status" placeholder="Status" value=`${user.status}`)
-
                 div(class="form-group")
-                    button(type="submit" class="btn btn mb-3")="Edit"
-                    button(type="button" class="btn btn mb-3" onclick=`window.location='/details'`)="Back"
+                    label="Username:"
+                    input(type="text" class="form-control" name="username" placeholder="username" value=`${user.username}` readonly)
+                div(class="form-group")
+                    label="Password:"
+                    input(type="password" class="form-control" name="password" placeholder="Password" value=`${user.password}`)
+                div(class="form-group")
+                    label="Email:"
+                    input(type="email" class="form-control" name="email" placeholder="Email" value=`${user.email}`)
+                div(class="form-group")
+                    label="Status:"
+                    input(type="text" class="form-control" name="status" placeholder="Status" value=`${user.status}`)
+                div(class="form-group")
+                    button(type="submit" class="btn btn mb-3" 
+                    style="background-color: #f8e5e7; color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;")="Edit"
+                    button(type="button" class="btn btn mb-3" 
+                    style="background-color: #98fb98;  color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;" 
+                    onclick=`window.location='/details'`)="Back"
         
