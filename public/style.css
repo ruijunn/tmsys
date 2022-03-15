@@ -19,8 +19,7 @@ body {
 .login {
     width: 500px; 
     background-color: #ffffff; 
-    box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3); 
-    margin: 30px auto;
+    margin: auto;
 }
 
 .login form {
@@ -61,19 +60,18 @@ body {
 .updateEmail {
     width: 500px; 
     background-color: #ffffff; 
-    box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3); 
-    margin: 30px auto;
+    margin: auto;
+    padding: 10px;
 }
 
 .updateEmail form {
     display: flex; 
     flex-wrap: wrap; 
     justify-content: center; 
-    padding: 25px;
 }
 
 .updateEmail form input[type="text"] {
-    padding:12px; 
+    padding: 12px; 
     border-radius: 4px; 
     margin: 5px 0; 
     opacity: 0.85; 
@@ -104,19 +102,18 @@ body {
 .createUser {
     width: 500px; 
     background-color: #ffffff; 
-    box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3); 
-    margin: 30px auto;
+    margin: auto;
 }
 
 .createUser form {
     display: flex; 
     flex-wrap: wrap; 
     justify-content: center; 
-    padding: 25px;
+    padding: 10px;
 }
 
 .createUser form input[type="text"], .createUser form input[type="password"], .createUser form input[type="email"] {
-    padding:12px; 
+    padding: 12px; 
     border-radius: 4px; 
     margin: 5px 0; 
     opacity: 0.85; 
@@ -168,19 +165,18 @@ body {
 .changePassword {
     width: 500px; 
     background-color: #ffffff; 
-    box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3); 
-    margin: 30px auto;
+    margin: auto;
 }
 
 .changePassword form {
-    display: flex; 
+    display: block; 
     flex-wrap: wrap; 
     justify-content: center; 
-    padding: 25px;
+    padding: 10px;
 }
 
 .changePassword form input[type="password"] {
-    padding:12px; 
+    padding: 12px; 
     border-radius: 4px; 
     margin: 5px 0; 
     opacity: 0.85; 

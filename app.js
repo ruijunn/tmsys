@@ -9,9 +9,11 @@ const port = process.env.PORT || 3000;
 
 // Inititalize the app and add middleware
 app.set('view engine', 'pug'); // Setup the pug
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/public')); // Static files
 app.use(bodyParser.urlencoded({extended: true})); // Setup the body parser to handle form submits
 app.use(session({secret: 'super-secret'})); // Session setup
+
+var user;
 
 /* Database connection */
 const db = mysql.createConnection({
@@ -152,7 +154,7 @@ app.post('/changePassword', (req, res) => {
   const {currentpwd, newpwd} = req.body;
   const hashedPwd2 = bcrypt.hashSync(newpwd,bcrypt.genSaltSync(10)); // store hash in database
   if (currentpwd && newpwd) { // check input fields are not empty
-    if (currentpwd == newpwd) { 
+    if (currentpwd === newpwd) { 
       res.render('changePassword', {error: 'Current password cannot be the same as new password!'});
     }
     else {
@@ -169,7 +171,6 @@ app.post('/changePassword', (req, res) => {
   }
 }); 
 
-
 /** Display update email page */
 app.get('/updateEmail', (req, res) => {
   res.render('updateEmail', {isLoggedIn: req.session.isLoggedIn});
@@ -179,7 +180,7 @@ app.get('/updateEmail', (req, res) => {
 app.post('/updateEmail', (req, res) => {
   const {email} = req.body;
   if (email) { // check input fields are not empty
-		const sql = "UPDATE accounts SET email = ? WHERE id = ?"; // update user email based on username
+		const sql = "UPDATE accounts SET email = ? WHERE id = ?"; 
     db.query(sql, [email, req.session.userID], function (error, result) {
       if (error) throw error; 
       res.render('updateEmail', {success: 'Email updated successfully!'});
@@ -190,6 +191,7 @@ app.post('/updateEmail', (req, res) => {
   }
 });  
 
+/* Display user list page */
 app.get('/details', function(req, res) {
   const sql = "SELECT role FROM accounts WHERE id = ?";
   db.query(sql, [req.session.userID], function (error, results, fields) {
@@ -197,7 +199,7 @@ app.get('/details', function(req, res) {
     if (results.length > 0) {
       const checkUsrGrp = checkGroup(results[0].id, results[0].role);
       if (checkUsrGrp) {
-        if (results[0].role === "admin") { // check if role is admin
+        if (results[0].role === "admin") { // if role is admin, then have access the details.pug page
           var userList = [];
           db.query('SELECT * FROM accounts', function(err, rows, fields) {
               if (err) {
@@ -213,8 +215,7 @@ app.get('/details', function(req, res) {
                     'role': rows[i].role,
                     'status': rows[i].status
                   }
-                  // Add object into array
-                  userList.push(user);
+                  userList.push(user); // Add object into array
               }
               res.render('details', {
                 isLoggedIn: req.session.isLoggedIn, 
@@ -222,7 +223,7 @@ app.get('/details', function(req, res) {
               }
           });
         }
-        else { // check if role is user
+        else { // if role is user, no access to details.pug page
           console.log("User is not an admin, not authorized!");
           res.redirect('/home'); // redirect to home page
         }
@@ -231,38 +232,44 @@ app.get('/details', function(req, res) {
   });
 });
 
+/* Display the edit user form based on the id that is selected in details.pug page */
 app.get('/editUser/:id', (req, res) => {
-  db.query('SELECT * FROM accounts WHERE id = ' + req.params.id, function(err, rows, fields) {
-    var person;
+  var id = req.params.id;
+  db.query('SELECT * FROM accounts WHERE id = ?', [id], function(err, rows, fields) {
     if (err) {
       console.log(err);
-    } else {
-      // Loop check on each row
-      for (var i = 0; i < rows.length; i++) {
-        // Create an object to save current row's data
-        var person = {
-          'id': rows[i].id,
-          'username': rows[i].username,
-          'email': rows[i].email,
-          'role': rows[i].role,
-          'status': rows[i].status
-        }
+    } 
+    else {
+      user = rows;
+      //console.log(user);
+      res.render('editUser', {isLoggedIn: req.session.isLoggedIn, "userA": user}) 
     }
-    res.render('editUser', {isLoggedIn: req.session.isLoggedIn, "person": person}) };
   });
 });
 
-app.post('/update', (req, res) => {
-  const { userid, password, email, status } = req.body;
+/* Edit account details of a user by ID */
+app.post('/editUser/:id', (req, res) => {
+  const { id, password, email, status } = req.body;
   const hashedPassword = bcrypt.hashSync(password,bcrypt.genSaltSync(10));
-  console.log(userid);
-  db.query("UPDATE accounts SET password = ?, email = ?, status = ? WHERE id = ?", 
-  [hashedPassword, email, status, userid], function(err, rows, fields) {
+  const sql = "UPDATE accounts SET password = ?, email = ?, status = ? WHERE id = ?";
+  db.query(sql, [hashedPassword, email, status, id], function(err, rows, fields) {
     if (err) {
       console.log(err);
     }
     else {
-      res.render('editUser', {success: 'Account edited successfully!'});
+      console.log(rows);
+      db.query('SELECT * FROM accounts WHERE id = ?', [id], function(err, rows, fields) {
+        if (err) {
+          console.log(err);
+        } 
+        else {
+          user = rows;
+          //console.log(user);
+        }
+      });
+      console.log("Account edited successfully!")
+      res.redirect('/details'); // redirect back to details.pug page after edited successfully
+      //res.render('editUser', {success: 'Account edited successfully!', "userA": user});
     }
   });
 });

@@ -21,36 +21,31 @@ body
                     span(class="caret")
                     div(class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink")
                       a(class="dropdown-item" href="/createUser")="Create User"
+                      a(class="dropdown-item" href="/changePassword")="Change Password"
+                      a(class="dropdown-item" href="/updateEmail")="Update Email"
                       a(class="dropdown-item" href="/details")="User List"
                   li(class="nav-item")
                     a(class="nav-link" href="/logout")="Logout"
-        h2="Edit Account Details"
-        if error
-            p(class="alert alert-danger")=error
-        if success
-            p(class="alert alert-success")=success
-        
+        h2(style="text-align: left")="Edit Account Details"
         div(class="editUser")
-            
-            form(class="row g-3" method="post" action="/update")        
+            form(class="row g-3" method="post")
+              each user in userA 
                 div(class="form-group row")
-                    label(class="col-sm-2 col-form-label")="ID"
-                    input(type="text" class="form-control" name="userid" value=`${person.id}` readonly)
-                    input(type="hidden" class="form-control" name="userid" value=`${person.id}` readonly)
+                    input(type="hidden" name="id" value=`${user.id}`)
                 div(class="form-group row")
                     label(class="col-sm-2 col-form-label")="Username"
-                    input(type="text" class="form-control" name="username" placeholder="username" value=`${person.username}` readonly)
+                    input(type="text" class="form-control" name="username" placeholder="username" value=`${user.username}` readonly)
                 div(class="form-group row")
                     label(class="col-sm-2 col-form-label")="Password"
-                    input(type="password" class="form-control" name="password" placeholder="Password" value=`${person.password}`)
+                    input(type="password" class="form-control" name="password" placeholder="Password" value=`${user.password}`)
                 div(class="form-group row")
                     label(class="col-sm-2 col-form-label")="Email"
-                    input(type="email" class="form-control" name="email" placeholder="Email" value=`${person.email}`)
+                    input(type="email" class="form-control" name="email" placeholder="Email" value=`${user.email}`)
                 div(class="form-group row")
                     label(class="col-sm-2 col-form-label")="Status"
-                    input(type="text" class="form-control" name="status" placeholder="Status" value=`${person.status}`)
+                    input(type="text" class="form-control" name="status" placeholder="Status" value=`${user.status}`)
 
                 div(class="form-group")
                     button(type="submit" class="btn btn mb-3")="Edit"
-                    button(type="button" class="btn btn mb-3" onclick=`window.location='/'`)="Back"
+                    button(type="button" class="btn btn mb-3" onclick=`window.location='/details'`)="Back"
         
