@@ -82,46 +82,45 @@ app.get('/home', (req, res) => {
 }); 
 
 /** Create a function to check if user is in a group */
-async function checkGroup (id, groupname) {
+function checkGroup (userid, groupname) {
+  // create promise with resolve and reject as params
 	return new Promise((resolve, reject) => {
-		try {
-      const sql = "SELECT groupName FROM usergrp WHERE id = ?";
-      db.query(sql, [id, groupname], (err, result) => {
-        if (err) throw err;
-        if (result.length > 0) { // if group name exists
-          const gname = result[0].grpName;
-          if (gname === groupname) {
-            return resolve(true);
-          }
-          else {
-            return resolve(false);
-          }
+    const sql = "SELECT groupName FROM usergrp WHERE id = ?";
+    db.query(sql, [userid], (error, result) => {
+      if (error) throw error;
+      if(result.length > 0) {
+        const gname = result[0].groupName;
+        if (gname === groupname) {
+          resolve(gname);
         }
-      });
-    }
-    catch (error) {
-      reject(console.log(error));
-    }
+        else {
+          resolve(false);
+        }
+      }
+    });
 	})
 };
 
 /** Display Create User Page */
 app.get('/createUser', (req, res) => {
   const sql = "SELECT role FROM accounts WHERE id = ?";
-  db.query(sql, [req.session.userID], function (error, results, fields) {
+  db.query(sql, [req.session.userID], async function (error, results, fields) {
     if (error) throw error;
     if (results.length > 0) {
-      const checkUsrGrp = checkGroup(results[0].id, results[0].role);
+      var checkUsrGrp = await checkGroup(req.session.userID, results[0].role);
+      // console.log(checkUsrGrp);
       if (checkUsrGrp) {
         if (results[0].role === "admin") { // check if role is admin
+          console.log(results);
           console.log("User is an admin");
           res.render('createUser', {isLoggedIn: req.session.isLoggedIn}); // redirect to create user page
         }
         else { // check if role is user
+          console.log(results);
           console.log("User is not an admin, not authorized!");
           res.redirect('/home'); // redirect to home page
         }
-      }
+      } 
     }
   });
 });
@@ -202,10 +201,11 @@ app.post('/updateEmail', (req, res) => {
 /* Display user list page */
 app.get('/details', function(req, res) {
   const sql = "SELECT role FROM accounts WHERE id = ?";
-  db.query(sql, [req.session.userID], function (error, results, fields) {
+  db.query(sql, [req.session.userID], async function (error, results, fields) {
     if (error) throw error;
     if (results.length > 0) {
-      const checkUsrGrp = checkGroup(results[0].id, results[0].role);
+      var checkUsrGrp = await checkGroup(req.session.userID, results[0].role);
+      //console.log(checkUsrGrp);
       if (checkUsrGrp) {
         if (results[0].role === "admin") { // if role is admin, then have access the details.pug page
           var userList = [];
@@ -272,7 +272,7 @@ app.post('/editUser/:id', (req, res) => {
         } 
         else {
           user = rows;
-          //console.log(user);
+          console.log(user);
         }
       });
       console.log("Account edited successfully!")
