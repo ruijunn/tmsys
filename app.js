@@ -36,7 +36,6 @@ app.get('/', (req, res) => {
 app.post('/login', (req, res) => {
   const {username, password} = req.body;
   if (username && password) { // check input fields are not empty
-	  // retrieve account from the database based on the specified username and password
     var sql = "SELECT * FROM accounts WHERE username = ?";
     db.query(sql, [username], function (error, results, fields) {
 		  if (error) throw error;
@@ -154,11 +153,11 @@ app.post('/changePassword', (req, res) => {
   const {currentpwd, newpwd} = req.body;
   const hashedPwd2 = bcrypt.hashSync(newpwd,bcrypt.genSaltSync(10)); // store hash in database
   if (currentpwd && newpwd) { // check input fields are not empty
-    if (currentpwd === newpwd) { 
+    if (currentpwd === newpwd) { // check if current pwd is the same as new pwd
       res.render('changePassword', {error: 'Current password cannot be the same as new password!'});
     }
     else {
-      // update user current password with new encrypted password based on username
+      // update user current password with new encrypted password based on user id
       const sql = "UPDATE accounts SET password = ? WHERE id = ?";
       db.query(sql, [hashedPwd2, req.session.userID], function (error, result) {
         if (error) throw error; 
@@ -179,7 +178,7 @@ app.get('/updateEmail', (req, res) => {
 /** Handle update email function */
 app.post('/updateEmail', (req, res) => {
   const {email} = req.body;
-  if (email) { // check input fields are not empty
+  if (email) { // check if email is not empty
 		const sql = "UPDATE accounts SET email = ? WHERE id = ?"; 
     db.query(sql, [email, req.session.userID], function (error, result) {
       if (error) throw error; 
@@ -187,7 +186,7 @@ app.post('/updateEmail', (req, res) => {
     });
   }
   else {
-    res.render('updateEmail', {error: 'Failed to update email!'});
+    res.render('updateEmail', {error: 'Please enter an email address!'});
   }
 });  
 
