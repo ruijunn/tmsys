@@ -131,11 +131,20 @@ app.post('/createUser', (req, res) => {
   const {username, password, email, grpName} = req.body;
   const hashedPwd = bcrypt.hashSync(password,bcrypt.genSaltSync(10)); // store hash in database
   if (username && password && email && grpName) { // check input fields are not empty
-    // insert username, hashedpwd, email, role and status to database
-		const sql2 = "INSERT INTO accounts (username, password, email, role, status) VALUES (?, ?, ?, ?, 1)";
-    db.query(sql2, [username, hashedPwd, email, grpName], function (error, result) {
-      if (error) throw error; 
-      res.render('createUser', {success: 'New user created successfully!'});
+    // check if user with given username exists or not in db
+    const sql = "SELECT username FROM accounts WHERE username = ?";
+    db.query(sql, [username], function(error, result) {
+      if (error) throw error;
+      if (result.length === 0) { // if username not exists in db, insert new user
+        const sql2 = "INSERT INTO accounts (username, password, email, role, status) VALUES (?, ?, ?, ?, 1)";
+        db.query(sql2, [username, hashedPwd, email, grpName], function (error, result) {
+          if (error) throw error; 
+          res.render('createUser', {success: 'New user created successfully!'});
+        });
+      }
+      else { // existing user, display error message
+        res.render('createUser', {error: 'Username already exists!'});
+      }
     });
   }
   else {
