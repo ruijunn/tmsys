@@ -1,14 +1,16 @@
 const mysql = require('mysql'); 
 const bcrypt = require('bcrypt');
 
+/** Database connection */
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     port: process.env.DB_PORT
-  });
+});
 
+/** Display login page */
 exports.user_login = async function(req, res) {
     if (req.session.isLoggedIn === true) {
         return res.redirect('/home'); // redirect to home page once login successful
@@ -16,6 +18,7 @@ exports.user_login = async function(req, res) {
     res.render('login', {error: false}); 
 }
 
+/** Handle form submit for login */
 exports.user_loginAuth = function(req, res) {
     const {username, password} = req.body;
     if (username && password) { // check input fields are not empty
@@ -52,6 +55,7 @@ exports.user_loginAuth = function(req, res) {
 	}
 }
 
+/** Display logout page */
 exports.user_logout = async function(req, res) {
     req.session.isLoggedIn = false;
     console.log("Logout Successful!")
