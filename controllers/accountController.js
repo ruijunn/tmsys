@@ -1,6 +1,7 @@
 const mysql = require('mysql'); 
 const bcrypt = require('bcrypt');
 
+/** Database connection */
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -51,6 +52,7 @@ exports.create_user = function(req, res) {
     });
 }
 
+/** Handle create user function */
 exports.create_user_validation = async function(req, res) {
     const {username, password, email, grpName} = req.body;
     const hashedPwd = await bcrypt.hash(password,bcrypt.genSaltSync(10)); // store hash in database
@@ -73,5 +75,52 @@ exports.create_user_validation = async function(req, res) {
     }
     else {
         res.render('createUser', {error: 'Please enter all user details!'});
+    }
+}
+
+/** Display change password page */
+exports.changePwd = async function(req, res) {
+    res.render('changePassword', {isLoggedIn: req.session.isLoggedIn});
+}
+
+/** Handle change password function */
+exports.changePwd_validation = async function(req, res) {
+  const {currentpwd, newpwd} = req.body;
+  const hashedPwd2 = await bcrypt.hash(newpwd,bcrypt.genSaltSync(10)); // store hash in database
+  if (currentpwd && newpwd) { // check input fields are not empty
+    if (currentpwd === newpwd) { // check if current pwd is the same as new pwd
+      res.render('changePassword', {error: 'Current password cannot be the same as new password!'});
+    }
+    else {
+      // update user current password with new encrypted password based on user id
+      const sql = "UPDATE accounts SET password = ? WHERE id = ?";
+      db.query(sql, [hashedPwd2, req.session.userID], function (error, result) {
+        if (error) throw error; 
+        res.render('changePassword', {success: 'Password updated successfully!'});
+      });
+    }
+  }
+  else {
+    res.render('changePassword', {error: 'Please enter current password and new password!'});
+  }
+}
+
+/** Display update email page */
+exports.update_email = function(req, res) {
+    res.render('updateEmail', {isLoggedIn: req.session.isLoggedIn});
+}
+
+/** Handle update email function */
+exports.update_email_validation = function(req, res) {
+    const {email} = req.body;
+    if (email) { // check if email is not empty
+	    const sql = "UPDATE accounts SET email = ? WHERE id = ?"; 
+        db.query(sql, [email, req.session.userID], function (error, result) {
+            if (error) throw error; 
+            res.render('updateEmail', {success: 'Email updated successfully!'});
+        });
+    }
+    else {
+        res.render('updateEmail', {error: 'Please enter an email address!'});
     }
 }
