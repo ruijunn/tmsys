@@ -1,8 +1,9 @@
-const mysql = require('mysql'); 
+const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 
 /** Database connection */
 const db = mysql.createConnection({
+    connectionLimit : 100,
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,

@@ -11,7 +11,7 @@ html
       h2(class="pb-2 border-bottom" style="text-align: center; padding-top: 1%; padding-bottom: 1%;")="Task Management System"
       h2(style="text-align: center;")="Login"
       if error 
-        p(class="alert alert-danger")=error
+        p(class="alert alert-danger" style="width: 45%; margin: auto;")=error
       div(class="login")
         form(class="row g-3" method="post" action="/login")
           div(class="form-group")

@@ -1,8 +1,10 @@
 const mysql = require('mysql'); 
 const bcrypt = require('bcrypt');
+const group = require('../group');
 
 /** Database connection */
 const db = mysql.createConnection({
+    connectionLimit : 100,
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
@@ -10,33 +12,13 @@ const db = mysql.createConnection({
     port: process.env.DB_PORT
 });
 
-/** Create a function to check if user is in a group */
-function checkGroup (userid, groupname) {
-    // create promise with resolve and reject as params
-    return new Promise((resolve, reject) => {
-        const sql = "SELECT groupName FROM usergrp WHERE id = ?";
-        db.query(sql, [userid], (error, result) => {
-        if (error) throw error;
-        if (result.length > 0) {
-            const gname = result[0].groupName;
-            if (gname === groupname) {
-                resolve(gname);
-            }
-            else {
-                resolve(false);
-            }
-        }
-        });
-    })
-};
-
 /** Display create user page */ 
 exports.create_user = function(req, res) {
     const sql = "SELECT role FROM accounts WHERE id = ?";
     db.query(sql, [req.session.userID], async function (error, results, fields) {
         if (error) throw error;
         if (results.length > 0) {
-            var checkUsrGrp = await checkGroup(req.session.userID, results[0].role);
+            var checkUsrGrp = await group.checkGroup(req.session.userID, results[0].role);
             // console.log(checkUsrGrp);
             if (checkUsrGrp) {
                 if (results[0].role === "admin") { // check if role is admin
