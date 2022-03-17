@@ -8,7 +8,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 var loginRouter = require('./routes/login');
-var registerRouter = require('./routes/register');
+var accountRouter = require('./routes/account');
 var userRouter = require('./routes/user');
 
 // Inititalize the app and add middleware
@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({extended: true})); // Setup the body parser to ha
 app.use(session({secret: 'super-secret'})); // Session setup
 
 app.use('/', loginRouter);
-app.use('/', registerRouter);
+app.use('/', accountRouter);
 app.use('/', userRouter);
 
 /* Database connection */
