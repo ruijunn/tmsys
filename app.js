@@ -7,11 +7,15 @@ const bcrypt = require('bcrypt');
 const app = express();
 const port = process.env.PORT || 3000;
 
+var loginRouter = require('./routes/login');
+
 // Inititalize the app and add middleware
 app.set('view engine', 'pug'); // Setup the pug
 app.use(express.static(__dirname + '/public')); // Static files
 app.use(bodyParser.urlencoded({extended: true})); // Setup the body parser to handle form submits
 app.use(session({secret: 'super-secret'})); // Session setup
+
+app.use('/', loginRouter);
 
 var user;
 
@@ -23,58 +27,6 @@ const db = mysql.createConnection({
   database: process.env.DB_DATABASE,
   port: process.env.DB_PORT
 });
-
-/** Display login page */
-app.get('/', (req, res) => {
-  if (req.session.isLoggedIn === true) {
-    return res.redirect('/home'); // redirect to home page once login successful
-  }
-  res.render('login', {error: false}); 
-});
-
-/** Handle form submit for login */
-app.post('/login', (req, res) => {
-  const {username, password} = req.body;
-  if (username && password) { // check input fields are not empty
-    var sql = "SELECT * FROM accounts WHERE username = ?";
-    db.query(sql, [username], function (error, results, fields) {
-		  if (error) throw error;
-		  if (results.length > 0) {   // If the account exists
-        // compare entered password with the stored encrypted password
-        const validPwd = bcrypt.compareSync(password, results[0].password); 
-        console.log(validPwd); // true
-        if (validPwd) {
-          if (results[0].status === 1) { // status = 1 means account is active
-            // Authenticate the user
-            req.session.isLoggedIn = true;
-            req.session.username = username; // store the username in session
-            req.session.userID = results[0].id; // store the id in session
-            const userid = req.session.userID;
-            console.log("Login Successful!");
-            console.log(userid);
-            res.redirect('/home') // redirect to home page
-          }
-          else { // status = 0 means account is disabled
-            res.render('login', {error: 'Your account has been disabled!'});
-          }
-        }
-		    else {
-          res.render('login', {error: 'Incorrect Username and/or Password!'});
-		    }			
-		  }
-	  });
-	} 
-  else {
-    res.render('login', {error: 'Please enter Username and Password!'});
-	}
-}); 
-
-/** Handle logout function */
-app.get('/logout', (req, res) => {
-  req.session.isLoggedIn = false;
-  console.log("Logout Successful!")
-  res.redirect('/'); // redirect back to login page
-}); 
 
 /** Display home page */
 app.get('/home', (req, res) => {
