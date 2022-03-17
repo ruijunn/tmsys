@@ -60,17 +60,17 @@ exports.create_user_validation = async function(req, res) {
         // check if user with given username exists or not in db
         const sql = "SELECT username FROM accounts WHERE username = ?";
         db.query(sql, [username], function(error, result) {
-        if (error) throw error;
-        if (result.length === 0) { // if username not exists in db, insert new user
-            const sql2 = "INSERT INTO accounts (username, password, email, role, status) VALUES (?, ?, ?, ?, 1)";
-            db.query(sql2, [username, hashedPwd, email, grpName], function (error, result) {
-                if (error) throw error; 
-                res.render('createUser', {success: 'New user created successfully!'});
-            });
-        }
-        else { // existing user, display error message
-            res.render('createUser', {error: 'Username already exists!'});
-        }
+            if (error) throw error;
+            if (result.length === 0) { // if username not exists in db, insert new user
+                const sql2 = "INSERT INTO accounts (username, password, email, role, status) VALUES (?, ?, ?, ?, 1)";
+                db.query(sql2, [username, hashedPwd, email, grpName], function (error, result) {
+                    if (error) throw error; 
+                    res.render('createUser', {success: 'New user created successfully!'});
+                });
+            }
+            else { // existing user, display error message
+                res.render('createUser', {error: 'Username already exists!'});
+            }
         });
     }
     else {
