@@ -4,54 +4,46 @@ const group = require('../group');
 
 /** Database connection */
 const db = mysql.createConnection({
-    connectionLimit : 100,
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
-    port: process.env.DB_PORT
+  connectionLimit : 100,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  port: process.env.DB_PORT
 });
 
 /* Display user list page */
-exports.user_list = function(req, res) {
-  const sql = "SELECT role FROM accounts WHERE id = ?";
-  db.query(sql, [req.session.userID], async function (error, results, fields) {
-    if (error) throw error;
-    if (results.length > 0) {
-      var checkUsrGrp = await group.checkGroup(req.session.userID, results[0].role);
-      //console.log(checkUsrGrp);
-      if (checkUsrGrp) {
-        if (results[0].role === "admin") { // if role is admin, then have access the details.pug page
-          var userList = [];
-          db.query('SELECT * FROM accounts', function(err, rows, fields) {
-              if (err) {
-                console.log(err);
-              } else {
-                // Loop check on each row
-                for (var i = 0; i < rows.length; i++) {
-                  // Create an object to save current row's data
-                  var user = {
-                    'id': rows[i].id,
-                    'username': rows[i].username,
-                    'email': rows[i].email,
-                    'role': rows[i].role,
-                    'status': rows[i].status
-                  }
-                  userList.push(user); // Add object into array
-              }
-              res.render('details', {
-                isLoggedIn: req.session.isLoggedIn, 
-                "userList": userList}); // Render details.pug page using array 
-              }
-          });
-        }
-        else { // if role is user, no access to details.pug page
-          console.log("User is not an admin, not authorized!");
-          res.redirect('/home'); // redirect to home page
-        }
+exports.user_list = async function(req, res) {
+  // check if username belong to admin group
+  if (await group.checkGroup(req.session.username, "admin")) {
+    var userList = [];
+    db.query('SELECT * FROM accounts', function(err, rows, fields) {
+      if (err) {
+        console.log(err);
+      } else {
+        // Loop check on each row
+        for (var i = 0; i < rows.length; i++) {
+          // Create an object to save current row's data
+          var user = {
+            'id': rows[i].id,
+            'username': rows[i].username,
+            'email': rows[i].email,
+            'role': rows[i].role,
+            'status': rows[i].status
+          }
+          userList.push(user); // Add object into array
       }
-    }
-  });
+      res.render('details', {
+        isLoggedIn: req.session.isLoggedIn, 
+        "userList": userList}); // Render details.pug page using array 
+      }
+    });
+  }
+  // check if username belong to user group
+  if (await group.checkGroup(req.session.username, "user")) {
+    console.log("User is not an admin, not authorized!");
+    res.redirect('/home');
+  }
 }
 
 var user;

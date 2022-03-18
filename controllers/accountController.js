@@ -13,25 +13,17 @@ const db = mysql.createConnection({
 });
 
 /** Display create user page */ 
-exports.create_user = function(req, res) {
-    const sql = "SELECT role FROM accounts WHERE id = ?";
-    db.query(sql, [req.session.userID], async function (error, results, fields) {
-        if (error) throw error;
-        if (results.length > 0) {
-            var checkUsrGrp = await group.checkGroup(req.session.userID, results[0].role);
-            // console.log(checkUsrGrp);
-            if (checkUsrGrp) {
-                if (results[0].role === "admin") { // check if role is admin
-                    console.log("User is an admin");
-                    res.render('createUser', {isLoggedIn: req.session.isLoggedIn}); // redirect to create user page
-                }
-                else { // check if role is user
-                    console.log("User is not an admin, not authorized!");
-                    res.redirect('/home'); // redirect to home page
-                }
-            } 
-        }
-    });
+exports.create_user = async function(req, res) {
+    // check if username belong to admin group
+    if (await group.checkGroup(req.session.username, "admin")) {
+        console.log("User is an admin");
+        res.render('createUser', {isLoggedIn: req.session.isLoggedIn}); // redirect to create user page
+    }
+    // check if username belong to user group
+    if (await group.checkGroup(req.session.username, "user")) {
+        console.log("User is not an admin, not authorized!");
+        res.redirect('/home'); // redirect to home page
+    }
 }
 
 /** Handle create user function */
