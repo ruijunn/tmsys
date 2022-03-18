@@ -1,6 +1,7 @@
 const mysql = require('mysql'); 
 const bcrypt = require('bcrypt');
 const group = require('../group');
+/* const str = require('../validatePassword'); */
 
 /** Database connection */
 const db = mysql.createConnection({
@@ -11,6 +12,12 @@ const db = mysql.createConnection({
     database: process.env.DB_DATABASE,
     port: process.env.DB_PORT
 });
+
+/** Create a function for password validation */
+function testInput(password) {
+    var pattern = new RegExp("^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,10}$");
+    return pattern.test(password);
+}
 
 /** Display create user page */ 
 exports.create_user = async function(req, res) {
@@ -65,13 +72,16 @@ exports.changePwd_validation = async function(req, res) {
     if (currentpwd === newpwd) { // check if current pwd is the same as new pwd
       res.render('changePassword', {error: 'Current password cannot be the same as new password!'});
     }
-    else {
+    if (testInput(newpwd)) {
       // update user current password with new encrypted password based on user id
       const sql = "UPDATE accounts SET password = ? WHERE id = ?";
       db.query(sql, [hashedPwd2, req.session.userID], function (error, result) {
         if (error) throw error; 
         res.render('changePassword', {success: 'Password updated successfully!'});
       });
+    }
+    else {
+        res.render('changePassword', {error: 'Password must contain alphabets, numbers, special characters, and at least 8 to 10 characters'}); 
     }
   }
   else {
