@@ -1,6 +1,5 @@
 const express = require('express');
-const mysql = require('mysql'); 
-require('./dbServer'); 
+require('./dbServer').db; 
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const app = express();
@@ -23,16 +22,6 @@ app.use('/', loginRouter);
 app.use('/', indexRouter);
 app.use('/', accountRouter);
 app.use('/', userRouter);
-
-/* Database connection */
-mysql.createConnection ( {
-  connectionLimit : 100,
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-  port: process.env.DB_PORT
-});
 
 /** App listening on port */
 app.listen(port, () => {

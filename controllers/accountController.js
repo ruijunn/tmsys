@@ -1,17 +1,6 @@
-const mysql = require('mysql'); 
+const db = require('../dbServer'); 
 const bcrypt = require('bcrypt');
 const group = require('../group');
-/* const str = require('../validatePassword'); */
-
-/** Database connection */
-const db = mysql.createConnection({
-    connectionLimit : 100,
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
-    port: process.env.DB_PORT
-});
 
 /** Create a function for password validation */
 function testInput(password) {

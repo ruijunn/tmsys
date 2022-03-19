@@ -1,7 +1,5 @@
 require("dotenv").config();
 
-const express = require("express");
-const app = express();
 const mysql = require("mysql");
 
 const DB_HOST = process.env.DB_HOST;
@@ -23,3 +21,5 @@ db.getConnection( (err) => {
     if (err) throw err;
     console.log("Connected to database!");
 })
+
+module.exports = db;
