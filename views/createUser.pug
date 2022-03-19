@@ -46,16 +46,12 @@ html
             label="Email:"
             input(type="email" class="form-control" name="email" placeholder="email@email.com")
 
-          p(style="margin-left: 5px; margin-bottom: 0px;")="Type of User:"
-          div(class="userOptions")
-            div(class="floatBlock")
-              input(type="radio" name="grpName" value="admin")
-              label="Admin"
-            
-            div(class="floatBlock")
-              input(type="radio" name="grpName" value="user")
-              label="User"
-            
+          div(class="form-group")
+            label="Type of User:"
+            select(class="form-control" name="grpName")
+              option(value="admin")="Admin"
+              option(value="user")="User"
+              
           div(class="form-group")
             button(type="submit" class="btn btn mb-3")="Create"
             button(type="button" class="btn btn mb-3" onclick=`window.location='/'`)="Back"
