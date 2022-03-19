@@ -42,12 +42,17 @@ exports.create_user_validation = async function(req, res) {
         const sql = "SELECT username FROM accounts WHERE username = ?";
         db.query(sql, [username], function(error, result) {
             if (error) throw error;
-            if (result.length === 0) { // if username not exists in db, insert new user
-                const sql2 = "INSERT INTO accounts (username, password, email, role, status) VALUES (?, ?, ?, ?, 1)";
-                db.query(sql2, [username, hashedPwd, email, grpName], function (error, result) {
-                    if (error) throw error; 
-                    res.render('createUser', {success: 'New user created successfully!'});
-                });
+            if (result.length === 0) { // if username not exists in db
+                if (testInput(password)) { // if password validation returns true, then create new user
+                    const sql2 = "INSERT INTO accounts (username, password, email, role, status) VALUES (?, ?, ?, ?, 1)";
+                    db.query(sql2, [username, hashedPwd, email, grpName], function (error, result) {
+                        if (error) throw error; 
+                        res.render('createUser', {success: 'New user created successfully!'});
+                    });
+                }
+                else { // password validation returns false, display error message
+                    res.render('createUser', {error: 'Password must contain alphabets, numbers, special characters, and at least 8 to 10 characters'});
+                }
             }
             else { // existing user, display error message
                 res.render('createUser', {error: 'Username already exists!'});
@@ -72,7 +77,7 @@ exports.changePwd_validation = async function(req, res) {
     if (currentpwd === newpwd) { // check if current pwd is the same as new pwd
       res.render('changePassword', {error: 'Current password cannot be the same as new password!'});
     }
-    if (testInput(newpwd)) {
+    if (testInput(newpwd)) {  // if password validation returns true
       // update user current password with new encrypted password based on user id
       const sql = "UPDATE accounts SET password = ? WHERE id = ?";
       db.query(sql, [hashedPwd2, req.session.userID], function (error, result) {
@@ -80,7 +85,7 @@ exports.changePwd_validation = async function(req, res) {
         res.render('changePassword', {success: 'Password updated successfully!'});
       });
     }
-    else {
+    else { // password validation returns false, display error message
         res.render('changePassword', {error: 'Password must contain alphabets, numbers, special characters, and at least 8 to 10 characters'}); 
     }
   }
