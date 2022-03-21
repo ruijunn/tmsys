@@ -1,5 +1,5 @@
 const express = require('express');
-require('./dbServer').db; 
+require('./dbServer'); 
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const app = express();
