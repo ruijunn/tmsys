@@ -53,29 +53,41 @@ exports.get_edit_user = function(req, res) {
   });
 }
 
+/** Create a function for password validation */
+function testInput(password) {
+  var pattern = new RegExp("^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,10}$");
+  return pattern.test(password);
+}
+
 /* Edit account details of a user by ID */
 exports.edit_user = async function(req, res) {
   const { id, password, email, status } = req.body;
   const hashedPassword = await bcrypt.hash(password,bcrypt.genSaltSync(10));
-  const sql = "UPDATE accounts SET password = ?, email = ?, status = ? WHERE id = ?";
-  db.query(sql, [hashedPassword, email, status, id], function(err, rows, fields) {
-    if (err) {
-      console.log(err);
-    }
-    else {
-      //console.log(rows);
-      db.query('SELECT * FROM accounts WHERE id = ?', [id], function(err, rows, fields) {
-        if (err) {
-          console.log(err);
-        } 
-        else {
-          user = rows;
-          //console.log(user);
-        }
-      });
-      console.log("Account edited successfully!")
-      res.redirect('/details'); // redirect back to details.pug page after edited successfully
-      //res.render('editUser', {success: 'Account edited successfully!', "userA": user});
-    }
-  });
+  if (testInput(password)) { // if password validation returns true, then update user account details
+    const sql = "UPDATE accounts SET password = ?, email = ?, status = ? WHERE id = ?";
+    db.query(sql, [hashedPassword, email, status, id], function(err, rows, fields) {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        //console.log(rows);
+        db.query('SELECT * FROM accounts WHERE id = ?', [id], function(err, rows, fields) {
+          if (err) {
+            console.log(err);
+          } 
+          else {
+            user = rows;
+            //console.log(user);
+          }
+        });
+        console.log("Account edited successfully!")
+        res.redirect('/details'); // redirect back to details.pug page after edited successfully
+        //res.render('editUser', {success: 'Account edited successfully!', "userA": user});
+      }
+    });
+  }
+  else {  // password validation returns false, redirect back to details.pug page
+    console.log("Password must contain alphabets, numbers, special characters, and at least 8 to 10 characters");
+    res.redirect('/details');
+  }
 }
