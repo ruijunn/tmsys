@@ -1,6 +1,6 @@
 const db = require('../dbServer'); 
 const bcrypt = require('bcrypt');
-const group = require('../group');
+const group = require('../checkGroup');
 
 /* Display user list page */
 exports.user_list = async function(req, res) {

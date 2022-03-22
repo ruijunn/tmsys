@@ -1,6 +1,6 @@
 const db = require('../dbServer'); 
 const bcrypt = require('bcrypt');
-const group = require('../group');
+const group = require('../checkGroup');
 
 /** Create a function for password validation */
 function testInput(password) {
