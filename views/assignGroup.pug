@@ -37,12 +37,15 @@ body
                 input(type="hidden" name="username" value=`${userA}`)
               
               div(class="form-group")
-                label="Existing Group:"
-                each user in userG
-                    input(type="text" class="form-control" name="existgrp" value=`${user.groupname}` readonly)
-              
+                label="Existing Group(s):"
+                block content
+                table(class="table table-bordered table-hover table-sm")  
+                    each user in userG
+                        tr
+                            td #{user.groupname}
+    
               div(class="form-group")
-                label="Group:"
+                label="New Group:"
                 select(class="form-control" name="allgrps")
                     each s in selectArray 
                         option(value=`${s.groupname}`)=`${s.groupname}`
