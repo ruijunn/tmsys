@@ -1,12 +1,12 @@
 html
-  head 
+head
     title="Task Management System"
     meta(charset='utf-8')
     meta(name='viewport' content='width=device-width, initial-scale=1.0')
     link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet")
     link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
-    link(type="text/css" href="style.css" rel="stylesheet")
-  body
+    link(type="text/css" href="/style.css" rel="stylesheet")
+body
     script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js")
     script(src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" )
     div(class="container")
@@ -28,3 +28,29 @@ html
                       a(class="dropdown-item" href="/listUsers")="Assign Group"
                   li(class="nav-item")
                     a(class="nav-link" href="/logout")="Logout"
+        h2(style="text-align: left")="Assign Group"
+        div
+          form(class="row g-3" method="post")
+              div(class="form-group")
+                label="Username:"
+                input(type="text" class="form-control" name="username" placeholder="username" value=`${userA}` readonly)
+                input(type="hidden" name="username" value=`${userA}`)
+              
+              div(class="form-group")
+                label="Existing Group:"
+                each user in userG
+                    input(type="text" class="form-control" name="existgrp" value=`${user.groupname}` readonly)
+              
+              div(class="form-group")
+                label="Group:"
+                select(class="form-control" name="allgrps")
+                    each s in selectArray 
+                        option(value=`${s.groupname}`)=`${s.groupname}`
+            
+              div(class="form-group")
+                button(type="submit" class="btn btn mb-3" 
+                style="background-color: #f8e5e7; color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;")="Assign"
+                button(type="button" class="btn btn mb-3" 
+                style="background-color: #98fb98;  color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;" 
+                onclick=`window.location='/listUsers'`)="Back"
+        
