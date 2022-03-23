@@ -109,26 +109,4 @@ exports.post_user_group = async function(req, res) {
         console.log("Successfully assigned group!")
         res.redirect('/listUsers'); 
     });
-} 
-
-/* exports.update_user_group = async function(req, res) {
-    var username = req.params.username;
-    const {allgrps} = req.body;
-    const sql = "UPDATE usergrp_list SET groupname = ? WHERE username = ?";
-    db.query(sql, [groupname, username], function(error, result) {
-        if (error) throw error;
-        console.log("Successfully changed the assigned group!")
-        res.redirect('/listUsers'); 
-    });
-} */
-
-/* exports.remove_user_group = async function(req, res) {
-    var username = req.params.username;
-    var groupname = req.params.groupname;
-    const sql = "DELETE FROM usergrp_list WHERE username = ? AND groupname = ?";
-    db.query(sql, [username, groupname], function(error, result) {
-        if (error) throw error;
-        console.log("Successfully deleted the assigned group!")
-        res.redirect('/listUsers'); 
-    });
-} */
+}

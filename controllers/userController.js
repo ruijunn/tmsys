@@ -29,8 +29,7 @@ exports.user_list = async function(req, res) {
       }
     });
   }
-  // check if username belong to user group
-  if (await group.checkGroup(req.session.username, "user")) {
+  else {
     console.log("User is not an admin, not authorized!");
     res.redirect('/home');
   }

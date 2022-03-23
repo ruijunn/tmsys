@@ -15,8 +15,7 @@ exports.create_user = async function(req, res) {
         console.log("User is an admin");
         res.render('createUser', {isLoggedIn: req.session.isLoggedIn}); // redirect to create user page
     }
-    // check if username belong to user group
-    if (await group.checkGroup(req.session.username, "user")) {
+    else {
         console.log("User is not an admin, not authorized!");
         res.redirect('/home'); // redirect to home page
     }
