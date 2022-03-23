@@ -154,3 +154,32 @@ body {
     background-color: #98fb98; 
     width: 10%;
 }
+
+/* css for create group */
+
+.createGroup form input[type="text"] {
+    padding: 12px; 
+    border-radius: 4px; 
+    margin: 5px 0; 
+    opacity: 0.85; 
+    display: inline-block; 
+    font-size: 17px; 
+    line-height: 20px;
+}
+
+.createGroup form button[type="submit"], .createGroup form button[type="button"] {
+    color: black; 
+    font-weight: bold; 
+    width: 10%; 
+    padding: 14px 20px; 
+    margin: auto; 
+    cursor: pointer;
+}
+
+.createGroup form button[type="submit"] {
+    background-color: #f8e5e7; 
+}
+
+.createGroup form button[type="button"] {
+    background-color: #98fb98; 
+}
