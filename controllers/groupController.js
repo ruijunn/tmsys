@@ -1,6 +1,7 @@
 const db = require('../dbServer'); 
 const group = require('../checkGroup');
 
+/** Display create group page */
 exports.user_group = async function(req, res) {
     if (await group.checkGroup(req.session.username, "admin")) {
         console.log("User is an admin");
@@ -13,6 +14,7 @@ exports.user_group = async function(req, res) {
     }
 }
 
+/** Handle form submit for create group */
 exports.user_group_create = async function(req, res) {
     const {groupname} = req.body;
     if (groupname) {
@@ -36,7 +38,9 @@ exports.user_group_create = async function(req, res) {
     }
 }
 
+/** Display all usernames in listUsers.pug */
 exports.user_list = async function(req, res) {
+    // check if username belongs to admin group
     if (await group.checkGroup(req.session.username, "admin")) {
         console.log("User is an admin");
         var userList = [];
@@ -55,11 +59,11 @@ exports.user_list = async function(req, res) {
                 res.render('listUsers', {
                     isLoggedIn: req.session.isLoggedIn, 
                     "userList": userList
-                }); // Render assignGroup.pug page using array 
+                }); // Render listUsers.pug page using array 
             }
         });
     }
-    else {
+    else { // if username not belong to admin group
         console.log("User is not an admin, not authorized!");
         res.redirect('/home'); // redirect to home page
     }
@@ -67,6 +71,7 @@ exports.user_list = async function(req, res) {
 
 var user;
 
+/* Display the assign group form based on the username that is selected in listUsers.pug page */
 exports.get_user_group = async function(req, res) {
     var username = req.params.username;
     // console.log(username);
@@ -100,6 +105,7 @@ exports.get_user_group = async function(req, res) {
     });
 }
 
+/* Handle form submit for assigning group to a user by username */
 exports.post_user_group = async function(req, res) {
     var username = req.params.username;
     const {allgrps} = req.body;
