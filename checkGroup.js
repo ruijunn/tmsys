@@ -7,13 +7,22 @@ exports.checkGroup = async (username, groupname) => {
         const sql = "SELECT groupname FROM usergrp_list WHERE username = ?";
         db.query(sql, [username], (error, result) => {
             if (error) throw error;
-            const gname = result[0].groupname;
+            for (var i = 0; i < result.length; i++) {
+                console.log(result[i].groupname);
+                if (result[i].groupname === groupname) {
+                    resolve(result[i].groupname);
+                }
+                else {
+                    resolve(false);
+                }
+            }
+            /* const gname = result[0].groupname;
             if (gname === groupname) {
                 resolve(gname);
             }
             else {
                 resolve(false);
-            }
+            } */
         })
     })
 };

@@ -183,3 +183,61 @@ body {
 .createGroup form button[type="button"] {
     background-color: #98fb98; 
 }
+
+/* css for create task */
+
+.createTask form input[type="text"] {
+    padding: 12px; 
+    border-radius: 4px; 
+    margin: 5px 0; 
+    opacity: 0.85; 
+    display: inline-block; 
+    font-size: 17px; 
+    line-height: 20px;
+}
+
+.createTask form button[type="submit"], .createTask form button[type="button"] {
+    color: black; 
+    font-weight: bold; 
+    width: 10%; 
+    padding: 14px 20px; 
+    margin: auto; 
+    cursor: pointer;
+}
+
+.createTask form button[type="submit"] {
+    background-color: #f8e5e7; 
+}
+
+.createTask form button[type="button"] {
+    background-color: #98fb98; 
+}
+
+/* css for create application */
+
+.createApplication form input[type="text"] {
+    padding: 12px; 
+    border-radius: 4px; 
+    margin: 5px 0; 
+    opacity: 0.85; 
+    display: inline-block; 
+    font-size: 17px; 
+    line-height: 20px;
+}
+
+.createApplication form button[type="submit"], .createApplication form button[type="button"] {
+    color: black; 
+    font-weight: bold; 
+    width: 10%; 
+    padding: 14px 20px; 
+    margin: auto; 
+    cursor: pointer;
+}
+
+.createApplication form button[type="submit"] {
+    background-color: #f8e5e7; 
+}
+
+.createApplication form button[type="button"] {
+    background-color: #98fb98; 
+}

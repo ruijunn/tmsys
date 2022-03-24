@@ -27,43 +27,31 @@ html
                         a(class="dropdown-item" href="/createGroup")="Create Group"
                         a(class="dropdown-item" href="/listUsers")="Assign Group"
                     li(class="nav-item dropdown")
-                      a(class="nav-link dropdown toggle" href="/home" role="button" data-bs-toggle="dropdown") Application 
-                      span(class="caret")
-                      div(class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink")
-                        a(class="dropdown-item" href="/createApplication")="Create Application"
-                    li(class="nav-item dropdown")
                       a(class="nav-link dropdown toggle" href="/home" role="button" data-bs-toggle="dropdown") Task 
                       span(class="caret")
                       div(class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink")
                         a(class="dropdown-item" href="/createTask")="Create Task"
+                    li(class="nav-item dropdown")
+                      a(class="nav-link dropdown toggle" href="/home" role="button" data-bs-toggle="dropdown") Application 
+                      span(class="caret")
+                      div(class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink")
+                        a(class="dropdown-item" href="/createApplication")="Create Application"
                     li(class="nav-item")
                       a(class="nav-link" href="/logout")="Logout"
-      h2="Create New User"
+      h2="New Task"
       if error
         p(class="alert alert-danger")=error
       if success
         p(class="alert alert-success")=success
 
-      div(class="createUser")
+      div(class="createTask")
         form(class="row g-3" method="post")
           div(class="form-group")
-            label="Username:"
-            input(type="text" class="form-control" name="username" placeholder="Username")
-          
+            label="Application Name:"
+            input(type="text" class="form-control" name="appname")
           div(class="form-group")
-            label="Password:"
-            input(type="password" class="form-control" name="password" placeholder="Password")
-            
-          div(class="form-group")
-            label="Email:"
-            input(type="email" class="form-control" name="email" placeholder="email@email.com")
-
-          div(class="form-group")
-            label="Type of User:"
-            select(class="form-control" name="grpName")
-              option(value="admin")="Admin"
-              option(value="user")="User"
-              
+            label="Task Description:"
+            textarea(class="form-control" name="taskdescription" rows="3")
           div(class="form-group")
             button(type="submit" class="btn btn mb-3")="Create"
             button(type="button" class="btn btn mb-3" onclick=`window.location='/'`)="Back"
