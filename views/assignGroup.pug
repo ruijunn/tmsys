@@ -56,7 +56,7 @@ body
     
               div(class="form-group")
                 label="New Group:"
-                select(class="form-control" name="allgrps")
+                select(class="form-select" name="allgrps")
                     each s in selectArray 
                         option(value=`${s.groupname}`)=`${s.groupname}`
             

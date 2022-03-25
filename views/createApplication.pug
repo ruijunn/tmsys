@@ -52,12 +52,40 @@ html
           div(class="form-group")
             label="Application Description:"
             textarea(class="form-control" name="appdescription" rows="3")
-          div(class="form-group")
+          div(class="form-group col-md-6")
             label="Start Date:"
             input(type="date" class="form-control" name="startdate")
-          div(class="form-group")
+          div(class="form-group col-md-6")
             label="End Date:"
             input(type="date" class="form-control" name="enddate")
+          div(class="form-group")
+            label="Set Permissions for Respective App Permit:"
+            block content
+            table(class="table table-bordered table-sm")  
+              tr 
+                th App Permit Open:
+                td 
+                  select(class="form-select" name="p_open")
+                    each s in selectArray 
+                      option(value=`${s.groupname}`)=`${s.groupname}`
+              tr 
+                th App Permit To-Do-List:
+                td 
+                  select(class="form-select" name="p_toDoList")
+                    each s in selectArray 
+                      option(value=`${s.groupname}`)=`${s.groupname}`
+              tr 
+                th App Permit Doing:
+                td 
+                  select(class="form-select" name="p_doing")
+                    each s in selectArray 
+                      option(value=`${s.groupname}`)=`${s.groupname}`
+              tr 
+                th App Permit Done:
+                td 
+                  select(class="form-select" name="p_done")
+                    each s in selectArray 
+                      option(value=`${s.groupname}`)=`${s.groupname}`
           div(class="form-group")
             button(type="submit" class="btn btn mb-3")="Create"
             button(type="button" class="btn btn mb-3" onclick=`window.location='/'`)="Back"
