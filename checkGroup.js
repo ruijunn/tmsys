@@ -8,14 +8,12 @@ exports.checkGroup = async (username, groupname) => {
         db.query(sql, [username], (error, result) => {
             if (error) throw error;
             for (var i = 0; i < result.length; i++) {
-                console.log(result[i].groupname);
+                //console.log(result[i].groupname);
                 if (result[i].groupname === groupname) {
-                    resolve(result[i].groupname);
-                }
-                else {
-                    resolve(false);
+                    resolve(true);
                 }
             }
+            resolve(false);
             /* const gname = result[0].groupname;
             if (gname === groupname) {
                 resolve(gname);
