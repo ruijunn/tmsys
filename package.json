@@ -11,6 +11,7 @@
         "dotenv": "^16.0.0",
         "express": "^4.17.3",
         "express-session": "^1.17.2",
+        "moment": "^2.29.1",
         "mysql": "^2.18.1",
         "pug": "^3.0.2"
     }

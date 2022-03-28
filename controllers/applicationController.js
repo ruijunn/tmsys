@@ -1,4 +1,5 @@
 const db = require('../dbServer'); 
+const moment = require('moment');
 const group = require('../checkGroup');
 
 /** Global variables */
@@ -44,15 +45,10 @@ exports.post_create_application = function(req, res) {
         db.query(sql, [appname], function(error, result) {
             if (error) throw error;
             if (result.length === 0) { // if appname not exists in db, then create new application
-                const sql2 = 
-                    `INSERT INTO application (app_acronym, app_description, app_Rnumber, 
-                        app_startDate, app_endDate, app_permit_open, app_permit_toDoList, 
-                        app_permit_doing, app_permit_done) 
-                    VALUES(?, ?, 0, ?, ?, ?, ?, ?, ?)`
-                db.query(sql2, [appname, appdescription, startdate, enddate, p_open, p_toDoList, p_doing, p_done], 
-                    function(error, result) {
-                        if (error) throw error;
-                        res.render('createApplication', {success: 'Application created successfully!', "selectArray": selectArray});
+                const sql2 = "INSERT INTO application (app_acronym, app_description, app_Rnumber, app_startDate, app_endDate, app_permit_open, app_permit_toDoList, app_permit_doing, app_permit_done) VALUES(?, ?, 0, ?, ?, ?, ?, ?, ?)";
+                db.query(sql2, [appname, appdescription, startdate, enddate, p_open, p_toDoList, p_doing, p_done], function(error, result) {
+                    if (error) throw error;
+                    res.render('createApplication', {success: 'Application created successfully!', "selectArray": selectArray});
                 });
             }
             else { // existing application name, display error message
@@ -62,5 +58,38 @@ exports.post_create_application = function(req, res) {
     }
     else {
         res.render('createApplication', {error: 'Please enter application details!'});
+    }
+}
+
+exports.application_list = async function(req, res) {
+    // check if username belongs to admin group
+    if (await group.checkGroup(req.session.username, "project lead")) {
+        console.log("User is a project lead");
+        var appList = [];
+        db.query('SELECT * FROM application', function(err, rows, fields) {
+            if (err) {
+                console.log(err);
+            } else {
+                // Loop check on each row
+                for (var i = 0; i < rows.length; i++) {
+                // Create an object to save current row's data
+                    var app = {
+                        'appname': rows[i].app_acronym,
+				        'description': rows[i].app_description,	
+  				        'startdate': moment(rows[i].app_startDate).format('MM/DD/YYYY'), 
+				        'enddate': moment(rows[i].app_endDate).format('MM/DD/YYYY')
+                    }
+                    appList.push(app); // Add object into array
+                }
+                res.render('applicationList', {
+                    isLoggedIn: req.session.isLoggedIn, 
+                    "appList": appList
+                }); // Render applicationList.pug page using array 
+            }
+        });
+    }
+    else { // if username not belong to admin group
+        console.log("User is not a project lead, not authorized!");
+        res.redirect('/home'); // redirect to home page
     }
 }
