@@ -61,8 +61,9 @@ exports.post_create_application = function(req, res) {
     }
 }
 
+/** Display application list page */
 exports.application_list = async function(req, res) {
-    // check if username belongs to admin group
+    // check if username belongs to project lead group
     if (await group.checkGroup(req.session.username, "project lead")) {
         console.log("User is a project lead");
         var appList = [];
@@ -88,7 +89,7 @@ exports.application_list = async function(req, res) {
             }
         });
     }
-    else { // if username not belong to admin group
+    else { // if username not belong to project lead group
         console.log("User is not a project lead, not authorized!");
         res.redirect('/home'); // redirect to home page
     }
