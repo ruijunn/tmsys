@@ -5,7 +5,7 @@ head
     meta(name='viewport' content='width=device-width, initial-scale=1.0')
     link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet")
     link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
-    link(type="text/css" href="style.css" rel="stylesheet")
+    link(type="text/css" href="/style.css" rel="stylesheet")
 body
     script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js")
     script(src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" )
@@ -38,17 +38,24 @@ body
                       a(class="dropdown-item" href="/createApplication")="Create Application"
                   li(class="nav-item")
                     a(class="nav-link" href="/logout")="Logout"
-          h1="User List"
-          block content
-          table(class="table table-bordered table-hover table-sm")  
-              tr 
-                  th Username 
-                  th Action 
-                  th Action
-              for user in userList
-                  tr
-                      td #{user.username}
-                      td 
-                          a(href="/assignGroup/"+user.username type="submit")="Get Group"
-                      td 
-                          a(href="/removeGroup/"+user.username type="submit")="Remove Group"
+        h2(style="text-align: left")="Remove Group"
+        div
+          form(class="row g-3" method="post")
+              div(class="form-group")
+                label="Username:"
+                input(type="text" class="form-control" name="username" placeholder="username" value=`${userA}` readonly)
+                input(type="hidden" name="username" value=`${userA}`)
+              
+              div(class="form-group")
+                label="Select a Group to Delete:"
+                select(class="form-select" name="selectedGrp")
+                    each d in deleteArray 
+                        option(value=`${d.groupname}`)=`${d.groupname}`
+              
+              div(class="form-group")
+                button(type="submit" class="btn btn mb-3" 
+                style="background-color: #f8e5e7; color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;")="Remove"
+                button(type="button" class="btn btn mb-3" 
+                style="background-color: #98fb98;  color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;" 
+                onclick=`window.location='/listUsers'`)="Back"
+        

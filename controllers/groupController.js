@@ -116,3 +116,47 @@ exports.post_user_group = async function(req, res) {
         res.redirect('/listUsers'); 
     });
 }
+
+/* Display the remove group form based on the username that is selected in listUsers.pug page */
+exports.get_delete_user_group = async function(req, res) {
+    var username = req.params.username;
+    db.query('SELECT * FROM usergrp_list WHERE username = ?', [username], function(err, rows, fields) {
+        if (err) {
+            console.log(err);
+        } 
+        else {
+            user = rows;
+            // console.log(user);
+            var deleteArray = [];
+            db.query('SELECT groupname FROM usergrp_list WHERE username = ?', [username], function(err, rows, fields) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    // Loop check on each row
+                    for (var i = 0; i < rows.length; i++) {
+                    // Create an object to save current row's data
+                        var d = {
+                            'groupname': rows[i].groupname
+                        }
+                        deleteArray.push(d); // Add object into array
+                    }
+                }
+                // console.log("sss", deleteArray);
+                res.render('removeGroup', {isLoggedIn: req.session.isLoggedIn, "userA": username, "deleteArray": deleteArray});
+            });
+        }
+    });
+}
+
+/* Handle form submit for deleting group to a user by username */
+exports.delete_user_group = async function(req, res) {
+    var username = req.params.username;
+    const {selectedGrp} = req.body;
+    const sql = "DELETE FROM usergrp_list WHERE username = ? AND groupname = ?";
+	db.query(sql, [username, selectedGrp], function(error, result) {
+		if (error) throw error;
+		console.log("Successfully deleted the assigned group!");
+		res.redirect('/listUsers');
+	});
+}
