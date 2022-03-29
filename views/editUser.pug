@@ -37,6 +37,11 @@ body
                     div(class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink")
                       a(class="dropdown-item" href="/createApplication")="Create Application"
                       a(class="dropdown-item" href="/applicationList")="Application List"
+                  li(class="nav-item dropdown")
+                    a(class="nav-link dropdown toggle" href="/home" role="button" data-bs-toggle="dropdown") Plan 
+                    span(class="caret")
+                    div(class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink")
+                      a(class="dropdown-item" href="/createPlan")="Create Plan"
                   li(class="nav-item")
                     a(class="nav-link" href="/logout")="Logout"
         h2(style="text-align: left")="Edit Account Details"
