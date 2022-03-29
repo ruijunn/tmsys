@@ -241,3 +241,32 @@ body {
 .createApplication form button[type="button"] {
     background-color: #98fb98; 
 }
+
+/* css for create plan */
+
+.createPlan form input[type="text"] {
+    padding: 12px; 
+    border-radius: 4px; 
+    margin: 5px 0; 
+    opacity: 0.85; 
+    display: inline-block; 
+    font-size: 17px; 
+    line-height: 20px;
+}
+
+.createPlan form button[type="submit"], .createPlan form button[type="button"] {
+    color: black; 
+    font-weight: bold; 
+    width: 10%; 
+    padding: 14px 20px; 
+    margin: auto; 
+    cursor: pointer;
+}
+
+.createPlan form button[type="submit"] {
+    background-color: #f8e5e7; 
+}
+
+.createPlan form button[type="button"] {
+    background-color: #98fb98; 
+}

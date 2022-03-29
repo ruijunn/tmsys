@@ -13,6 +13,7 @@ var userRouter = require('./routes/user');
 var groupRouter = require('./routes/group');
 var taskRouter = require('./routes/task');
 var applicationRouter = require('./routes/application');
+var planRouter = require('./routes/plan');
 
 // Inititalize the app and add middleware
 app.set('view engine', 'pug'); // Setup the pug
@@ -28,6 +29,7 @@ app.use('/', userRouter);
 app.use('/', groupRouter);
 app.use('/', taskRouter);
 app.use('/', applicationRouter);
+app.use('/', planRouter);
 
 /** App listening on port */
 app.listen(port, () => {
