@@ -112,7 +112,7 @@ exports.get_edit_application = async function(req, res) {
 exports.post_edit_application = async function(req, res) {
     var appname = req.params.appname;
     const {appdescription} = req.body;
-    if (appdescription) { // check if email is not empty
+    if (appdescription) { // check if app description is not empty
 	    const sql = "UPDATE application SET app_description = ? WHERE app_acronym = ?"; 
         db.query(sql, [appdescription, appname], function (error, result) {
             if (error) throw error; 

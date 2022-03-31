@@ -31,6 +31,7 @@ html
                   span(class="caret")
                   div(class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink")
                     a(class="dropdown-item" href="/createTask")="Create Task"
+                    a(class="dropdown-item" href="/taskList")="Task List"
                 li(class="nav-item dropdown")
                   a(class="nav-link dropdown toggle" href="/home" role="button" data-bs-toggle="dropdown") Application 
                   span(class="caret")
@@ -52,6 +53,11 @@ html
 
       div(class="createPlan")
         form(class="row g-3" method="post")
+          div(class="form-group")
+            label="Application Name:"
+            select(class="form-select" name="appname")
+              each app in applicationArray 
+                option(value=`${app.appname}`)=`${app.appname}`
           div(class="form-group")
             label="Plan MVP Name:"
             input(type="text" class="form-control" name="pname")
