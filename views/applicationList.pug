@@ -47,15 +47,15 @@ body
           h1="Application List"
           block content
           table(class="table table-bordered table-hover table-sm")  
-              tr 
-                  th App Acronym
-                  th Description 
-                  th Start Date 
-                  th End Date
-              for app in appList
-                  tr
-                    td #{app.appname}
-                    td #{app.description}
-                    td #{app.startdate}
-                    td #{app.enddate}
+            tr 
+              th App Acronym
+              th Description 
+              th Start Date 
+              th End Date
+            for app in appList
+              tr
+                td #{app.appname}
+                td #{app.description}
+                td #{app.startdate}
+                td #{app.enddate}
                      

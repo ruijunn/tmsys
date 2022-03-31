@@ -53,6 +53,11 @@ html
       div(class="createTask")
         form(class="row g-3" method="post")
           div(class="form-group")
+            label="Application Name:"
+            select(class="form-select" name="appname")
+              each app in applicationArray 
+                option(value=`${app.appname}`)=`${app.appname}`
+          div(class="form-group")
             label="Task Name:"
             input(type="text" class="form-control" name="taskname")
           div(class="form-group")
