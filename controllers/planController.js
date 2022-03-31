@@ -1,4 +1,5 @@
 const db = require('../dbServer'); 
+const moment = require('moment');
 const group = require('../checkGroup');
 
 /** Global variables */
@@ -31,13 +32,14 @@ exports.get_create_plan = async function(req, res) {
     }
 }
 
+/** Handle form submit for create plan */
 exports.post_create_plan = async function(req, res) {
     const {appname, pname, pstartDate, pendDate} = req.body;
-    if (appname && pname && pstartDate && pendDate) { // check if app description is not empty
+    if (appname && pname && pstartDate && pendDate) { // check if input fields are not empty
 	    const sql = "SELECT plan_MVP_name FROM plan WHERE plan_MVP_name = ?";
         db.query(sql, [pname], function(error, result) {
             if (error) throw error;
-            if (result.length === 0) { // if appname not exists in db, then create new application
+            if (result.length === 0) { // if plan_MVP_name not exists in db, then create new plan
                 const sql2 = "INSERT INTO plan (plan_MVP_name, plan_startDate, plan_endDate, plan_app_acronym) VALUES(?, ?, ?, ?)";
                 db.query(sql2, [pname, pstartDate, pendDate, appname], function(error, result) {
                     if (error) throw error;
@@ -51,5 +53,38 @@ exports.post_create_plan = async function(req, res) {
     }
     else {
         res.render('createPlan', {error: 'Please enter plan details!', "applicationArray": applicationArray});
+    }
+}
+
+/** Display plan list page */
+exports.plan_list = async function(req, res) {
+    // check if username belongs to project lead group
+    if (await group.checkGroup(req.session.username, "project lead")) {
+        console.log("User is a project lead");
+        var planList = [];
+        db.query('SELECT * FROM plan', function(err, rows, fields) {
+            if (err) {
+                console.log(err);
+            } else {
+                // Loop check on each row
+                for (var i = 0; i < rows.length; i++) {
+                    // Create an object to save current row's data
+                    var plan = {
+                        'pname': rows[i].plan_MVP_name,
+  				        'startdate': moment(rows[i].plan_startDate).format('MM/DD/YYYY'), 
+				        'enddate': moment(rows[i].plan_endDate).format('MM/DD/YYYY'),
+                        'appname': rows[i].plan_app_acronym
+                    }
+                    planList.push(plan); // Add object into array
+                }
+                res.render('planList', {
+                    isLoggedIn: req.session.isLoggedIn, "planList": planList
+                }); // Render planList.pug page using array 
+            }
+        });
+    }
+    else { // if username not belong to project lead group
+        console.log("User is not a project lead, not authorized!");
+        res.redirect('/home'); // redirect to home page
     }
 }
