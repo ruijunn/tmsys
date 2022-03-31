@@ -52,7 +52,7 @@ exports.post_create_application = function(req, res) {
                 });
             }
             else { // existing application name, display error message
-                res.render('createApplication', {error: 'Application name already exists!'});
+                res.render('createApplication', {error: 'Application name already exists!', "selectArray": selectArray});
             }
         });
     }
@@ -73,7 +73,7 @@ exports.application_list = async function(req, res) {
             } else {
                 // Loop check on each row
                 for (var i = 0; i < rows.length; i++) {
-                // Create an object to save current row's data
+                    // Create an object to save current row's data
                     var app = {
                         'appname': rows[i].app_acronym,
 				        'description': rows[i].app_description,	
@@ -98,7 +98,6 @@ exports.application_list = async function(req, res) {
 /** Display edit application page */
 exports.get_edit_application = async function(req, res) {
     var appname = req.params.appname;
-    // console.log(username);
     db.query('SELECT * FROM application WHERE app_acronym = ?', [appname], function(err, rows, fields) {
         if (err) {
             console.log(err);
@@ -121,6 +120,6 @@ exports.post_edit_application = async function(req, res) {
         });
     }
     else {
-        res.render('editApplication', {error: 'Please enter app description!',  "app": appname});
+        res.render('editApplication', {error: 'Please enter application description!', "app": appname});
     }
 }
