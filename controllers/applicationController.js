@@ -94,3 +94,33 @@ exports.application_list = async function(req, res) {
         res.redirect('/home'); // redirect to home page
     }
 }
+
+/** Display edit application page */
+exports.get_edit_application = async function(req, res) {
+    var appname = req.params.appname;
+    // console.log(username);
+    db.query('SELECT * FROM application WHERE app_acronym = ?', [appname], function(err, rows, fields) {
+        if (err) {
+            console.log(err);
+        } 
+        else {
+            res.render('editApplication', {isLoggedIn: req.session.isLoggedIn, "app": appname});
+        }
+    });
+}
+
+/** Handle form submit for edit application */
+exports.post_edit_application = async function(req, res) {
+    var appname = req.params.appname;
+    const {appdescription} = req.body;
+    if (appdescription) { // check if email is not empty
+	    const sql = "UPDATE application SET app_description = ? WHERE app_acronym = ?"; 
+        db.query(sql, [appdescription, appname], function (error, result) {
+            if (error) throw error; 
+            res.render('editApplication', {success: 'Successfully edited application details!', "app": appname});
+        });
+    }
+    else {
+        res.render('editApplication', {error: 'Please enter app description!',  "app": appname});
+    }
+}
