@@ -69,5 +69,10 @@ html
             label="Task Notes:"
             textarea(class="form-control" name="tasknotes" rows="3")
           div(class="form-group")
+            label="Task Plan:"
+            select(class="form-select" name="pname")
+              each plan in planArray 
+                option(value=`${plan.pname}`)=`${plan.pname}`
+          div(class="form-group")
             button(type="submit" class="btn btn mb-3")="Create"
             button(type="button" class="btn btn mb-3" onclick=`window.location='/'`)="Back"
