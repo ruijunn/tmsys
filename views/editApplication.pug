@@ -52,18 +52,20 @@ body
         if success
             p(class="alert alert-success")=success
         div
-        form(class="row g-3" method="post")
+          form(class="row g-3" method="post")
             div(class="form-group")
-                label="Application Name:"
-                input(type="text" class="form-control" name="username" placeholder="appname" value=`${app}` readonly)
-                input(type="hidden" name="appname" value=`${app}`)
+              label="Application Name:"
+              input(type="text" class="form-control" name="username" placeholder="appname" value=`${app}` readonly)
+              input(type="hidden" name="appname" value=`${app}`)
             div(class="form-group")
-                label="Application Description:"
-                textarea(class="form-control" name="appdescription" rows="3")
+              label="Application Description:"
+              textarea(class="form-control" name="appdescription" rows="3")
+            div(class="form-group")
+              label="Application Rnumber:"
+              input(type="text" class="form-control" name="apprnumber" readonly)
             div(class="form-group")
                 button(type="submit" class="btn btn mb-3" 
                 style="background-color: #f8e5e7; color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;")="Edit"
                 button(type="button" class="btn btn mb-3" 
                 style="background-color: #98fb98;  color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;" 
                 onclick=`window.location='/applicationList'`)="Back"
-            

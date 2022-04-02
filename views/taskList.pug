@@ -46,35 +46,33 @@ body
                       a(class="dropdown-item" href="/planList")="Plan List"
                   li(class="nav-item")
                     a(class="nav-link" href="/logout")="Logout"
-          h1="Application List"
+          h1="Task List"
           block content
           table(class="table table-bordered table-hover table-sm")  
             tr 
-              th App Acronym
-              th Description 
-              th Rnumber
-              th Start Date 
-              th End Date
-              th App Permit Create 
-              th App Permit Open 
-              th App Permit ToDoList 
-              th App Permit Doing 
-              th App Permit Done
-              th Create Date
+              th ID
+              th Name
+              th Description
+              th Notes
+              th Task Plan
+              th Task App Acronym 
+              th Task State 
+              th Task Creator 
+              th Task Owner 
+              th Task Create Date
               th Action
-            for app in appList
+            for task in taskList
               tr
-                td #{app.appname}
-                td #{app.description}
-                td #{app.rnumber}
-                td #{app.startdate}
-                td #{app.enddate}
-                td #{app.pcreate}
-                td #{app.popen}
-                td #{app.ptoDoList}
-                td #{app.pdoing}
-                td #{app.pdone}
-                td #{app.createdate}
+                td #{task.tid}
+                td #{task.name}
+                td #{task.description}
+                td #{task.notes}
+                td #{task.tplan}
+                td #{task.tappname}
+                td #{task.state}
+                td #{task.creator}
+                td #{task.owner}
+                td #{task.createDate}
                 td 
-                  a(href="/editApplication/"+app.appname type="submit")="Edit"
+                  a(href="/editTask/"+task.taskname type="submit")="Edit"
                      

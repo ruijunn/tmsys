@@ -69,7 +69,13 @@ html
           div(class="form-group")
             label="Set Permissions for Respective App Permit:"
             block content
-            table(class="table table-bordered table-sm")  
+            table(class="table table-bordered table-sm")
+              tr 
+                th App Permit Create:
+                td 
+                  select(class="form-select" name="p_create")
+                    each s in selectArray 
+                      option(value=`${s.groupname}`)=`${s.groupname}`  
               tr 
                 th App Permit Open:
                 td 

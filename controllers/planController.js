@@ -40,8 +40,9 @@ exports.post_create_plan = async function(req, res) {
         db.query(sql, [pname], function(error, result) {
             if (error) throw error;
             if (result.length === 0) { // if plan_MVP_name not exists in db, then create new plan
-                const sql2 = "INSERT INTO plan (plan_MVP_name, plan_startDate, plan_endDate, plan_app_acronym) VALUES(?, ?, ?, ?)";
-                db.query(sql2, [pname, pstartDate, pendDate, appname], function(error, result) {
+                const planCreateDate = new Date();
+                const sql2 = "INSERT INTO plan (plan_MVP_name, plan_startDate, plan_endDate, plan_app_acronym, plan_createDate) VALUES(?, ?, ?, ?, ?)";
+                db.query(sql2, [pname, pstartDate, pendDate, appname, planCreateDate], function(error, result) {
                     if (error) throw error;
                     res.render('createPlan', {success: 'Plan created successfully!', "applicationArray": applicationArray});
                 });
@@ -73,7 +74,8 @@ exports.plan_list = async function(req, res) {
                         'pname': rows[i].plan_MVP_name,
   				        'startdate': moment(rows[i].plan_startDate).format('MM/DD/YYYY'), 
 				        'enddate': moment(rows[i].plan_endDate).format('MM/DD/YYYY'),
-                        'appname': rows[i].plan_app_acronym
+                        'appname': rows[i].plan_app_acronym,
+                        'createDate': moment(rows[i].plan_createDate).format('MM/DD/YYYY'), 
                     }
                     planList.push(plan); // Add object into array
                 }

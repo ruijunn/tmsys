@@ -54,6 +54,7 @@ body
               th Start Date 
               th End Date
               th Plan App Acronym
+              th Plan Create Date
               th Action
             for plan in planList
               tr
@@ -61,6 +62,7 @@ body
                 td #{plan.startdate}
                 td #{plan.enddate}
                 td #{plan.appname}
+                td #{plan.createDate}
                 td 
                   a(href="/editPlan/"+plan.pname type="submit")="Edit"
                      
