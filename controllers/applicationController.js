@@ -3,22 +3,20 @@ const moment = require('moment');
 const group = require('../checkGroup');
 
 /** Global variables */
-var user;
-var selectArray = []; 
+var selectArray = [];
+var appList = [];
 
 /** Display create application form */
 exports.get_create_application = async function(req, res) {
     // check if username belong to project lead group
     if (await group.checkGroup(req.session.username, "project lead")) {
-        var selectArray = [];
         const {p_create, p_open, p_toDoList, p_doing, p_done} = req.body;
         db.query('SELECT groupName FROM usergrp', [p_create, p_open, p_toDoList, p_doing, p_done], function(err, rows, fields) {
             if (err) {
                 console.log(err);
             }
             else {
-                user = rows;
-                //console.log(user);
+                grp = rows;
                 // Loop check on each row
                 for (var i = 0; i < rows.length; i++) {
                     // Create an object to save current row's data
@@ -69,7 +67,6 @@ exports.post_create_application = function(req, res) {
 exports.application_list = async function(req, res) {
     // check if username belongs to project lead group
     if (await group.checkGroup(req.session.username, "project lead")) {
-        console.log("User is a project lead");
         var appList = [];
         db.query('SELECT * FROM application', function(err, rows, fields) {
             if (err) {
@@ -94,8 +91,7 @@ exports.application_list = async function(req, res) {
                     appList.push(app); // Add object into array
                 }
                 res.render('applicationList', {
-                    isLoggedIn: req.session.isLoggedIn, 
-                    "appList": appList
+                    isLoggedIn: req.session.isLoggedIn, "appList": appList
                 }); // Render applicationList.pug page using array 
             }
         });
@@ -114,7 +110,27 @@ exports.get_edit_application = async function(req, res) {
             console.log(err);
         } 
         else {
-            res.render('editApplication', {isLoggedIn: req.session.isLoggedIn, "app": appname});
+            app = rows;
+            for (var i = 0; i < rows.length; i++) {
+                var app = {
+                    'appname': rows[i].app_acronym,
+                    'description': rows[i].app_description,	
+                    'rnumber': rows[i].app_Rnumber,
+                    'startdate': moment(rows[i].app_startDate).format('MM/DD/YYYY'), 
+                    'enddate': moment(rows[i].app_endDate).format('MM/DD/YYYY'),
+                    'pcreate': rows[i].app_permit_create,
+                    'popen': rows[i].app_permit_open,
+                    'ptoDoList': rows[i].app_permit_toDoList,
+                    'pdoing': rows[i].app_permit_doing,
+                    'pdone': rows[i].app_permit_done
+                }
+                appList.push(app); // Add object into array
+            }
+            res.render('editApplication', {
+                isLoggedIn: req.session.isLoggedIn, 
+                "app": appname, 
+                "appList": appList
+            }); // Render editApplication.pug page using array 
         }
     });
 }
@@ -122,15 +138,38 @@ exports.get_edit_application = async function(req, res) {
 /** Handle form submit for edit application */
 exports.post_edit_application = async function(req, res) {
     var appname = req.params.appname;
-    const {appdescription} = req.body;
-    if (appdescription) { // check if app description is not empty
-	    const sql = "UPDATE application SET app_description = ? WHERE app_acronym = ?"; 
-        db.query(sql, [appdescription, appname], function (error, result) {
-            if (error) throw error; 
-            res.render('editApplication', {success: 'Successfully edited application details!', "app": appname});
+    const {appdescription, p_create, p_open, p_toDoList, p_doing, p_done} = req.body;
+    if (appdescription && p_create && p_open && p_toDoList && p_doing && p_done) { // check if app description is not empty
+	    const sql = 
+            `UPDATE application SET app_description = ?, app_permit_create = ?, app_permit_open = ?, 
+            app_permit_toDoList = ?, app_permit_doing = ?, app_permit_done = ? WHERE app_acronym = ?`; 
+        db.query(sql, [appdescription, p_create, p_open, p_toDoList, p_doing, p_done, appname], function (err, result) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                db.query('SELECT * FROM application WHERE app_acronym = ?', [appname], function(err, rows, fields) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                        app = rows;
+                    }
+                });
+            }
+            res.render('editApplication', {
+                success: 'Successfully edited application details!', 
+                "app": appname,
+                "appList": appList
+            });
         });
     }
     else {
-        res.render('editApplication', {error: 'Please enter application description!', "app": appname});
+        res.render('editApplication', {
+            error: 'Please enter application description!', 
+            "app": appname,
+            "appList": appList
+        });
+        //res.redirect("/editApplication/" + req.params.appname);
     }
 }
