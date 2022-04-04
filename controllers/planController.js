@@ -4,11 +4,11 @@ const group = require('../checkGroup');
 
 /** Global variables */
 var applicationArray = [];
+var planList = [];
 
 /** Display create task page */
 exports.get_create_plan = async function(req, res) {
     if (await group.checkGroup(req.session.username, "project lead")) {
-        var applicationArray = [];
         db.query('SELECT app_acronym FROM application', function(err, rows, fields) {
             if (err) {
                 console.log(err);
@@ -61,8 +61,6 @@ exports.post_create_plan = async function(req, res) {
 exports.plan_list = async function(req, res) {
     // check if username belongs to project lead group
     if (await group.checkGroup(req.session.username, "project lead")) {
-        console.log("User is a project lead");
-        var planList = [];
         db.query('SELECT * FROM plan', function(err, rows, fields) {
             if (err) {
                 console.log(err);
@@ -90,3 +88,32 @@ exports.plan_list = async function(req, res) {
         res.redirect('/home'); // redirect to home page
     }
 }
+
+/** Display edit application page */
+/* exports.get_edit_plan = async function(req, res) {
+    var planName = req.params.pname;
+    console.log(planName);
+    db.query('SELECT * FROM plan WHERE plan_MVP_name = ?', [planname], function(err, rows, fields) {
+        if (err) {
+            console.log(err);
+        } 
+        else {
+            p = rows;
+            console.log(p);
+            for (var i = 0; i < rows.length; i++) {
+                var plan = {
+                    'pname': rows[i].plan_MVP_name,
+                    'startdate': moment(rows[i].plan_startDate).format('MM/DD/YYYY'), 
+                    'enddate': moment(rows[i].plan_endDate).format('MM/DD/YYYY'),
+                    'appname': rows[i].plan_app_acronym
+                }
+                planList.push(plan); // Add object into array
+            }
+            res.render('editPlan', {
+                isLoggedIn: req.session.isLoggedIn, 
+                "p": planName, 
+                "planList": planList
+            }); // Render editApplication.pug page using array 
+        }
+    });
+} */
