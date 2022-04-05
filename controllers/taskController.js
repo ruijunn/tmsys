@@ -92,9 +92,9 @@ exports.post_create_task = function(req, res) {
 
 /** Display task list page */
 exports.task_list = async function(req, res) {
-    // check if username belongs to project lead or team member group
-    if (await group.checkGroup(req.session.username, "project lead") || 
-    (await group.checkGroup(req.session.username, "team member"))) {
+    // check if username belongs to project lead, project manager or team member group
+    if (await group.checkGroup(req.session.username, "project lead") || (await group.checkGroup(req.session.username, "project manager") ||
+    (await group.checkGroup(req.session.username, "team member")))) {
         db.query('SELECT * FROM task', function(err, rows, fields) {
             if (err) {
                 console.log(err);
@@ -125,13 +125,13 @@ exports.task_list = async function(req, res) {
             }
         });
     }
-    else { // if username not belong to project lead or team member group
+    else { // if username not belong to project lead, project manager or team member group
         console.log("Not authorized!");
         res.redirect('/home'); // redirect to home page
     }
 }
 
-/** Display edit application page */
+/** Display edit task page */
 exports.get_edit_task = async function(req, res) {
     var tid = req.params.tid;
     db.query('SELECT * FROM task WHERE task_id = ?', [tid], function(err, rows, fields) {
@@ -163,4 +163,31 @@ exports.get_edit_task = async function(req, res) {
             }); // Render editTask.pug page using array 
         }
     });
+}
+
+/** Handle form submit for edit task */
+exports.post_edit_task = async function(req, res) {
+    /* var tid = req.params.tid;
+    const {tdescription, tasknotes, notes} = req.body;
+    console.log(tasknotes);
+    const sql = "SELECT * FROM task WHERE task_id = ?";
+    db.query(sql, [tid], function(err, result) {
+        if (err) throw error;
+        if (result.length > 0) {
+            const tasknotes = result[0].task_notes +  notes
+            console.log(tasknotes);
+
+        }
+    }); */
+   /*  const finalnote = `${tnotes}\r${notes}}\r`;
+    console.log(finalnote); */
+    /* const sql = 
+        `UPDATE task SET task_description = ?, 
+        task_notes = ?
+        WHERE task_id = ?`;
+    db.query(sql, [tdescription, tnotes, tid], function(err, result) {
+        if (err) {
+            console.log(err);
+        }
+    }); */
 }
