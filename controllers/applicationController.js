@@ -106,7 +106,7 @@ exports.application_list = async function(req, res) {
 exports.get_edit_application = async function(req, res) {
     var appname = req.params.appname;
     db.query('SELECT * FROM application WHERE app_acronym = ?', [appname], function(err, rows, fields) {
-        if (err) {
+        if (err) {l
             console.log(err);
         } 
         else {
