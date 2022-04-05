@@ -55,15 +55,15 @@ body
           form(class="row g-3" method="post")
             div(class="form-group")
               label="Plan MVP Name:"
-              input(type="text" class="form-control" name="pname" placeholder="pname" value=`${p}` readonly)
-              input(type="hidden" name="pname" value=`${p}`)
+              input(type="text" class="form-control" name="pname" placeholder="pname" value=`${plan}` readonly)
+              input(type="hidden" name="pname" value=`${plan}`)
             each plan in planList
               div(class="form-group")
                 label="Start Date:"
-                input(type="text" class="form-control" name="pstartDate" value=`${plan.startdate}` readonly)
+                input(type="text" class="form-control" name="pstartDate" placeholder=`${plan.startdate}` value=`${plan.startdate}`)
               div(class="form-group")
                 label="End Date:"
-                input(type="text" class="form-control" name="pendDate" value=`${plan.enddate}` readonly)
+                input(type="text" class="form-control" name="pendDate" placeholder=`${plan.enddate}` value=`${plan.enddate}`)
               div(class="form-group")
                 label="Plan App Acronym:"
                 input(type="text" class="form-control" name="appname" value=`${plan.appname}` readonly)

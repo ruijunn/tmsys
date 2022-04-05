@@ -65,6 +65,7 @@ exports.plan_list = async function(req, res) {
             if (err) {
                 console.log(err);
             } else {
+                var tempArray = [];
                 // Loop check on each row
                 for (var i = 0; i < rows.length; i++) {
                     // Create an object to save current row's data
@@ -75,8 +76,9 @@ exports.plan_list = async function(req, res) {
                         'appname': rows[i].plan_app_acronym,
                         'createDate': moment(rows[i].plan_createDate).format('MM/DD/YYYY'), 
                     }
-                    planList.push(plan); // Add object into array
+                    tempArray.push(plan); // Add object into array
                 }
+                planList = tempArray;
                 res.render('planList', {
                     isLoggedIn: req.session.isLoggedIn, "planList": planList
                 }); // Render planList.pug page using array 
@@ -92,14 +94,13 @@ exports.plan_list = async function(req, res) {
 /** Display edit application page */
 /* exports.get_edit_plan = async function(req, res) {
     var planName = req.params.pname;
-    console.log(planName);
-    db.query('SELECT * FROM plan WHERE plan_MVP_name = ?', [planname], function(err, rows, fields) {
+    db.query('SELECT * FROM plan WHERE plan_MVP_name = ?', [planName], function(err, rows, fields) {
         if (err) {
             console.log(err);
         } 
         else {
-            p = rows;
-            console.log(p);
+            plan = rows;
+            planList = [];
             for (var i = 0; i < rows.length; i++) {
                 var plan = {
                     'pname': rows[i].plan_MVP_name,
@@ -111,7 +112,7 @@ exports.plan_list = async function(req, res) {
             }
             res.render('editPlan', {
                 isLoggedIn: req.session.isLoggedIn, 
-                "p": planName, 
+                "plan": planName, 
                 "planList": planList
             }); // Render editApplication.pug page using array 
         }
