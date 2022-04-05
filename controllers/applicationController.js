@@ -106,7 +106,7 @@ exports.application_list = async function(req, res) {
 exports.get_edit_application = async function(req, res) {
     var appname = req.params.appname;
     db.query('SELECT * FROM application WHERE app_acronym = ?', [appname], function(err, rows, fields) {
-        if (err) {l
+        if (err) {
             console.log(err);
         } 
         else {
@@ -170,6 +170,5 @@ exports.post_edit_application = async function(req, res) {
             "app": appname,
             "appList": appList
         });
-        //res.redirect("/editApplication/" + req.params.appname);
     }
 }
