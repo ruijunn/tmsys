@@ -8,8 +8,9 @@ var appList = [];
 
 /** Display create application form */
 exports.get_create_application = async function(req, res) {
-    // check if username belong to project lead group
-    if (await group.checkGroup(req.session.username, "project lead")) {
+    // check if username belong to project manager or project lead group
+    if (await group.checkGroup(req.session.username, "project manager") || 
+    await group.checkGroup(req.session.username, "project lead")) {
         const {p_create, p_open, p_toDoList, p_doing, p_done} = req.body;
         db.query('SELECT groupName FROM usergrp', [p_create, p_open, p_toDoList, p_doing, p_done], function(err, rows, fields) {
             if (err) {
@@ -29,7 +30,7 @@ exports.get_create_application = async function(req, res) {
             res.render('createApplication', {isLoggedIn: req.session.isLoggedIn, "selectArray": selectArray});
         });
     }
-    else { // username not belong to project lead group
+    else { // username not belong to project manager or project lead group
         console.log("Not authorized!");
         res.redirect('/home');
     }
@@ -65,8 +66,9 @@ exports.post_create_application = function(req, res) {
 
 /** Display application list page */
 exports.application_list = async function(req, res) {
-    // check if username belongs to project lead group
-    if (await group.checkGroup(req.session.username, "project lead")) {
+    // check if username belongs to project manager or project lead group
+    if (await group.checkGroup(req.session.username, "project manager") || 
+    await group.checkGroup(req.session.username, "project lead")) {
         var appList = [];
         db.query('SELECT * FROM application', function(err, rows, fields) {
             if (err) {
@@ -96,8 +98,8 @@ exports.application_list = async function(req, res) {
             }
         });
     }
-    else { // if username not belong to project lead group
-        console.log("User is not a project lead, not authorized!");
+    else { // if username not belong to project manager or project lead group
+        console.log("Not authorized!");
         res.redirect('/home'); // redirect to home page
     }
 }
@@ -127,9 +129,7 @@ exports.get_edit_application = async function(req, res) {
                 appList.push(app); // Add object into array
             }
             res.render('editApplication', {
-                isLoggedIn: req.session.isLoggedIn, 
-                "app": appname, 
-                "appList": appList
+                isLoggedIn: req.session.isLoggedIn, "app": appname, "appList": appList
             }); // Render editApplication.pug page using array 
         }
     });
@@ -139,7 +139,7 @@ exports.get_edit_application = async function(req, res) {
 exports.post_edit_application = async function(req, res) {
     var appname = req.params.appname;
     const {appdescription, p_create, p_open, p_toDoList, p_doing, p_done} = req.body;
-    if (appdescription && p_create && p_open && p_toDoList && p_doing && p_done) { // check if app description is not empty
+    if (appdescription && p_create && p_open && p_toDoList && p_doing && p_done) {
 	    const sql = 
             `UPDATE application SET app_description = ?, app_permit_create = ?, app_permit_open = ?, 
             app_permit_toDoList = ?, app_permit_doing = ?, app_permit_done = ? WHERE app_acronym = ?`; 
@@ -158,17 +158,13 @@ exports.post_edit_application = async function(req, res) {
                 });
             }
             res.render('editApplication', {
-                success: 'Successfully edited application details!', 
-                "app": appname,
-                "appList": appList
-            });
+                success: 'Successfully edited application details!', "app": appname, "appList": appList
+            }); // Render editApplication.pug page using array 
         });
     }
     else {
         res.render('editApplication', {
-            error: 'Please enter application description!', 
-            "app": appname,
-            "appList": appList
-        });
+            error: 'Please enter application details!', "app": appname, "appList": appList
+        }); // Render editApplication.pug page using array 
     }
 }

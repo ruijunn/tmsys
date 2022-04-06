@@ -57,8 +57,10 @@ html
           div(class="form-group")
             label="Application Name:"
             select(class="form-select" name="appname")
-              each app in applicationArray 
-                option(value=`${app.appname}`)=`${app.appname}`
+              option(value="" disabled selected)="-- Select application --"
+              if applicationArray
+                each app in applicationArray 
+                  option(value=`${app.appname}`)=`${app.appname}`
           div(class="form-group")
             label="Plan MVP Name:"
             input(type="text" class="form-control" name="pname")
@@ -70,4 +72,4 @@ html
             input(type="date" class="form-control" name="pendDate")
           div(class="form-group")
             button(type="submit" class="btn btn mb-3")="Create"
-            button(type="button" class="btn btn mb-3" onclick=`window.location='/'`)="Back"
+            button(type="button" class="btn btn mb-3" onclick=`window.location='/planList'`)="Back"

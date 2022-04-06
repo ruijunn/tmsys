@@ -9,38 +9,36 @@ var taskList = [];
 
 /** Display create task page */
 exports.get_create_task = async function(req, res) {
-    if (await group.checkGroup(req.session.username, "project lead")) {
-        db.query('SELECT app_acronym FROM application', function(err, rows, fields) {
-            if (err) { console.log(err); }
-            else {
-                for (var i = 0; i < rows.length; i++) {
-                    var app = {
-                        'appname': rows[i].app_acronym
-                    }
-                    applicationArray.push(app); 
+    db.query("SELECT * FROM application", function(err, rows, fields) {
+        if (group.checkGroup(req.session.username, rows[0].app_permit_create)) {
+            for (var i = 0; i < rows.length; i++) {
+                var app = {
+                    'appname': rows[i].app_acronym
                 }
-                db.query('SELECT plan_MVP_name FROM plan', function(err, rows, fields) {
-                    if (err) { console.log(err); }
-                    else {
-                        for (var x = 0; x < rows.length; x++) {
-                            var plan = {
-                                'pname': rows[x].plan_MVP_name
-                            }
-                            planArray.push(plan);
-                        }
-                    }
-                    res.render('createTask', {
-                        isLoggedIn: req.session.isLoggedIn, 
-                        "applicationArray": applicationArray, 
-                        "planArray": planArray});
-                });
+                applicationArray.push(app); 
             }
-        });
-    }
-    else {
-        console.log("Not authorized!");
-        res.redirect('/home');
-    }
+            db.query('SELECT plan_MVP_name FROM plan', function(err, rows, fields) {
+                if (err) { 
+                    console.log(err); 
+                }
+                else {
+                    for (var x = 0; x < rows.length; x++) {
+                        var plan = {
+                            'pname': rows[x].plan_MVP_name
+                        }
+                        planArray.push(plan);
+                    }
+                }
+                res.render('createTask', {
+                    isLoggedIn: req.session.isLoggedIn, "applicationArray": applicationArray, "planArray": planArray
+                }); // Render createTask.pug page using array 
+            });
+        }
+        else {
+            console.log("User is not a project lead, not authorized!");
+            res.redirect('/home');
+        }
+    });
 }
 
 /** Handle form submit for create task */
@@ -53,10 +51,11 @@ exports.post_create_task = function(req, res) {
             // task id need to be in the format <app_acronym>_<app_Rnumber>
             const newTaskID = `${result[0].app_acronym}_${result[0].app_Rnumber+1}`;
             console.log(newTaskID);
+            // format the task notes with username, current state, date & timestamp
             const logonUID = req.session.username;
             const currentState = "open";
             const date = new Date().toLocaleString();
-            const auditlog = `${tasknotes}\r${logonUID}, ${currentState}, ${date}\r`;
+            const auditlog = `${tasknotes}, ${logonUID}, ${currentState}, ${date}`;
             console.log(auditlog);
             const taskCreateDate = new Date();
             const sql2 = `INSERT INTO task (task_id, task_name, task_description, task_notes, task_plan, 
@@ -82,9 +81,8 @@ exports.post_create_task = function(req, res) {
                     });
                 }
                 res.render('createTask', {
-                    success: 'Task created successfully!', 
-                    "applicationArray": applicationArray, 
-                    "planArray": planArray});
+                    success: 'Task created successfully!', "applicationArray": applicationArray, "planArray": planArray
+                }); // Render createTask.pug page using array 
             });
         }
     });
@@ -93,7 +91,8 @@ exports.post_create_task = function(req, res) {
 /** Display task list page */
 exports.task_list = async function(req, res) {
     // check if username belongs to project lead, project manager or team member group
-    if (await group.checkGroup(req.session.username, "project lead") || (await group.checkGroup(req.session.username, "project manager") ||
+    if (await group.checkGroup(req.session.username, "project lead") || 
+    (await group.checkGroup(req.session.username, "project manager") ||
     (await group.checkGroup(req.session.username, "team member")))) {
         db.query('SELECT * FROM task', function(err, rows, fields) {
             if (err) {
@@ -157,9 +156,7 @@ exports.get_edit_task = async function(req, res) {
                 taskList.push(task); // Add object into array
             }
             res.render('editTask', {
-                isLoggedIn: req.session.isLoggedIn, 
-                "task": tid,
-                "taskList": taskList
+                isLoggedIn: req.session.isLoggedIn, "task": tid, "taskList": taskList
             }); // Render editTask.pug page using array 
         }
     });
@@ -167,27 +164,36 @@ exports.get_edit_task = async function(req, res) {
 
 /** Handle form submit for edit task */
 exports.post_edit_task = async function(req, res) {
-    /* var tid = req.params.tid;
-    const {tdescription, tasknotes, notes} = req.body;
-    console.log(tasknotes);
-    const sql = "SELECT * FROM task WHERE task_id = ?";
-    db.query(sql, [tid], function(err, result) {
-        if (err) throw error;
-        if (result.length > 0) {
-            const tasknotes = result[0].task_notes +  notes
-            console.log(tasknotes);
-
-        }
-    }); */
-   /*  const finalnote = `${tnotes}\r${notes}}\r`;
-    console.log(finalnote); */
-    /* const sql = 
-        `UPDATE task SET task_description = ?, 
-        task_notes = ?
-        WHERE task_id = ?`;
-    db.query(sql, [tdescription, tnotes, tid], function(err, result) {
-        if (err) {
-            console.log(err);
-        }
-    }); */
+    var tid = req.params.tid;
+    const {tdescription, notes, tstate} = req.body;
+    if (!tdescription) {
+        res.render('editTask', { 
+            error: 'Please enter the task description!', "task": tid, "taskList": taskList
+        });
+    }
+    if (!notes) {
+        res.render('editTask', { 
+            error: 'Please enter the task notes!', "task": tid, "taskList": taskList
+        });
+    }
+    if (tdescription && notes) {
+        db.query('SELECT * FROM task WHERE task_id = ?', [tid], function(err, result) {
+            if (err) throw err;
+            // retrieve the current task notes from db
+            task_notes = result[0].task_notes;
+            // format the new notes with username, current state, date & timestamp
+            var date = new Date().toLocaleString();
+            var new_note = `${notes}, ${req.session.username}, ${tstate}, ${date}`;
+            // add new notes to the current task notes
+            task_notes += `\n${new_note}`;
+            console.log(task_notes);
+            const sql = "UPDATE task SET task_description = ?, task_notes = ? WHERE task_id = ?";
+            db.query(sql, [tdescription, task_notes, tid], function(err, result) {
+                if (err) throw err;
+                res.render('editTask', { 
+                    success: 'Task details successfully updated!', "task": tid, "taskList": "taskList"
+                }) // Render editTask.pug page using array 
+            });
+        }); 
+    }
 }

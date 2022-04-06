@@ -8,7 +8,7 @@ var planList = [];
 
 /** Display create task page */
 exports.get_create_plan = async function(req, res) {
-    if (await group.checkGroup(req.session.username, "project lead")) {
+    if (await group.checkGroup(req.session.username, "project manager")) {
         db.query('SELECT app_acronym FROM application', function(err, rows, fields) {
             if (err) {
                 console.log(err);
@@ -27,7 +27,7 @@ exports.get_create_plan = async function(req, res) {
         });
     }
     else {
-        console.log("Not authorized!");
+        console.log("User is not a project manager, not authorized!");
         res.redirect('/home');
     }
 }
@@ -59,7 +59,7 @@ exports.post_create_plan = async function(req, res) {
 
 /** Display plan list page */
 exports.plan_list = async function(req, res) {
-    // check if username belongs to project lead group
+    // check if username belongs to project manager group
     if (await group.checkGroup(req.session.username, "project lead")) {
         db.query('SELECT * FROM plan', function(err, rows, fields) {
             if (err) {
@@ -85,13 +85,13 @@ exports.plan_list = async function(req, res) {
             }
         });
     }
-    else { // if username not belong to project lead group
-        console.log("User is not a project lead, not authorized!");
+    else { // if username not belong to project manager group
+        console.log("User is not a project manager, not authorized!");
         res.redirect('/home'); // redirect to home page
     }
 }
 
-/** Display edit application page */
+/** Display edit plan page */
 /* exports.get_edit_plan = async function(req, res) {
     var planName = req.params.pname;
     db.query('SELECT * FROM plan WHERE plan_MVP_name = ?', [planName], function(err, rows, fields) {
