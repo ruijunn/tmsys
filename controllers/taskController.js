@@ -234,9 +234,9 @@ exports.post_edit_task = async function(req, res) {
             const sql = "UPDATE task SET task_description = ?, task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
             db.query(sql, [tdescription, task_notes, t_state, req.session.username, tid], function(err, result) {
                 if (err) throw err;
-                /* res.render('editTask', { 
+                res.render('editTask', { 
                     success: 'Task details successfully updated!', "task": tid, "taskList": "taskList", "inputs": inputs
-                }) // Render editTask.pug page using array  */
+                }) // Render editTask.pug page using array 
             });
         }); 
     }
