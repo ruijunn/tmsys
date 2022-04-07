@@ -76,35 +76,22 @@ body
               div(class="form-group col-md-6")
                 label="Task App Acronym:"
                 input(type="text" class="form-control" name="tappname" value=`${task.tappname}` readonly)
-              div(class="form-group col-md-6")
-                label="Current State:"
-                input(type="text" class="form-control" name="tstate" value=`${task.state}` readonly)
-              div(class="form-group col-md-6")
-                if task.state === 'open'
-                  label="Action:"
-                  select(class="form-select" name="action")
-                    option(value="" disabled selected)="-- Select action --"
-                    option(value="approve")="Approve"
-                if task.state === 'to-do-list'
-                  label="Action:"
-                  select(class="form-select" name="action")
-                    option(value="" disabled selected)="-- Select action --"
-                    option(value="workon")="Work on"
-                if task.state === 'doing'
-                  label="Action:"
-                  select(class="form-select" name="action")
-                    option(value="" disabled selected)="-- Select action --"
-                    option(value="promote")="Promote"
-                    option(value="return")="Return"
-                if task.state === 'done'
-                  label="Action:"
-                  select(class="form-select" name="action")
-                    option(value="" disabled selected)="-- Select action --"
-                    option(value="confirm")="Confirm"
-                    option(value="demote")="Demote"
               div(class="form-group")
-                label="Task Creator:"
-                input(type="text" class="form-control" name="tcreator" value=`${task.creator}` readonly)
+                label="Current State:"
+                input(type="text" class="form-control" name="state" value=`${task.state}` readonly)
+              div(class="form-group") 
+                each input in inputs 
+                  label #{input.label}
+                  select(class=input.class name=input.name)
+                    option(selected disabled hidden)="-- Select state --"
+                    each option in input.options 
+                      if input.target
+                        option=option[input.target]
+                      else 
+                        option=option
+              div(class="form-group")
+                label="Task Owner:"
+                input(type="text" class="form-control" name="towner" value=`${task.owner}` readonly)
             div(class="form-group")
               button(type="submit" class="btn btn mb-3" 
               style="background-color: #f8e5e7; color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;")="Edit"
