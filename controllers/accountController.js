@@ -1,6 +1,7 @@
 const db = require('../dbServer'); 
 const bcrypt = require('bcrypt');
 const group = require('../checkGroup');
+const alert = require('alert');
 
 /** Create a function for password validation */
 function testInput(password) {
@@ -12,12 +13,10 @@ function testInput(password) {
 exports.create_user = async function(req, res) {
     // check if username belong to admin group
     if (await group.checkGroup(req.session.username, "admin")) {
-        console.log("User is an admin");
         res.render('createUser', {isLoggedIn: req.session.isLoggedIn}); // redirect to create user page
     }
     else {
-        console.log("User is not an admin, not authorized!");
-        res.redirect('/home'); // redirect to home page
+        alert("You are not authorized to view this page!");
     }
 }
 

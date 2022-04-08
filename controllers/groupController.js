@@ -1,16 +1,15 @@
 const db = require('../dbServer'); 
 const group = require('../checkGroup');
+const alert = require('alert');
 
 /** Display create group page */
 exports.user_group = async function(req, res) {
     if (await group.checkGroup(req.session.username, "admin")) {
-        console.log("User is an admin");
         res.render('createGroup', {isLoggedIn: req.session.isLoggedIn}); // redirect to create user page
     }
     // check if username belong to user group
     else {
-        console.log("User is not an admin, not authorized!");
-        res.redirect('/home'); // redirect to home page
+        alert("You are not authorized to view this page!");
     }
 }
 
@@ -42,7 +41,6 @@ exports.user_group_create = async function(req, res) {
 exports.user_list = async function(req, res) {
     // check if username belongs to admin group
     if (await group.checkGroup(req.session.username, "admin")) {
-        console.log("User is an admin");
         var userList = [];
         db.query('SELECT username FROM accounts', function(err, rows, fields) {
             if (err) {

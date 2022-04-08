@@ -1,6 +1,7 @@
 const db = require('../dbServer'); 
 const moment = require('moment');
 const group = require('../checkGroup');
+const alert = require('alert');
 
 /** Global variables */
 var applicationArray = [];
@@ -27,8 +28,7 @@ exports.get_create_plan = async function(req, res) {
         });
     }
     else {
-        console.log("User is not a project manager, not authorized!");
-        res.redirect('/home');
+        alert("You are not authorized to view this page!");
     }
 }
 
@@ -86,7 +86,6 @@ exports.plan_list = async function(req, res) {
         });
     }
     else { // if username not belong to project manager group
-        console.log("User is not a project manager, not authorized!");
-        res.redirect('/home'); // redirect to home page
+        alert("You are not authorized to view this page!");
     }
 }

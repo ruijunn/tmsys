@@ -1,6 +1,7 @@
 const db = require('../dbServer'); 
 const moment = require('moment');
 const group = require('../checkGroup');
+const alert = require('alert');
 
 /** Global variables */
 var selectArray = [];
@@ -30,8 +31,7 @@ exports.get_create_application = async function(req, res) {
         });
     }
     else { // username not belong to project lead group
-        console.log("Not authorized!");
-        res.redirect('/home');
+        alert("You are not authorized to view this page!");
     }
 }
 
@@ -98,8 +98,7 @@ exports.application_list = async function(req, res) {
         });
     }
     else { // if username not belong to project lead group
-        console.log("Not authorized!");
-        res.redirect('/home'); // redirect to home page
+        alert("You are not authorized to view this page!");
     }
 }
 
