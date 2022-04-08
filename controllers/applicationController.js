@@ -8,9 +8,8 @@ var appList = [];
 
 /** Display create application form */
 exports.get_create_application = async function(req, res) {
-    // check if username belong to project manager or project lead group
-    if (await group.checkGroup(req.session.username, "project manager") || 
-    await group.checkGroup(req.session.username, "project lead")) {
+    // check if username belong to project lead group
+    if (await group.checkGroup(req.session.username, "project lead")) {
         const {p_create, p_open, p_toDoList, p_doing, p_done} = req.body;
         db.query('SELECT groupName FROM usergrp', [p_create, p_open, p_toDoList, p_doing, p_done], function(err, rows, fields) {
             if (err) {
@@ -30,7 +29,7 @@ exports.get_create_application = async function(req, res) {
             res.render('createApplication', {isLoggedIn: req.session.isLoggedIn, "selectArray": selectArray});
         });
     }
-    else { // username not belong to project manager or project lead group
+    else { // username not belong to project lead group
         console.log("Not authorized!");
         res.redirect('/home');
     }
@@ -66,14 +65,13 @@ exports.post_create_application = function(req, res) {
 
 /** Display application list page */
 exports.application_list = async function(req, res) {
-    // check if username belongs to project manager or project lead group
-    if (await group.checkGroup(req.session.username, "project manager") || 
-    await group.checkGroup(req.session.username, "project lead")) {
-        var appList = [];
+    // check if username belongs to project lead group
+    if (await group.checkGroup(req.session.username, "project lead")) {
         db.query('SELECT * FROM application', function(err, rows, fields) {
             if (err) {
                 console.log(err);
             } else {
+                var tempArray = [];
                 // Loop check on each row
                 for (var i = 0; i < rows.length; i++) {
                     // Create an object to save current row's data
@@ -90,15 +88,16 @@ exports.application_list = async function(req, res) {
                         'pdone': rows[i].app_permit_done,
                         'createdate': moment(rows[i].app_createDate).format('MM/DD/YYYY')
                     }
-                    appList.push(app); // Add object into array
+                    tempArray.push(app); // Add object into array
                 }
+                appList = tempArray;
                 res.render('applicationList', {
                     isLoggedIn: req.session.isLoggedIn, "appList": appList
                 }); // Render applicationList.pug page using array 
             }
         });
     }
-    else { // if username not belong to project manager or project lead group
+    else { // if username not belong to project lead group
         console.log("Not authorized!");
         res.redirect('/home'); // redirect to home page
     }
@@ -113,6 +112,7 @@ exports.get_edit_application = async function(req, res) {
         } 
         else {
             app = rows;
+            appList = [];
             for (var i = 0; i < rows.length; i++) {
                 var app = {
                     'appname': rows[i].app_acronym,

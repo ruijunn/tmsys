@@ -6,7 +6,7 @@ const group = require('../checkGroup');
 var applicationArray = [];
 var planList = [];
 
-/** Display create task page */
+/** Display create plan page */
 exports.get_create_plan = async function(req, res) {
     if (await group.checkGroup(req.session.username, "project manager")) {
         db.query('SELECT app_acronym FROM application', function(err, rows, fields) {
@@ -90,31 +90,3 @@ exports.plan_list = async function(req, res) {
         res.redirect('/home'); // redirect to home page
     }
 }
-
-/** Display edit plan page */
-/* exports.get_edit_plan = async function(req, res) {
-    var planName = req.params.pname;
-    db.query('SELECT * FROM plan WHERE plan_MVP_name = ?', [planName], function(err, rows, fields) {
-        if (err) {
-            console.log(err);
-        } 
-        else {
-            plan = rows;
-            planList = [];
-            for (var i = 0; i < rows.length; i++) {
-                var plan = {
-                    'pname': rows[i].plan_MVP_name,
-                    'startdate': moment(rows[i].plan_startDate).format('MM/DD/YYYY'), 
-                    'enddate': moment(rows[i].plan_endDate).format('MM/DD/YYYY'),
-                    'appname': rows[i].plan_app_acronym
-                }
-                planList.push(plan); // Add object into array
-            }
-            res.render('editPlan', {
-                isLoggedIn: req.session.isLoggedIn, 
-                "plan": planName, 
-                "planList": planList
-            }); // Render editApplication.pug page using array 
-        }
-    });
-} */

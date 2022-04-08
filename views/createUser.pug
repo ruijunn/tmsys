@@ -7,45 +7,7 @@ html
     link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
     link(type="text/css" href="style.css" rel="stylesheet")
   body
-    script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js")
-    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js")
-    div(class="container")
-      if isLoggedIn
-        nav(class="navbar navbar-expand-lg navbar-light")
-          span(class="navbar-brand mb-0 h1")="Task Management System"
-          div(class="container-fluid")
-            div(class="collapse navbar-collapse" id="collapsibleNavbar")
-              ul(class="navbar-nav" )
-                li(class="nav-item dropdown")
-                  a(class="nav-link dropdown toggle" href="/home" role="button" data-bs-toggle="dropdown") User Management 
-                  span(class="caret")
-                  div(class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink")
-                    a(class="dropdown-item" href="/createUser")="Create User"
-                    a(class="dropdown-item" href="/changePassword")="Change Password"
-                    a(class="dropdown-item" href="/updateEmail")="Update Email"
-                    a(class="dropdown-item" href="/details")="User List"
-                    a(class="dropdown-item" href="/createGroup")="Create Group"
-                    a(class="dropdown-item" href="/listUsers")="Assign Group"
-                  li(class="nav-item dropdown")
-                    a(class="nav-link dropdown toggle" href="/home" role="button" data-bs-toggle="dropdown") Task 
-                    span(class="caret")
-                    div(class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink")
-                      a(class="dropdown-item" href="/createTask")="Create Task"
-                      a(class="dropdown-item" href="/taskList")="Task List"
-                  li(class="nav-item dropdown")
-                    a(class="nav-link dropdown toggle" href="/home" role="button" data-bs-toggle="dropdown") Application 
-                    span(class="caret")
-                    div(class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink")
-                      a(class="dropdown-item" href="/createApplication")="Create Application"
-                      a(class="dropdown-item" href="/applicationList")="Application List"
-                  li(class="nav-item dropdown")
-                    a(class="nav-link dropdown toggle" href="/home" role="button" data-bs-toggle="dropdown") Plan 
-                    span(class="caret")
-                    div(class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink")
-                      a(class="dropdown-item" href="/createPlan")="Create Plan"
-                      a(class="dropdown-item" href="/planList")="Plan List"
-                li(class="nav-item")
-                  a(class="nav-link" href="/logout")="Logout"
+    include ./navbar.pug
       h2="Create New User"
       if error
         p(class="alert alert-danger")=error
