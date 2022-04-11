@@ -2,6 +2,7 @@ const db = require('../dbServer');
 const moment = require('moment');
 const group = require('../checkGroup');
 const alert = require('alert');
+const transporter = require('../email');
 
 /** Global variables */
 var applicationArray = [];
@@ -218,8 +219,6 @@ exports.post_edit_task = async function(req, res) {
         });
     }
     if (tdescription && notes && t_state) {
-        taskList = [];
-        inputs = [];
         db.query('SELECT * FROM task WHERE task_id = ?', [tid], function(err, result) {
             if (err) throw err;
             // retrieve the current task notes from db
@@ -233,10 +232,48 @@ exports.post_edit_task = async function(req, res) {
             const sql = "UPDATE task SET task_description = ?, task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
             db.query(sql, [tdescription, task_notes, t_state, req.session.username, tid], function(err, result) {
                 if (err) throw err;
-                res.render('editTask', { 
+                console.log("Task successfuly updated!")
+                res.redirect('/taskList');
+                /* res.render('editTask', { 
                     success: 'Task details successfully updated!', "task": tid, "taskList": "taskList", "inputs": inputs
-                }) // Render editTask.pug page using array 
+                }) // Render editTask.pug page using array  */
             });
         }); 
+        if (t_state === 'done') {
+            var emailSQL = "SELECT email FROM accounts WHERE username = ?";
+            // store the recipent and sender emails as array
+            var toList = [];
+            var sendList = [];
+            // team member have to send email notification to lead
+            // so team member (aka sender) will send email to users who belong to project lead group (aka recipient)
+            db.query(emailSQL, [req.session.username], async function(err, rows, fields) {
+                for (k in rows) {
+                    if (await group.checkGroup(rows[k].username, "project lead")) {
+                        console.log( group.checkGroup(rows[k].username, "project lead"));
+                        toList.push(rows[k].email)
+                    } 
+                }
+                for (x in rows) {
+                    if (await group.checkGroup(req.session.username, "team member")) {
+                        sendList.push(rows[x].email)
+                    }
+                }
+            });
+
+            var message = {
+                from: sendList,
+                to: toList,
+                subject: "Seeking task to be approved",
+                text: "Task has been promoted to done state, waiting for task to be approved"
+            }
+            console.log("output", message);
+            transporter.sendMail(message, function(err, info) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    console.log(info);
+                }
+            });
+        }
     }
 }
