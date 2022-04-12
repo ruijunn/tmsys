@@ -239,25 +239,37 @@ exports.post_edit_task = async function(req, res) {
                 }) // Render editTask.pug page using array  */
             });
         }); 
+
+        /** 
+         * team member have to send email notification to lead when the task has been promoted to done state
+         * if task state is done, then it will send the email
+         */
         if (t_state === 'done') {
+            /** get team member data */
             var emailSQL = "SELECT email FROM accounts WHERE username = ?";
-            // store the recipent and sender emails as array
-            var toList = [];
             var sendList = [];
-            // team member have to send email notification to lead
-            // so team member (aka sender) will send email to users who belong to project lead group (aka recipient)
             db.query(emailSQL, [req.session.username], async function(err, rows, fields) {
-                for (k in rows) {
-                    if (await group.checkGroup(rows[k].username, "project lead")) {
-                        console.log( group.checkGroup(rows[k].username, "project lead"));
-                        toList.push(rows[k].email)
-                    } 
-                }
                 for (x in rows) {
                     if (await group.checkGroup(req.session.username, "team member")) {
                         sendList.push(rows[x].email)
                     }
                 }
+                console.log(sendList); 
+            });
+
+            /**
+             * get project lead data
+             * sql = select email from accounts where username in (select username from usergrp_list where groupname = "project lead");
+             * output : "dev1@gmail.com"
+             */
+            
+            const sql = 'SELECT email FROM accounts where username IN (SELECT username FROM usergrp_list WHERE groupname = "project lead")';
+            var toList = [];
+            db.query(sql, function(err, result, fields) {
+                for (k in result) {
+                    toList.push(result[k].email);
+                }
+                console.log(toList);
             });
 
             var message = {
@@ -266,7 +278,7 @@ exports.post_edit_task = async function(req, res) {
                 subject: "Seeking task to be approved",
                 text: "Task has been promoted to done state, waiting for task to be approved"
             }
-            console.log("output", message);
+
             transporter.sendMail(message, function(err, info) {
                 if (err) {
                     console.log(err)

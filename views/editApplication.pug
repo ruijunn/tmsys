@@ -15,36 +15,36 @@ html
           p(class="alert alert-success")=success
       div
         form(class="row g-3" method="post")
-          div(class="form-group")
+          div(class="form-group col-md-6")
             label="Application Name:"
             input(type="text" class="form-control" name="appname" placeholder="appname" value=`${app}` readonly)
             input(type="hidden" name="appname" value=`${app}`)
           each app in appList
+            div(class="form-group col-md-6")
+              label="Application Release Number:"
+              input(type="text" class="form-control" name="apprnumber" value=`${app.rnumber}` readonly)
             div(class="form-group")
               label="Application Description:"
               textarea(class="form-control" name="appdescription" placeholder=`${app.description}` value=`${app.description}` rows="3")
-            div(class="form-group col-md-4")
-              label="Application Rnumber:"
-              input(type="text" class="form-control" name="apprnumber" value=`${app.rnumber}` readonly)
-            div(class="form-group col-md-4")
+            div(class="form-group col-md-6")
               label="Start Date:"
-              input(type="text" class="form-control" name="startdate" value=`${app.startdate}` readonly)
-            div(class="form-group col-md-4")
+              input(type="text" class="form-control" name="startdate" placeholder=`${app.startdate}` value=`${app.startdate}` onfocus="this.type='date'" onblur="this.type='text'")
+            div(class="form-group col-md-6")
               label="End Date:"
-              input(type="text" class="form-control" name="enddate" value=`${app.enddate}` readonly)
-            div(class="form-group col-md-4")
-              label="Create Permit:"
+              input(type="text" class="form-control" name="enddate" placeholder=`${app.enddate}` value=`${app.enddate}` onfocus="this.type='date'" onblur="this.type='text'")
+            div(class="form-group")
+              label="Create Task Permit:"
               input(type="text" class="form-control" name="p_create" value=`${app.pcreate}`)
-            div(class="form-group col-md-4")
+            div(class="form-group")
               label="Open Permit:"
               input(type="text" class="form-control" name="p_open" value=`${app.popen}`)
-            div(class="form-group col-md-4")
+            div(class="form-group")
               label="To-Do-List Permit:"
               input(type="text" class="form-control" name="p_toDoList" value=`${app.ptoDoList}`)
-            div(class="form-group col-md-4")
+            div(class="form-group")
               label="Doing Permit :"
               input(type="text" class="form-control" name="p_doing" value=`${app.pdoing}`)
-            div(class="form-group col-md-4")
+            div(class="form-group")
               label="Done Permit :"
               input(type="text" class="form-control" name="p_done" value=`${app.pdone}`)
           div(class="form-group")

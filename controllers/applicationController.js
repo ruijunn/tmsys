@@ -138,6 +138,11 @@ exports.get_edit_application = async function(req, res) {
 exports.post_edit_application = async function(req, res) {
     var appname = req.params.appname;
     const {appdescription, p_create, p_open, p_toDoList, p_doing, p_done} = req.body;
+    if (!appdescription) {
+        res.render('editApplication', { 
+            error: 'Please enter app description!', "app": appname, "appList": appList
+        });
+    }
     if (appdescription && p_create && p_open && p_toDoList && p_doing && p_done) {
 	    const sql = 
             `UPDATE application SET app_description = ?, app_permit_create = ?, app_permit_open = ?, 
@@ -160,10 +165,5 @@ exports.post_edit_application = async function(req, res) {
                 success: 'Successfully edited application details!', "app": appname, "appList": appList
             }); // Render editApplication.pug page using array 
         });
-    }
-    else {
-        res.render('editApplication', {
-            error: 'Please enter application details!', "app": appname, "appList": appList
-        }); // Render editApplication.pug page using array 
     }
 }
