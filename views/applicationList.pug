@@ -10,18 +10,19 @@ html
     include ./navbar.pug
       h1="Application List"
       block content
-      table(class="table table-bordered table-hover table-sm")  
+      table(class="table table-bordered table-sm")  
         tr 
           th App Acronym
           th Description 
           th Rnumber
           th Start Date 
           th End Date
-          th App Permit Create 
-          th App Permit Open 
-          th App Permit ToDoList 
-          th App Permit Doing 
-          th App Permit Done
+          th Open Permit
+          th ToDoList Permit
+          th Doing Permit
+          th Done Permit
+          th Create Task Permit 
+          th Create Plan Permit
           th Create Date
           th Action
         for app in appList
@@ -31,11 +32,12 @@ html
             td #{app.rnumber}
             td #{app.startdate}
             td #{app.enddate}
-            td #{app.pcreate}
             td #{app.popen}
             td #{app.ptoDoList}
             td #{app.pdoing}
             td #{app.pdone}
+            td #{app.pcreateTask}
+            td #{app.pcreatePlan}
             td #{app.createdate}
             td 
               a(href="/editApplication/"+app.appname type="submit")="Edit"

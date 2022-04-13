@@ -1,6 +1,7 @@
 const db = require('../dbServer'); 
 const bcrypt = require('bcrypt');
 const group = require('../checkGroup');
+const alert = require('alert');
 
 /* Display user list page */
 exports.user_list = async function(req, res) {
@@ -30,8 +31,7 @@ exports.user_list = async function(req, res) {
     });
   }
   else {
-    console.log("User is not an admin, not authorized!");
-    res.redirect('/home');
+    alert("You are not authorized to view this page!");
   }
 }
 

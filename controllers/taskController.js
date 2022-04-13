@@ -13,7 +13,7 @@ var inputs = [];
 /** Display create task page */
 exports.get_create_task = async function(req, res) {
     db.query("SELECT * FROM application", async function(err, rows, fields) {
-        if (await group.checkGroup(req.session.username, rows[0].app_permit_create)) {
+        if (await group.checkGroup(req.session.username, rows[0].app_permit_createTask)) {
             for (var i = 0; i < rows.length; i++) {
                 var app = {
                     'appname': rows[i].app_acronym

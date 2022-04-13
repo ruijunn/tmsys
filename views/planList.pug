@@ -17,7 +17,7 @@ html
           th End Date
           th Plan App Acronym
           th Plan Create Date
-          //th Action
+          th Action
         for plan in planList
           tr
             td #{plan.pname}
@@ -25,6 +25,6 @@ html
             td #{plan.enddate}
             td #{plan.appname}
             td #{plan.createDate}
-            //td 
+            td 
               a(href="/editPlan/"+plan.pname type="submit")="Edit"
                      

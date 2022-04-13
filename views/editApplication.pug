@@ -8,7 +8,7 @@ html
     link(type="text/css" href="/style.css" rel="stylesheet")
   body
     include ./navbar.pug
-      h2(style="text-align: left")="Edit Application"
+      h2(style="text-align: left")="Edit Application:"
       if error
           p(class="alert alert-danger")=error
       if success
@@ -19,7 +19,7 @@ html
             label="Application Name:"
             input(type="text" class="form-control" name="appname" placeholder="appname" value=`${app}` readonly)
             input(type="hidden" name="appname" value=`${app}`)
-          each app in appList
+          each app in appList 
             div(class="form-group col-md-6")
               label="Application Release Number:"
               input(type="text" class="form-control" name="apprnumber" value=`${app.rnumber}` readonly)
@@ -28,25 +28,63 @@ html
               textarea(class="form-control" name="appdescription" placeholder=`${app.description}` value=`${app.description}` rows="3")
             div(class="form-group col-md-6")
               label="Start Date:"
-              input(type="text" class="form-control" name="startdate" placeholder=`${app.startdate}` value=`${app.startdate}` onfocus="this.type='date'" onblur="this.type='text'")
+              input(type="date" class="form-control" name="startdate" placeholder=`${app.startdate}` value=`${app.startdate}`)
             div(class="form-group col-md-6")
               label="End Date:"
-              input(type="text" class="form-control" name="enddate" placeholder=`${app.enddate}` value=`${app.enddate}` onfocus="this.type='date'" onblur="this.type='text'")
-            div(class="form-group")
-              label="Create Task Permit:"
-              input(type="text" class="form-control" name="p_create" value=`${app.pcreate}`)
-            div(class="form-group")
-              label="Open Permit:"
-              input(type="text" class="form-control" name="p_open" value=`${app.popen}`)
-            div(class="form-group")
-              label="To-Do-List Permit:"
-              input(type="text" class="form-control" name="p_toDoList" value=`${app.ptoDoList}`)
-            div(class="form-group")
-              label="Doing Permit :"
-              input(type="text" class="form-control" name="p_doing" value=`${app.pdoing}`)
-            div(class="form-group")
-              label="Done Permit :"
-              input(type="text" class="form-control" name="p_done" value=`${app.pdone}`)
+              input(type="date" class="form-control" name="enddate" placeholder=`${app.enddate}` value=`${app.enddate}`)
+          div(class="form-group")
+            label="Permissions for Respective Permits:"
+            block content
+            table(class="table table-bordered table-sm")
+              tr 
+                th Create Task Permit:
+                td 
+                  select(class="form-select" name="p_createTask")
+                    option(value="" disabled selected)="-- Select a group --"
+                    if permitArray
+                      each g in permitArray 
+                        option(value=`${g.groupname}`)=`${g.groupname}`  
+              tr 
+                th Create Plan Permit:
+                td 
+                  select(class="form-select" name="p_createPlan")
+                    option(value="" disabled selected)="-- Select a group --"
+                    if permitArray
+                      each g in permitArray 
+                        option(value=`${g.groupname}`)=`${g.groupname}`  
+              tr 
+                th Open Permit:
+                td 
+                  select(class="form-select" name="p_open")
+                    option(value="" disabled selected)="-- Select a group --"
+                    if permitArray
+                      each g in permitArray 
+                        option(value=`${g.groupname}`)=`${g.groupname}`
+              tr 
+                th To-Do-List Permit:
+                td 
+                  select(class="form-select" name="p_toDoList")
+                    option(value="" disabled selected)="-- Select a group --"
+                    if permitArray
+                      each g in permitArray 
+                        option(value=`${g.groupname}`)=`${g.groupname}`
+              tr 
+                th Doing Permit:
+                td 
+                  select(class="form-select" name="p_doing")
+                    option(value="" disabled selected)="-- Select a group --"
+                    if permitArray
+                      each g in permitArray 
+                        option(value=`${g.groupname}`)=`${g.groupname}`
+              tr 
+                th Done Permit:
+                td 
+                  select(class="form-select" name="p_done")
+                    option(value="" disabled selected)="-- Select a group --"
+                    if permitArray
+                      each g in permitArray 
+                        option(value=`${g.groupname}`)=`${g.groupname}`
+        
           div(class="form-group")
             button(type="submit" class="btn btn mb-3" 
             style="background-color: #f8e5e7; color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;")="Edit"

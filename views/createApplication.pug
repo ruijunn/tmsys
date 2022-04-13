@@ -35,7 +35,15 @@ html
               tr 
                 th Create Task Permit:
                 td 
-                  select(class="form-select" name="p_create")
+                  select(class="form-select" name="p_createTask")
+                    option(value="" disabled selected)="-- Select a group --"
+                    if selectArray
+                      each s in selectArray 
+                        option(value=`${s.groupname}`)=`${s.groupname}`  
+              tr 
+                th Create Plan Permit:
+                td 
+                  select(class="form-select" name="p_createPlan")
                     option(value="" disabled selected)="-- Select a group --"
                     if selectArray
                       each s in selectArray 

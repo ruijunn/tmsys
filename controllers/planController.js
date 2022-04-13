@@ -9,27 +9,31 @@ var planList = [];
 
 /** Display create plan page */
 exports.get_create_plan = async function(req, res) {
-    if (await group.checkGroup(req.session.username, "project manager")) {
-        db.query('SELECT app_acronym FROM application', function(err, rows, fields) {
-            if (err) {
-                console.log(err);
-            }
-            else {
-                // Loop check on each row
-                for (var i = 0; i < rows.length; i++) {
-                // Create an object to save current row's data
-                    var app = {
-                        'appname': rows[i].app_acronym
-                    }
-                    applicationArray.push(app); // Add object into array
+    db.query("SELECT * FROM application", async function(err, rows, fields) {
+        if (await group.checkGroup(req.session.username, rows[0].app_permit_createPlan)) {
+            db.query('SELECT app_acronym FROM application', function(err, rows, fields) {
+                if (err) {
+                    console.log(err);
                 }
-            }
-            res.render('createPlan', {isLoggedIn: req.session.isLoggedIn, "applicationArray": applicationArray});
-        });
-    }
-    else {
-        alert("You are not authorized to view this page!");
-    }
+                else {
+                    var tempArray = [];
+                    // Loop check on each row
+                    for (var i = 0; i < rows.length; i++) {
+                    // Create an object to save current row's data
+                        var app = {
+                            'appname': rows[i].app_acronym
+                        }
+                        tempArray.push(app); // Add object into array
+                    }
+                }
+                applicationArray = tempArray;
+                res.render('createPlan', {isLoggedIn: req.session.isLoggedIn, "applicationArray": applicationArray});
+            });
+        }
+        else {
+            alert("You are not authorized to view this page!");
+        }
+    });
 }
 
 /** Handle form submit for create plan */
@@ -60,7 +64,7 @@ exports.post_create_plan = async function(req, res) {
 /** Display plan list page */
 exports.plan_list = async function(req, res) {
     // check if username belongs to project manager group
-    if (await group.checkGroup(req.session.username, "project lead")) {
+    if (await group.checkGroup(req.session.username, "project manager")) {
         db.query('SELECT * FROM plan', function(err, rows, fields) {
             if (err) {
                 console.log(err);
@@ -71,10 +75,10 @@ exports.plan_list = async function(req, res) {
                     // Create an object to save current row's data
                     var plan = {
                         'pname': rows[i].plan_MVP_name,
-  				        'startdate': moment(rows[i].plan_startDate).format('MM/DD/YYYY'), 
-				        'enddate': moment(rows[i].plan_endDate).format('MM/DD/YYYY'),
+  				        'startdate': moment(rows[i].plan_startDate).format('DD/MM/YYYY'), 
+				        'enddate': moment(rows[i].plan_endDate).format('DD/MM/YYYY'),
                         'appname': rows[i].plan_app_acronym,
-                        'createDate': moment(rows[i].plan_createDate).format('MM/DD/YYYY'), 
+                        'createDate': moment(rows[i].plan_createDate).format('DD/MM/YYYY'), 
                     }
                     tempArray.push(plan); // Add object into array
                 }
@@ -87,5 +91,62 @@ exports.plan_list = async function(req, res) {
     }
     else { // if username not belong to project manager group
         alert("You are not authorized to view this page!");
+    }
+}
+
+/** Display edit plan page */
+exports.get_edit_plan = async function(req, res) {
+    var pname = req.params.pname;
+    db.query('SELECT * FROM plan WHERE plan_MVP_name = ?', [pname], function(err, rows, fields) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            plan = rows;
+            planList = [];
+            for (var i = 0; i < rows.length; i++) {
+                var plan = {
+                    'pname': rows[i].plan_MVP_name,
+                    'pstartDate': rows[i].plan_startDate,
+                    'pendDate': rows[i].plan_endDate,
+                    'appname': rows[i].plan_app_acronym
+                }
+                planList.push(plan);
+            }
+            res.render('editPlan', {
+                isLoggedIn: req.session.isLoggedIn, "plan": pname, "planList": planList
+            }); // Render editPlan.pug page using array 
+        }
+    });
+}
+
+exports.post_edit_plan = async function(req, res) {
+    var pname = req.params.pname;
+    const { pstartDate, pendDate } = req.body;
+    if (pstartDate && pendDate) {
+        const sql = "UPDATE plan SET plan_startDate = ?, plan_endDate = ? WHERE plan_MVP_name = ?";
+        db.query(sql, [pstartDate, pendDate, pname], function(err, result) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                db.query('SELECT * FROM plan WHERE plan_MVP_name = ?', [pname], function(err, rows, fields) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                        plan = rows;
+                    }
+                });
+            }
+            res.render('editPlan', {
+                success: 'Successfully edited plan details!', "plan": pname, "planList": planList
+            }); // Render editPlan.pug page using array 
+        })
+    }
+    else {
+        res.render('editPlan', {
+            error: 'Please enter plan start or end date!', "plan": pname, "planList": planList
+        }); // Render editPlan.pug page using array 
     }
 }

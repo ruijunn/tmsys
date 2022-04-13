@@ -62,8 +62,7 @@ exports.user_list = async function(req, res) {
         });
     }
     else { // if username not belong to admin group
-        console.log("User is not an admin, not authorized!");
-        res.redirect('/home'); // redirect to home page
+        alert("You are not authorized to view this page!");
     }
 }
 
