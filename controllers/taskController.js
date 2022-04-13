@@ -39,6 +39,7 @@ exports.get_create_task = async function(req, res) {
         }
         else {
             alert("You are not authorized to view this page!");
+            res.redirect('/home');
         }
     });
 }
@@ -128,6 +129,7 @@ exports.task_list = async function(req, res) {
     }
     else { // if username not belong to project lead, project manager or team member group
         alert("You are not authorized to view this page!");
+        res.redirect('/home');
     }
 }
 

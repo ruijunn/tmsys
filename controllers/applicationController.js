@@ -30,11 +30,12 @@ exports.get_create_application = async function(req, res) {
                 }
                 selectArray = sArray;
             }
-            res.render('createApplication', {isLoggedIn: req.session.isLoggedIn, "selectArray": selectArray});
+            res.render('createApplication', {isLoggedIn: req.session.isLoggedIn, "selectArray": selectArray}); // Render createApplication.pug page using array 
         });
     }
     else { // username not belong to project lead group
         alert("You are not authorized to view this page!");
+        res.redirect('/home');
     }
 }
 
@@ -55,7 +56,7 @@ exports.post_create_application = function(req, res) {
             });
         }
         else { // existing application name, display error message
-            res.render('createApplication', {error: 'Application name already exists!', "selectArray": selectArray});
+            res.render('createApplication', {error: 'Application name already exists!', "selectArray": selectArray}); // Render createApplication.pug page using array 
         }
     });
 }
@@ -97,6 +98,7 @@ exports.application_list = async function(req, res) {
     }
     else { // if username not belong to project lead group
         alert("You are not authorized to view this page!");
+        res.redirect('/home');
     }
 }
 
@@ -176,6 +178,6 @@ exports.post_edit_application = async function(req, res) {
     else {
         res.render('editApplication', {
             error: 'Please enter application details!', "app": appname, "appList": appList, "permitArray": permitArray
-        });
+        }); // Render editApplication.pug page using array 
     }
 }

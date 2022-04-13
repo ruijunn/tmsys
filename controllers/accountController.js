@@ -17,6 +17,7 @@ exports.create_user = async function(req, res) {
     }
     else {
         alert("You are not authorized to view this page!");
+        res.redirect('/home');
     }
 }
 

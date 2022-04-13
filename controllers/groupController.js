@@ -10,6 +10,7 @@ exports.user_group = async function(req, res) {
     // check if username belong to user group
     else {
         alert("You are not authorized to view this page!");
+        res.redirect('/home');
     }
 }
 
@@ -63,6 +64,7 @@ exports.user_list = async function(req, res) {
     }
     else { // if username not belong to admin group
         alert("You are not authorized to view this page!");
+        res.redirect('/home');
     }
 }
 

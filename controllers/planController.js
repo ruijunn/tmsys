@@ -27,11 +27,12 @@ exports.get_create_plan = async function(req, res) {
                     }
                 }
                 applicationArray = tempArray;
-                res.render('createPlan', {isLoggedIn: req.session.isLoggedIn, "applicationArray": applicationArray});
+                res.render('createPlan', {isLoggedIn: req.session.isLoggedIn, "applicationArray": applicationArray}); // Render createPlan.pug page using array 
             });
         }
         else {
             alert("You are not authorized to view this page!");
+            res.redirect('/home');
         }
     });
 }
@@ -48,16 +49,16 @@ exports.post_create_plan = async function(req, res) {
                 const sql2 = "INSERT INTO plan (plan_MVP_name, plan_startDate, plan_endDate, plan_app_acronym, plan_createDate) VALUES(?, ?, ?, ?, ?)";
                 db.query(sql2, [pname, pstartDate, pendDate, appname, planCreateDate], function(error, result) {
                     if (error) throw error;
-                    res.render('createPlan', {success: 'Plan created successfully!', "applicationArray": applicationArray});
+                    res.render('createPlan', {success: 'Plan created successfully!', "applicationArray": applicationArray}); // Render createPlan.pug page using array 
                 });
             }
             else { // existing plan name, display error message
-                res.render('createPlan', {error: 'Plan MVP Name already exists!', "applicationArray": applicationArray});
+                res.render('createPlan', {error: 'Plan MVP Name already exists!', "applicationArray": applicationArray}); // Render createPlan.pug page using array 
             }
         });
     }
     else {
-        res.render('createPlan', {error: 'Please enter plan details!', "applicationArray": applicationArray});
+        res.render('createPlan', {error: 'Please enter plan details!', "applicationArray": applicationArray}); // Render createPlan.pug page using array 
     }
 }
 
@@ -91,6 +92,7 @@ exports.plan_list = async function(req, res) {
     }
     else { // if username not belong to project manager group
         alert("You are not authorized to view this page!");
+        res.redirect('/home');
     }
 }
 
@@ -120,6 +122,7 @@ exports.get_edit_plan = async function(req, res) {
     });
 }
 
+/** Handle form submit for edit plan */
 exports.post_edit_plan = async function(req, res) {
     var pname = req.params.pname;
     const { pstartDate, pendDate } = req.body;
