@@ -33,10 +33,10 @@ html
               label="Add Notes:"
               textarea(class="form-control" name="notes")
             div(class="form-group col-md-6")
-              label="Task Plan:"
+              label="Assigned Plan:"
               input(type="text" class="form-control" name="tplan" value=`${task.tplan}` readonly)
             div(class="form-group col-md-6")
-              label="Task App Acronym:"
+              label="Assigned Application:"
               input(type="text" class="form-control" name="tappname" value=`${task.tappname}` readonly)
             div(class="form-group")
               label="Current State:"
@@ -52,7 +52,7 @@ html
                     else 
                       option=option
             div(class="form-group")
-              label="Task Owner:"
+              label="Last Edited By:"
               input(type="text" class="form-control" name="towner" value=`${task.owner}` readonly)
           div(class="form-group")
             button(type="submit" class="btn btn mb-3" 

@@ -14,6 +14,7 @@ var inputs = [];
 exports.get_create_task = async function(req, res) {
     db.query("SELECT * FROM application", async function(err, rows, fields) {
         if (await group.checkGroup(req.session.username, rows[0].app_permit_createTask)) {
+            applicationArray = [];
             for (var i = 0; i < rows.length; i++) {
                 var app = {
                     'appname': rows[i].app_acronym
@@ -25,12 +26,14 @@ exports.get_create_task = async function(req, res) {
                     console.log(err); 
                 }
                 else {
+                    var pArray = [];
                     for (var x = 0; x < rows.length; x++) {
                         var plan = {
                             'pname': rows[x].plan_MVP_name
                         }
-                        planArray.push(plan);
+                        pArray.push(plan);
                     }
+                    planArray = pArray;
                 }
                 res.render('createTask', {
                     isLoggedIn: req.session.isLoggedIn, "applicationArray": applicationArray, "planArray": planArray
@@ -65,23 +68,17 @@ exports.post_create_task = function(req, res) {
                 task_app_acronym, task_state, task_creator, task_owner, task_createDate) 
                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             db.query(sql2, [newTaskID, taskname, taskdescription, auditlog, pname, appname, currentState, 
-                req.session.username, req.session.username, taskCreateDate], function(error, result) {
+                req.session.username, req.session.username, taskCreateDate], function(error, row, fields) {
                 if (error) {
                     console.log(error);
                 }
                 else {
-                    const sql3 = "SELECT app_Rnumber FROM application WHERE app_acronym = ?";
-                    db.query(sql3, [appname], function(error, result) {
+                    const newRnumber = result[0].app_Rnumber + 1;
+                    const sql4 = "UPDATE application SET app_Rnumber = ? WHERE app_acronym = ?";
+                    db.query(sql4, [newRnumber, appname], function(error, result) {
                         if (error) throw error;
-                        if (result.length > 0) {
-                            const newRnumber = result[0].app_Rnumber + 1;
-                            const sql4 = "UPDATE application SET app_Rnumber = ? WHERE app_acronym = ?";
-                            db.query(sql4, [newRnumber, appname], function(error, result) {
-                                if (error) throw error;
-                                console.log("AppRnumber updated!");
-                            })
-                        }
-                    });
+                        console.log("AppRnumber updated!");
+                    })
                 }
                 res.render('createTask', {
                     success: 'Task created successfully!', "applicationArray": applicationArray, "planArray": planArray
@@ -185,7 +182,7 @@ exports.get_edit_task = async function(req, res) {
                             name: "t_state",
                             type: "select",
                             class: "form-select",
-                            options: ["todolist", "doing", "done"]
+                            options: ["todolist", "done"]
                         }]
                     }
                     else if (rows[i].task_state === 'done' && await group.checkGroup(req.session.username, result[0].app_permit_done)) {
