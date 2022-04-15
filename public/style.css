@@ -3,6 +3,8 @@
 body {
     font-family: Poppins;
     font-size: 20px;
+    margin: 0;
+    padding: 0;
 }
 
 /* css for login */
@@ -40,9 +42,9 @@ body {
     cursor: pointer;
 }
 
-/* css for home page */
+/** css for navbar **/
 
-.container nav {
+nav {
     background-color: #f8e5e7;
 }
 
