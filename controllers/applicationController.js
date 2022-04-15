@@ -42,23 +42,28 @@ exports.get_create_application = async function(req, res) {
 /** Handle form submit for create application */
 exports.post_create_application = function(req, res) {
     const {appname, appdescription, startdate, enddate, p_open, p_toDoList, p_doing, p_done, p_createTask, p_createPlan} = req.body;
-    const sql = "SELECT app_acronym FROM application WHERE app_acronym = ?";
-    db.query(sql, [appname], function(error, result) {
-        if (error) throw error;
-        if (result.length === 0) { // if appname not exists in db, then create new application
-            const appCreateDate = new Date();
-            const sql2 = `INSERT INTO application (app_acronym, app_description, app_Rnumber, app_startDate, app_endDate, app_permit_open, 
-                app_permit_toDoList, app_permit_doing, app_permit_done, app_permit_createTask, app_permit_createPlan, app_createDate) 
-                VALUES(?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            db.query(sql2, [appname, appdescription, startdate, enddate, p_open, p_toDoList, p_doing, p_done, p_createTask, p_createPlan, appCreateDate], function(error, result) {
-                if (error) throw error;
-                res.render('createApplication', {success: 'Application created successfully!', "selectArray": selectArray});
-            });
-        }
-        else { // existing application name, display error message
-            res.render('createApplication', {error: 'Application name already exists!', "selectArray": selectArray}); // Render createApplication.pug page using array 
-        }
-    });
+    if (appname && appdescription && startdate && enddate && p_open && p_toDoList && p_doing && p_done && p_createTask && p_createPlan) {
+        const sql = "SELECT app_acronym FROM application WHERE app_acronym = ?";
+        db.query(sql, [appname], function(error, result) {
+            if (error) throw error;
+            if (result.length === 0) { // if appname not exists in db, then create new application
+                const appCreateDate = new Date();
+                const sql2 = `INSERT INTO application (app_acronym, app_description, app_Rnumber, app_startDate, app_endDate, app_permit_open, 
+                    app_permit_toDoList, app_permit_doing, app_permit_done, app_permit_createTask, app_permit_createPlan, app_createDate) 
+                    VALUES(?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+                db.query(sql2, [appname, appdescription, startdate, enddate, p_open, p_toDoList, p_doing, p_done, p_createTask, p_createPlan, appCreateDate], function(error, result) {
+                    if (error) throw error;
+                    res.render('createApplication', {success: 'Application created successfully!', "selectArray": selectArray}); // Render createApplication.pug page using array 
+                });
+            }
+            else { // existing application name, display error message
+                res.render('createApplication', {error: 'Application name already exists!', "selectArray": selectArray}); // Render createApplication.pug page using array 
+            }
+        });
+    }
+    else { // display error message if there are empty fields
+        res.render('createApplication', {error: 'Please enter application details!', "selectArray": selectArray}); // Render createApplication.pug page using array 
+    }
 }
 
 /** Display application list page */
