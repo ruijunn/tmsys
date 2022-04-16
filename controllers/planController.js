@@ -27,7 +27,8 @@ exports.get_create_plan = async function(req, res) {
                     }
                 }
                 applicationArray = tempArray;
-                res.render('createPlan', {isLoggedIn: req.session.isLoggedIn, "applicationArray": applicationArray}); // Render createPlan.pug page using array 
+                res.render('createPlan', {isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username,
+                    "applicationArray": applicationArray}); // Render createPlan.pug page using array 
             });
         }
         else {
@@ -85,7 +86,7 @@ exports.plan_list = async function(req, res) {
                 }
                 planList = tempArray;
                 res.render('planList', {
-                    isLoggedIn: req.session.isLoggedIn, "planList": planList
+                    isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username, "planList": planList
                 }); // Render planList.pug page using array 
             }
         });
@@ -116,7 +117,7 @@ exports.get_edit_plan = async function(req, res) {
                 planList.push(plan);
             }
             res.render('editPlan', {
-                isLoggedIn: req.session.isLoggedIn, "plan": pname, "planList": planList
+                isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username, "plan": pname, "planList": planList
             }); // Render editPlan.pug page using array 
         }
     });

@@ -13,7 +13,7 @@ function testInput(password) {
 exports.create_user = async function(req, res) {
     // check if username belong to admin group
     if (await group.checkGroup(req.session.username, "admin")) {
-        res.render('createUser', {isLoggedIn: req.session.isLoggedIn}); // redirect to create user page
+        res.render('createUser', {isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username}); // redirect to create user page
     }
     else {
         alert("You are not authorized to view this page!");
@@ -34,7 +34,16 @@ exports.create_user_validation = async function(req, res) {
                 if (testInput(password)) { // if password validation returns true, then create new user
                     const sql2 = "INSERT INTO accounts (username, password, email, role, status) VALUES (?, ?, ?, ?, 1)";
                     db.query(sql2, [username, hashedPwd, email, grpName], function (error, result) {
-                        if (error) throw error; 
+                        if (error) {
+                            console.log(error);
+                        }
+                        else {
+                            const sql2 = "INSERT INTO usergrp_list (username, groupname) VALUES (?, ?)";
+                            db.query(sql2, [username, grpName], function (error, result) {
+                                if (error) throw error; 
+                                console.log("Username and group is inserted into database!");
+                            });
+                        }
                         res.render('createUser', {success: 'New user created successfully!'});
                     });
                 }
@@ -54,7 +63,7 @@ exports.create_user_validation = async function(req, res) {
 
 /** Display change password page */
 exports.changePwd = async function(req, res) {
-    res.render('changePassword', {isLoggedIn: req.session.isLoggedIn});
+    res.render('changePassword', {isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username});
 }
 
 /** Handle change password function */
@@ -84,7 +93,7 @@ exports.changePwd_validation = async function(req, res) {
 
 /** Display update email page */
 exports.update_email = function(req, res) {
-    res.render('updateEmail', {isLoggedIn: req.session.isLoggedIn});
+    res.render('updateEmail', {isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username});
 }
 
 /** Handle update email function */

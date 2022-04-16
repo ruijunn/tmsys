@@ -8,7 +8,7 @@ html
     link(type="text/css" href="/style.css" rel="stylesheet")
   body
     include ./navbar.pug
-      h2(style="text-align: left")="Edit Application:"
+      h2(style="text-align: left")=`Edit Application: ${app}`
       if error
           p(class="alert alert-danger")=error
       if success

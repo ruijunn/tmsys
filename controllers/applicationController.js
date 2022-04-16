@@ -30,7 +30,9 @@ exports.get_create_application = async function(req, res) {
                 }
                 selectArray = sArray;
             }
-            res.render('createApplication', {isLoggedIn: req.session.isLoggedIn, "selectArray": selectArray}); // Render createApplication.pug page using array 
+            res.render('createApplication', {
+                isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username, 
+                "selectArray": selectArray}); // Render createApplication.pug page using array 
         });
     }
     else { // username not belong to project lead group
@@ -96,7 +98,7 @@ exports.application_list = async function(req, res) {
                 }
                 appList = tempArray;
                 res.render('applicationList', {
-                    isLoggedIn: req.session.isLoggedIn, "appList": appList
+                    isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username, "appList": appList
                 }); // Render applicationList.pug page using array 
             }
         });
@@ -144,7 +146,8 @@ exports.get_edit_application = async function(req, res) {
                 }
                 permitArray = gArray;
                 res.render('editApplication', {
-                    isLoggedIn: req.session.isLoggedIn, "app": appname, "appList": appList, "permitArray": permitArray
+                    isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username,
+                    "app": appname, "appList": appList, "permitArray": permitArray
                 }); // Render editApplication.pug page using array 
             });
             

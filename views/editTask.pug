@@ -8,11 +8,11 @@ html
     link(type="text/css" href="/style.css" rel="stylesheet")
   body
     include ./navbar.pug
-      h2(style="text-align: left")="Edit Task"
+      h2(style="text-align: left")=`Edit Task: ${task}`
       if error
-          p(class="alert alert-danger")=error
+        p(class="alert alert-danger")=error
       if success
-          p(class="alert alert-success")=success
+        p(class="alert alert-success")=success
       div
         form(class="row g-3" method="post")
           div(class="form-group col-md-6")

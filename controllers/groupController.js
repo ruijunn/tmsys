@@ -5,7 +5,7 @@ const alert = require('alert');
 /** Display create group page */
 exports.user_group = async function(req, res) {
     if (await group.checkGroup(req.session.username, "admin")) {
-        res.render('createGroup', {isLoggedIn: req.session.isLoggedIn}); // redirect to create user page
+        res.render('createGroup', {isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username}); // redirect to create user page
     }
     // check if username belong to user group
     else {
@@ -56,8 +56,7 @@ exports.user_list = async function(req, res) {
                     userList.push(user); // Add object into array
                 }
                 res.render('listUsers', {
-                    isLoggedIn: req.session.isLoggedIn, 
-                    "userList": userList
+                    isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username, "userList": userList
                 }); // Render listUsers.pug page using array 
             }
         });
@@ -98,7 +97,8 @@ exports.get_user_group = async function(req, res) {
                     }
                 }
                 // console.log("sss", selectArray);
-                res.render('assignGroup', {isLoggedIn: req.session.isLoggedIn, "userA": username, "userG": user, "selectArray": selectArray});
+                res.render('assignGroup', {isLoggedIn: req.session.isLoggedIn, 
+                    userLoggedIn: req.session.username, "userA": username, "userG": user, "selectArray": selectArray});
             });
         }
     });
@@ -142,7 +142,8 @@ exports.get_delete_user_group = async function(req, res) {
                     }
                 }
                 // console.log("sss", deleteArray);
-                res.render('removeGroup', {isLoggedIn: req.session.isLoggedIn, "userA": username, "deleteArray": deleteArray});
+                res.render('removeGroup', {isLoggedIn: req.session.isLoggedIn, 
+                    userLoggedIn: req.session.username, "userA": username, "deleteArray": deleteArray});
             });
         }
     });

@@ -25,7 +25,7 @@ exports.user_list = async function(req, res) {
           userList.push(user); // Add object into array
       }
       res.render('details', {
-        isLoggedIn: req.session.isLoggedIn, 
+        isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username,
         "userList": userList}); // Render details.pug page using array 
       }
     });
@@ -48,7 +48,7 @@ exports.get_edit_user = function(req, res) {
     else {
       user = rows;
       //console.log(user);
-      res.render('editUser', {isLoggedIn: req.session.isLoggedIn, "userA": user}) 
+      res.render('editUser', {isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username, "userA": user}) 
     }
   });
 }

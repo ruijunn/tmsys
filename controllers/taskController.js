@@ -36,7 +36,8 @@ exports.get_create_task = async function(req, res) {
                     planArray = pArray;
                 }
                 res.render('createTask', {
-                    isLoggedIn: req.session.isLoggedIn, "applicationArray": applicationArray, "planArray": planArray
+                    isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username,
+                    "applicationArray": applicationArray, "planArray": planArray
                 }); // Render createTask.pug page using array 
             });
         }
@@ -81,7 +82,8 @@ exports.post_create_task = function(req, res) {
                     })
                 }
                 res.render('createTask', {
-                    success: 'Task created successfully!', "applicationArray": applicationArray, "planArray": planArray
+                    success: 'Task created successfully!', userLoggedIn: req.session.username,
+                     "applicationArray": applicationArray, "planArray": planArray
                 }); // Render createTask.pug page using array 
             });
         }
@@ -119,7 +121,7 @@ exports.task_list = async function(req, res) {
                 taskList = tempArray;
 
                 res.render('taskList', {
-                    isLoggedIn: req.session.isLoggedIn, "taskList": taskList
+                    isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username, "taskList": taskList
                 }); // Render taskList.pug page using array 
             }
         });
@@ -196,7 +198,8 @@ exports.get_edit_task = async function(req, res) {
                     }
                 }
                 res.render('editTask', {
-                    isLoggedIn: req.session.isLoggedIn, "task": tid, "taskList": taskList, "inputs": inputs
+                    isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username,
+                    "task": tid, "taskList": taskList, "inputs": inputs
                 }); // Render editTask.pug page using array  
             }
         });
