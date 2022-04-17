@@ -2,6 +2,11 @@ const db = require('../dbServer');
 const group = require('../checkGroup');
 const alert = require('alert');
 
+/** Global variables */
+var userList = [];
+var selectArray = [];
+var deleteArray = [];
+
 /** Display create group page */
 exports.user_group = async function(req, res) {
     if (await group.checkGroup(req.session.username, "admin")) {
@@ -42,23 +47,26 @@ exports.user_group_create = async function(req, res) {
 exports.user_list = async function(req, res) {
     // check if username belongs to admin group
     if (await group.checkGroup(req.session.username, "admin")) {
-        var userList = [];
+        //var userList = [];
         db.query('SELECT username FROM accounts', function(err, rows, fields) {
             if (err) {
                 console.log(err);
             } else {
+                user = rows;
+                var uList = [];
                 // Loop check on each row
                 for (var i = 0; i < rows.length; i++) {
                 // Create an object to save current row's data
                     var user = {
                         'username': rows[i].username
                     }
-                    userList.push(user); // Add object into array
+                    uList.push(user); // Add object into array
                 }
-                res.render('listUsers', {
-                    isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username, "userList": userList
-                }); // Render listUsers.pug page using array 
+                userList = uList;
             }
+            res.render('listUsers', {
+                isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username, "userList": userList
+            }); // Render listUsers.pug page using array 
         });
     }
     else { // if username not belong to admin group
@@ -66,8 +74,6 @@ exports.user_list = async function(req, res) {
         res.redirect('/home');
     }
 }
-
-var user;
 
 /* Display the assign group form based on the username that is selected in listUsers.pug page */
 exports.get_user_group = async function(req, res) {
@@ -79,8 +85,7 @@ exports.get_user_group = async function(req, res) {
         } 
         else {
             user = rows;
-            // console.log(user);
-            var selectArray = [];
+            var tempArray = [];
             const allgrps = req.body;
             db.query('SELECT groupName FROM usergrp', [allgrps], function(err, rows, fields) {
                 if (err) {
@@ -93,12 +98,13 @@ exports.get_user_group = async function(req, res) {
                         var s = {
                             'groupname': rows[i].groupName
                         }
-                        selectArray.push(s); // Add object into array
+                        tempArray.push(s); // Add object into array
                     }
                 }
-                // console.log("sss", selectArray);
+                selectArray = tempArray;
                 res.render('assignGroup', {isLoggedIn: req.session.isLoggedIn, 
-                    userLoggedIn: req.session.username, "userA": username, "userG": user, "selectArray": selectArray});
+                    userLoggedIn: req.session.username, "userA": username, "userG": user, "selectArray": selectArray
+                });
             });
         }
     });
@@ -108,12 +114,47 @@ exports.get_user_group = async function(req, res) {
 exports.post_user_group = async function(req, res) {
     var username = req.params.username;
     const {allgrps} = req.body;
-    const sql = "INSERT INTO usergrp_list (username, groupname) VALUES (?, ?)";
-    db.query(sql, [username, allgrps], function (error, result) {
-        if (error) throw error; 
-        console.log("Successfully assigned group!")
-        res.redirect('/listUsers'); 
-    });
+    if (allgrps) {
+        const sql = "INSERT INTO usergrp_list (username, groupname) VALUES (?, ?)";
+        db.query(sql, [username, allgrps], function (error, result) {
+            if (error) {
+                console.log(error);
+            }
+            else {
+                db.query("SELECT * FROM usergrp_list WHERE username = ?", [username], function(error, result) {
+                    if (error) {
+                        console.log(error);
+                    }
+                    else {
+                        console.log(result);
+                    }
+                });
+            }
+            res.render('assignGroup', { 
+                success: 'Successfully assigned group!', 
+                "userA": username, "userG": user, 
+                "selectArray": selectArray
+            });
+        });
+       /*  db.query("SELECT * FROM usergrp_list WHERE username = ?", [username], function(error, result) {
+            if (error) throw error;
+            const sql = "INSERT INTO usergrp_list (username, groupname) VALUES (?, ?)";
+            db.query(sql, [username, allgrps], function (error, result) {
+                if (error) throw error;
+                res.render('assignGroup', { 
+                    success: 'Successfully assigned group!', 
+                    "userA": username, "userG": user, 
+                    "selectArray": selectArray
+                });
+            });
+        }) */
+    }
+    else {
+        res.render('assignGroup', { 
+            error: 'Please select a group to assign the user!', 
+            "userA": username, "userG": user, "selectArray": selectArray
+        });
+    }
 }
 
 /* Display the remove group form based on the username that is selected in listUsers.pug page */
@@ -124,9 +165,7 @@ exports.get_delete_user_group = async function(req, res) {
             console.log(err);
         } 
         else {
-            user = rows;
-            // console.log(user);
-            var deleteArray = [];
+            var dList = [];
             db.query('SELECT groupname FROM usergrp_list WHERE username = ?', [username], function(err, rows, fields) {
                 if (err) {
                     console.log(err);
@@ -138,12 +177,14 @@ exports.get_delete_user_group = async function(req, res) {
                         var d = {
                             'groupname': rows[i].groupname
                         }
-                        deleteArray.push(d); // Add object into array
+                        dList.push(d); // Add object into array
                     }
                 }
+                deleteArray = dList;
                 // console.log("sss", deleteArray);
                 res.render('removeGroup', {isLoggedIn: req.session.isLoggedIn, 
-                    userLoggedIn: req.session.username, "userA": username, "deleteArray": deleteArray});
+                    userLoggedIn: req.session.username, "userA": username, "deleteArray": deleteArray
+                });
             });
         }
     });
@@ -153,10 +194,43 @@ exports.get_delete_user_group = async function(req, res) {
 exports.delete_user_group = async function(req, res) {
     var username = req.params.username;
     const {selectedGrp} = req.body;
-    const sql = "DELETE FROM usergrp_list WHERE username = ? AND groupname = ?";
-	db.query(sql, [username, selectedGrp], function(error, result) {
-		if (error) throw error;
-		console.log("Successfully deleted the assigned group!");
-		res.redirect('/listUsers');
-	});
+    if (selectedGrp) {
+        const sql = "DELETE FROM usergrp_list WHERE username = ? AND groupname = ?";
+        db.query(sql, [username, selectedGrp], function (error, result) {
+            if (error) {
+                console.log(error);
+            }
+            else {
+                db.query("SELECT * FROM usergrp_list WHERE username = ?", [username], function(error, result) {
+                    if (error) {
+                        console.log(error);
+                    }
+                    else {
+                        console.log(result);
+                    }
+                });
+            }
+            res.render('removeGroup', { 
+                success: 'Successfully deleted the assigned group!', 
+                "userA": username, "deleteArray": deleteArray
+            });
+        });
+        /* db.query("SELECT * FROM usergrp_list WHERE username = ?", [username], function(error, result) {
+            if (error) throw error;
+            const sql = "DELETE FROM usergrp_list WHERE username = ? AND groupname = ?";
+            db.query(sql, [username, selectedGrp], function (error, result) {
+                if (error) throw error;
+                res.render('removeGroup', { 
+                    success: 'Successfully deleted the assigned group!', 
+                    "userA": username, "deleteArray": deleteArray
+                });
+            });
+        }) */
+    }
+    else {
+        res.render('removeGroup', { 
+            error: 'Please select a group to delete for the user!', 
+            "userA": username, "deleteArray": deleteArray
+        });
+    }
 }
