@@ -17,8 +17,9 @@ html
       div(class="createGroup")
         form(class="row g-3" method="post")
           div(class="form-group")
-            label="Group Name:"
-            input(type="text" class="form-control" name="groupname" placeholder="Group Name")
+            div(class="col-sm-8")
+              label(class="form-label")="Group Name:"
+              input(type="text" class="form-control" name="groupname" placeholder="Group Name")
           
           div(class="form-group")
             button(type="submit" class="btn btn mb-3")="Create"

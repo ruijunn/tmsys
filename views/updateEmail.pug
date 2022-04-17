@@ -17,8 +17,9 @@ html
       div(class="updateEmail")
         form(class="row g-3" method="post")          
           div(class="form-group")
-            label="Email:"
-            input(type="email" class="form-control" name="email" placeholder="email@email.com")
+            div(class="col-sm-8")
+              label(class="form-label")="Email:"
+              input(type="email" class="form-control" name="email" placeholder="email@email.com")
 
           div(class="form-group")
             button(type="submit" class="btn btn mb-3")="Update"

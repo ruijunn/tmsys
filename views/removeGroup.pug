@@ -13,23 +13,24 @@ html
           p(class="alert alert-danger")=error
       if success
           p(class="alert alert-success")=success
-      div
+      div(class="removeGroup")
         form(class="row g-3" method="post")
             div(class="form-group")
-              label="Username:"
-              input(type="text" class="form-control" name="username" placeholder="username" value=`${userA}` readonly)
-              input(type="hidden" name="username" value=`${userA}`)
+              div(class="col-sm-8")
+                label(class="form-label")="Username:"
+                input(type="text" class="form-control" name="username" placeholder="username" value=`${userA}` readonly)
+                input(type="hidden" name="username" value=`${userA}`)
             
             div(class="form-group")
-              label="Select a Group to Delete:"
-              select(class="form-select" name="selectedGrp")
-                  each d in deleteArray 
+              label(class="form-label")="Select a Group to Delete:"
+              div(class="col-sm-8")
+                select(class="form-select" name="selectedGrp")
+                  option(value="" disabled selected)="-- Select --"
+                  if deleteArray
+                    each d in deleteArray 
                       option(value=`${d.groupname}`)=`${d.groupname}`
             
             div(class="form-group")
-              button(type="submit" class="btn btn mb-3" 
-              style="background-color: #f8e5e7; color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;")="Remove"
-              button(type="button" class="btn btn mb-3" 
-              style="background-color: #98fb98;  color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;" 
-              onclick=`window.location='/listUsers'`)="Back"
+              button(type="submit" class="btn btn mb-3")="Remove"
+              button(type="button" class="btn btn mb-3" onclick=`window.location='/listUsers'`)="Back"
         

@@ -17,69 +17,69 @@ html
       div(class="createApplication")
         form(class="row g-3" method="post")
           div(class="form-group")
-            label="Application Name:"
-            input(type="text" class="form-control" name="appname")
+            div(class="col-sm-8")
+              label(class="form-label")="Application Name:"
+              input(type="text" class="form-control" name="appname")
           div(class="form-group")
-            label="Application Description:"
-            textarea(class="form-control" name="appdescription" rows="3")
-          div(class="form-group col-md-6")
-            label="Start Date:"
-            input(type="date" class="form-control" name="startdate")
-          div(class="form-group col-md-6")
-            label="End Date:"
-            input(type="date" class="form-control" name="enddate")
+            div(class="col-sm-8")
+              label(class="form-label")="Application Description:"
+              textarea(class="form-control" name="appdescription" rows="3")
           div(class="form-group")
-            label="Permissions for Respective Permits:"
-            block content
-            table(class="table table-bordered table-sm")
-              tr 
-                th Create Task Permit:
-                td 
-                  select(class="form-select" name="p_createTask")
-                    option(value="" disabled selected)="-- Select a group --"
-                    if selectArray
-                      each s in selectArray 
+            div(class="col-sm-8")
+              label(class="form-label")="Start Date:"
+              input(type="date" class="form-control" name="startdate")
+          div(class="form-group")
+            div(class="col-sm-8")
+              label(class="form-label")="End Date:"
+              input(type="date" class="form-control" name="enddate")
+          div(class="form-group")
+            label(class="form-label")="Create Task Permit: "
+            div(class="col-sm-8")
+              select(class="form-select" name="p_createTask")
+                option(value="" disabled selected)="-- Select a group --"
+                  if selectArray
+                    each s in selectArray 
                         option(value=`${s.groupname}`)=`${s.groupname}`  
-              tr 
-                th Create Plan Permit:
-                td 
-                  select(class="form-select" name="p_createPlan")
-                    option(value="" disabled selected)="-- Select a group --"
-                    if selectArray
-                      each s in selectArray 
-                        option(value=`${s.groupname}`)=`${s.groupname}`  
-              tr 
-                th Open Permit:
-                td 
-                  select(class="form-select" name="p_open")
-                    option(value="" disabled selected)="-- Select a group --"
-                    if selectArray
-                      each s in selectArray 
-                        option(value=`${s.groupname}`)=`${s.groupname}`
-              tr 
-                th To-Do-List Permit:
-                td 
-                  select(class="form-select" name="p_toDoList")
-                    option(value="" disabled selected)="-- Select a group --"
-                    if selectArray
-                      each s in selectArray 
-                        option(value=`${s.groupname}`)=`${s.groupname}`
-              tr 
-                th Doing Permit:
-                td 
-                  select(class="form-select" name="p_doing")
-                    option(value="" disabled selected)="-- Select a group --"
-                    if selectArray
-                      each s in selectArray 
-                        option(value=`${s.groupname}`)=`${s.groupname}`
-              tr 
-                th Done Permit:
-                td 
-                  select(class="form-select" name="p_done")
-                    option(value="" disabled selected)="-- Select a group --"
-                    if selectArray
-                      each s in selectArray 
-                        option(value=`${s.groupname}`)=`${s.groupname}`
+          div(class="form-group")
+            label(class="form-label")="Create Plan Permit: "
+            div(class="col-sm-8")
+              select(class="form-select" name="p_createPlan")
+                option(value="" disabled selected)="-- Select a group --"
+                  if selectArray
+                    each s in selectArray 
+                      option(value=`${s.groupname}`)=`${s.groupname}` 
+          div(class="form-group")
+            label(class="form-label")="Open Permit: "
+            div(class="col-sm-8")
+              select(class="form-select" name="p_open")
+                option(value="" disabled selected)="-- Select a group --"
+                  if selectArray
+                    each s in selectArray 
+                      option(value=`${s.groupname}`)=`${s.groupname}` 
+          div(class="form-group")
+            label(class="form-label")="To-Do-List Permit: "
+            div(class="col-sm-8")
+              select(class="form-select" name="p_toDoList")
+                option(value="" disabled selected)="-- Select a group --"
+                  if selectArray
+                    each s in selectArray 
+                      option(value=`${s.groupname}`)=`${s.groupname}` 
+          div(class="form-group")
+            label(class="form-label")="Doing Permit: "
+            div(class="col-sm-8")
+              select(class="form-select" name="p_doing")
+                option(value="" disabled selected)="-- Select a group --"
+                  if selectArray
+                    each s in selectArray 
+                      option(value=`${s.groupname}`)=`${s.groupname}` 
+          div(class="form-group")
+            label(class="form-label")="Done Permit: "
+            div(class="col-sm-8")
+              select(class="form-select" name="p_done")
+                option(value="" disabled selected)="-- Select a group --"
+                  if selectArray
+                    each s in selectArray 
+                      option(value=`${s.groupname}`)=`${s.groupname}` 
           div(class="form-group")
             button(type="submit" class="btn btn mb-3")="Create"
             button(type="button" class="btn btn mb-3" onclick=`window.location='/applicationList'`)="Back"

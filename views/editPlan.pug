@@ -10,28 +10,25 @@ html
     include ./navbar.pug
       h2(style="text-align: left")=`Edit Plan: ${plan}`
       if error
-          p(class="alert alert-danger")=error
+        p(class="alert alert-danger")=error
       if success
-          p(class="alert alert-success")=success
-      div
+        p(class="alert alert-success")=success
+      div(class="editPlan")
         form(class="row g-3" method="post")
-          div(class="form-group col-md-6")
-            label="Plan MVP Name:"
-            input(type="text" class="form-control" name="pname" value=`${plan}` readonly)
-            input(type="hidden" name="pname" value=`${plan}`)
+          input(type="hidden" name="pname" value=`${plan}`)
           each plan in planList
+            div(class="form-group")
+              div(class="col-sm-8")
+                label(class="form-label")="Assigned Application:"
+                input(type="text" class="form-control" name="appname" placeholder=`${plan.appname}` value=`${plan.appname}` readonly)
+            div(class="form-group")
+              div(class="col-sm-8")
+                label(class="form-label")="Start Date:"
+                input(type="date" class="form-control" name="pstartDate" placeholder=`${plan.pstartDate}` value=`${plan.pstartDate}`)
             div(class="form-group col-md-6")
-              label="Assigned App:"
-              input(type="text" class="form-control" name="appname" placeholder=`${plan.appname}` value=`${plan.appname}` readonly)
-            div(class="form-group col-md-6")
-              label="Start Date:"
-              input(type="date" class="form-control" name="pstartDate" placeholder=`${plan.pstartDate}` value=`${plan.pstartDate}`)
-            div(class="form-group col-md-6")
-              label="End Date:"
-              input(type="date" class="form-control" name="pendDate" placeholder=`${plan.pendDate}` value=`${plan.pendDate}`)
+              div(class="col-sm-8")
+                label(class="form-label")="End Date:"
+                input(type="date" class="form-control" name="pendDate" placeholder=`${plan.pendDate}` value=`${plan.pendDate}`)
           div(class="form-group")
-            button(type="submit" class="btn btn mb-3" 
-            style="background-color: #f8e5e7; color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;")="Edit"
-            button(type="button" class="btn btn mb-3" 
-            style="background-color: #98fb98;  color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;" 
-            onclick=`window.location='/planList'`)="Back"
+            button(type="submit" class="btn btn mb-3")="Confirm"
+            button(type="button" class="btn btn mb-3" onclick=`window.location='/planList'`)="Back"

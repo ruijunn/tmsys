@@ -9,16 +9,15 @@ html
   body
     include ./navbar.pug
       h1="User List"
-      block content
       table(class="table table-bordered table-hover table-sm")  
-          tr 
-              th Username 
-              th Action 
-              th Action
-          for user in userList
-              tr
-                  td #{user.username}
-                  td 
-                      a(href="/assignGroup/"+user.username type="submit")="Get Group"
-                  td 
-                      a(href="/removeGroup/"+user.username type="submit")="Remove Group"
+        tr 
+          th Username 
+          th Action 
+          th Action
+        for user in userList
+          tr
+            td #{user.username}
+            td 
+              a(href="/assignGroup/"+user.username type="submit")="Get Group"
+            td 
+              a(href="/removeGroup/"+user.username type="submit")="Remove Group"

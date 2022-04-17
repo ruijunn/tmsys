@@ -10,34 +10,35 @@ html
     include ./navbar.pug
       h2(style="text-align: left")="Assign Group"
       if error
-          p(class="alert alert-danger")=error
+        p(class="alert alert-danger")=error
       if success
-          p(class="alert alert-success")=success
-      div
+        p(class="alert alert-success")=success
+      div(Class="assignGroup")
         form(class="row g-3" method="post")
           div(class="form-group")
-            label="Username:"
-            input(type="text" class="form-control" name="username" placeholder="username" value=`${userA}` readonly)
-            input(type="hidden" name="username" value=`${userA}`)
+            div(class="col-sm-8")
+              label(class="form-label")="Username:"
+              input(type="text" class="form-control" name="username" placeholder="username" value=`${userA}` readonly)
+              input(type="hidden" name="username" value=`${userA}`)
           
           div(class="form-group")
-            label="Existing Group(s):"
-            block content
-            table(class="table table-bordered table-hover table-sm")  
-              each user in userG
-                tr
-                  td #{user.groupname}
+            label(class="form-label")="Existing Group(s):"
+            div(class="col-sm-8")
+              table(class="table table-bordered table-hover table-sm")  
+                each user in userG
+                  tr
+                    td #{user.groupname}
 
           div(class="form-group")
-            label="New Group:"
-            select(class="form-select" name="allgrps")
-                each s in selectArray 
+            label(class="form-label")="New Group:"
+            div(class="col-sm-8")
+              select(class="form-select" name="allgrps")
+                option(value="" disabled selected)="-- Select --"
+                if selectArray
+                  each s in selectArray 
                     option(value=`${s.groupname}`)=`${s.groupname}`
         
           div(class="form-group")
-            button(type="submit" class="btn btn mb-3" 
-            style="background-color: #f8e5e7; color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;")="Assign"
-            button(type="button" class="btn btn mb-3" 
-            style="background-color: #98fb98;  color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;" 
-            onclick=`window.location='/listUsers'`)="Back"
+            button(type="submit" class="btn btn mb-3")="Assign"
+            button(type="button" class="btn btn mb-3" onclick=`window.location='/listUsers'`)="Back"
       

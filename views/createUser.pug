@@ -17,22 +17,26 @@ html
       div(class="createUser")
         form(class="row g-3" method="post")
           div(class="form-group")
-            label="Username:"
-            input(type="text" class="form-control" name="username" placeholder="Username")
+            div(class="col-sm-8")
+              label(class="form-label")="Username:"
+              input(type="text" class="form-control" name="username" placeholder="Username")
           
           div(class="form-group")
-            label="Password:"
-            input(type="password" class="form-control" name="password" placeholder="Password")
+            div(class="col-sm-8")
+              label(class="form-label")="Password:"
+              input(type="password" class="form-control" name="password" placeholder="Password")
             
           div(class="form-group")
-            label="Email:"
-            input(type="email" class="form-control" name="email" placeholder="email@email.com")
+            div(class="col-sm-8")
+              label(class="form-label")="Email:"
+              input(type="email" class="form-control" name="email" placeholder="email@email.com")
 
           div(class="form-group")
-            label="Type of User:"
-            select(class="form-control" name="grpName")
-              option(value="admin")="Admin"
-              option(value="user")="User"
+            label(class="form-label")="Type of User:"
+            div(class="col-sm-8")
+              select(class="form-select" name="grpName")
+                option(value="admin")="Admin"
+                option(value="user")="User"
               
           div(class="form-group")
             button(type="submit" class="btn btn mb-3")="Create"

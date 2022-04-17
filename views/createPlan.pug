@@ -17,21 +17,25 @@ html
       div(class="createPlan")
         form(class="row g-3" method="post")
           div(class="form-group")
-            label="Application Name:"
-            select(class="form-select" name="appname")
-              option(value="" disabled selected)="-- Select application --"
-              if applicationArray
-                each app in applicationArray 
-                  option(value=`${app.appname}`)=`${app.appname}`
+            label(class="form-label")="Application Name:"
+            div(class="col-sm-8")
+              select(class="form-select" name="appname")
+                option(value="" disabled selected)="-- Select application --"
+                if applicationArray
+                  each app in applicationArray 
+                    option(value=`${app.appname}`)=`${app.appname}`
           div(class="form-group")
-            label="Plan MVP Name:"
-            input(type="text" class="form-control" name="pname")
+            div(class="col-sm-8")
+              label(class="form-label")="Plan MVP Name:"
+              input(type="text" class="form-control" name="pname")
+          div(class="form-group")
+            div(class="col-sm-8")
+              label(class="form-label")="Start Date:"
+              input(type="date" class="form-control" name="pstartDate")
           div(class="form-group col-md-6")
-            label="Start Date:"
-            input(type="date" class="form-control" name="pstartDate")
-          div(class="form-group col-md-6")
-            label="End Date:"
-            input(type="date" class="form-control" name="pendDate")
+            div(class="col-sm-8")
+              label(class="form-label")="End Date:"
+              input(type="date" class="form-control" name="pendDate")
           div(class="form-group")
             button(type="submit" class="btn btn mb-3")="Create"
             button(type="button" class="btn btn mb-3" onclick=`window.location='/planList'`)="Back"

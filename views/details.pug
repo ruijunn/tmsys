@@ -9,21 +9,20 @@ html
   body
     include ./navbar.pug
       h1="User List"
-      block content
       table(class="table table-bordered table-hover table-sm")  
-          tr 
-              th ID 
-              th Username 
-              th Email
-              th Role 
-              th Status
-              th Action
-          for user in userList
-              tr
-                  td #{user.id} 
-                  td #{user.username}
-                  td #{user.email}
-                  td #{user.role}
-                  td #{user.status}
-                  td 
-                      a(href="/editUser/"+user.id type="submit")="Edit"
+        tr 
+          th ID 
+          th Username 
+          th Email
+          th Role 
+          th Status
+          th Action
+        for user in userList
+          tr
+            td #{user.id} 
+            td #{user.username}
+            td #{user.email}
+            td #{user.role}
+            td #{user.status}
+            td 
+                a(href="/editUser/"+user.id type="submit")="Edit"

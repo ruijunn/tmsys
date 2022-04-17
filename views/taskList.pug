@@ -25,14 +25,17 @@ html
             th Owner 
             th Create Date
             th Action
-        tbbody
+        tbody
           for task in taskList
             tr
               td #{task.tid}
               td #{task.name}
               td #{task.description}
               td #{task.notes}
-              td #{task.tplan}
+              if task.tplan 
+                td #{task.tplan}
+              else 
+                td NIL
               td #{task.tappname}
               td #{task.state}
               td #{task.creator}

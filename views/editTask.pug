@@ -13,50 +13,54 @@ html
         p(class="alert alert-danger")=error
       if success
         p(class="alert alert-success")=success
-      div
+      div(class="editTask")
         form(class="row g-3" method="post")
-          div(class="form-group col-md-6")
-            label="Task ID:"
-            input(type="text" class="form-control" name="tid" value=`${task}` readonly)
-            input(type="hidden" name="tid" value=`${task}`)
+          input(type="hidden" name="tid" value=`${task}`)
           each task in taskList
-            div(class="form-group col-md-6")
-              label="Task Name:"
-              input(type="text" class="form-control" name="tname" value=`${task.name}` readonly)
             div(class="form-group")
-              label="Task Description:"
-              textarea(class="form-control" name="tdescription" placeholder=`${task.description}` value=`${task.description}`)
+              div(class="col-sm-8")
+                label(class="form-label")="Task Name:"
+                input(type="text" class="form-control" name="tname" value=`${task.name}` readonly)
             div(class="form-group")
-              label="Task Current Notes:"
-              textarea(class="form-control" name="tnotes" placeholder=`${task.notes}` value=`${task.notes}` readonly)
+              div(class="col-sm-8")
+                label(class="form-label")="Task Description:"
+                textarea(class="form-control" name="tdescription" placeholder=`${task.description}` value=`${task.description}` rows="3")
             div(class="form-group")
-              label="Add Notes:"
-              textarea(class="form-control" name="notes")
-            div(class="form-group col-md-6")
-              label="Assigned Plan:"
-              input(type="text" class="form-control" name="tplan" value=`${task.tplan}` readonly)
-            div(class="form-group col-md-6")
-              label="Assigned Application:"
-              input(type="text" class="form-control" name="tappname" value=`${task.tappname}` readonly)
+              div(class="col-sm-8")
+                label(class="form-label")="Task Current Notes:"
+                textarea(class="form-control" name="tnotes" placeholder=`${task.notes}` value=`${task.notes}` rows="3" readonly)
             div(class="form-group")
-              label="Current State:"
-              input(type="text" class="form-control" name="state" value=`${task.state}` readonly)
+              div(class="col-sm-8")
+                label(class="form-label")="Add Notes:"
+                textarea(class="form-control" name="notes" rows="3")
+            if task.tplan
+              div(class="form-group")
+                div(class="col-sm-8")
+                    label(class="form-label")="Assigned Plan:"
+                    input(type="text" class="form-control" name="tplan" value=`${task.tplan}` readonly)
+            div(class="form-group")
+              div(class="col-sm-8")
+                label(class="form-label")="Assigned Application:"
+                input(type="text" class="form-control" name="tappname" value=`${task.tappname}` readonly)
+            div(class="form-group")
+              div(class="col-sm-8")
+                label(class="form-label")="Current State:"
+                input(type="text" class="form-control" name="state" value=`${task.state}` readonly)
             div(class="form-group") 
               each input in inputs 
-                label #{input.label}
-                select(class=input.class name=input.name)
-                  option(selected disabled hidden)="-- Select state --"
-                  each option in input.options 
-                    if input.target
-                      option=option[input.target]
-                    else 
-                      option=option
+                label(class="form-label") #{input.label}
+                div(class="col-sm-8")
+                  select(class=input.class name=input.name)
+                    option(selected disabled hidden)="-- Select state --"
+                    each option in input.options 
+                      if input.target
+                        option=option[input.target]
+                      else 
+                        option=option
             div(class="form-group")
-              label="Last Edited By:"
-              input(type="text" class="form-control" name="towner" value=`${task.owner}` readonly)
+              div(class="col-sm-8")
+                label(class="form-label")="Last Edited By:"
+                input(type="text" class="form-control" name="towner" value=`${task.owner}` readonly)
           div(class="form-group")
-            button(type="submit" class="btn btn mb-3" 
-            style="background-color: #f8e5e7; color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;")="Edit"
-            button(type="button" class="btn btn mb-3" 
-            style="background-color: #98fb98;  color: black; font-weight: bold; width: 10%; padding: 14px 20px; margin: auto; cursor: pointer;" 
-            onclick=`window.location='/taskList'`)="Back"
+            button(type="submit" class="btn btn mb-3")="Confirm"
+            button(type="button" class="btn btn mb-3" onclick=`window.location='/taskList'`)="Back"

@@ -50,23 +50,13 @@ nav {
 
 /* css for update email */
 
-.updateEmail form input[type="text"] {
-    padding: 12px; 
-    border-radius: 4px; 
-    margin: 5px 0; 
-    opacity: 0.85; 
-    display: inline-block; 
-    font-size: 17px; 
-    line-height: 20px;
-}
-
 .updateEmail form button[type="submit"], .updateEmail form button[type="button"] {
-    color: black; 
-    font-weight: bold; 
-    width: 10%; 
-    padding: 14px 20px; 
-    margin: auto; 
-    cursor: pointer;
+    font-weight: bold;
+    list-style: none;
+    text-align: center;
+    width: 150px;
+    margin: auto;
+    line-height: 60px;
 }
 
 .updateEmail form button[type="submit"] {
@@ -79,23 +69,13 @@ nav {
 
 /* css for create user */
 
-.createUser form input[type="text"], .createUser form input[type="password"], .createUser form input[type="email"] {
-    padding: 12px; 
-    border-radius: 4px; 
-    margin: 5px 0; 
-    opacity: 0.85; 
-    display: inline-block; 
-    font-size: 17px; 
-    line-height: 20px;
-}
-
 .createUser form button[type="submit"], .createUser form button[type="button"] {
-    color: black; 
-    font-weight: bold; 
-    width: 10%; 
-    padding: 14px 20px; 
-    margin: auto; 
-    cursor: pointer;
+    font-weight: bold;
+    list-style: none;
+    text-align: center;
+    width: 150px;
+    margin: auto;
+    line-height: 60px;
 }
 
 .createUser form button[type="submit"] {
@@ -106,76 +86,53 @@ nav {
     background-color: #98fb98; 
 }
 
-.createUser form .userOptions {
-    border: none;
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
-	break-before: always;
-    margin: 0;
+/* css for edit user */
+
+.editUser form button[type="submit"], .editUser form button[type="button"] {
+    font-weight: bold;
+    list-style: none;
+    text-align: center;
+    width: 150px;
+    margin: auto;
+    line-height: 60px;
 }
 
-.createUser form .userOptions .floatBlock {
-    margin: 0 1.81em 0 0;
+.editUser form button[type="submit"] {
+    background-color: #f8e5e7; 
 }
 
-.createUser form .userOptions .floatBlock label {
-    display: inline-block;
-}
-
-.createUser form .userOptions .floatBlock input[type="radio"] {
-    margin-right: 10px;
+.editUser form button[type="button"] {
+    background-color: #98fb98; 
 }
 
 /* css for change password */
 
-.changePassword form input[type="password"] {
-    padding: 12px; 
-    border-radius: 4px; 
-    margin: 5px 0; 
-    opacity: 0.85; 
-    display: inline-block; 
-    font-size: 17px; 
-    line-height: 20px;
-}
-
 .changePassword form button[type="submit"], .changePassword form button[type="button"] {
-    color: black; 
-    font-weight: bold; 
-    padding: 14px 20px; 
-    margin: auto; 
-    cursor: pointer;
+    font-weight: bold;
+    list-style: none;
+    text-align: center;
+    width: 150px;
+    margin: auto;
+    line-height: 60px;
 }
 
 .changePassword form button[type="submit"] {
     background-color: #f8e5e7; 
-    width: 20%;
 }
 
 .changePassword form button[type="button"] {
     background-color: #98fb98; 
-    width: 10%;
 }
 
 /* css for create group */
 
-.createGroup form input[type="text"] {
-    padding: 12px; 
-    border-radius: 4px; 
-    margin: 5px 0; 
-    opacity: 0.85; 
-    display: inline-block; 
-    font-size: 17px; 
-    line-height: 20px;
-}
-
 .createGroup form button[type="submit"], .createGroup form button[type="button"] {
-    color: black; 
-    font-weight: bold; 
-    width: 10%; 
-    padding: 14px 20px; 
-    margin: auto; 
-    cursor: pointer;
+    font-weight: bold;
+    list-style: none;
+    text-align: center;
+    width: 150px;
+    margin: auto;
+    line-height: 60px;
 }
 
 .createGroup form button[type="submit"] {
@@ -186,25 +143,54 @@ nav {
     background-color: #98fb98; 
 }
 
-/* css for create task */
+/** css for assign group */
 
-.createTask form input[type="text"] {
-    padding: 12px; 
-    border-radius: 4px; 
-    margin: 5px 0; 
-    opacity: 0.85; 
-    display: inline-block; 
-    font-size: 17px; 
-    line-height: 20px;
+.assignGroup form button[type="submit"], .assignGroup form button[type="button"] {
+    font-weight: bold;
+    list-style: none;
+    text-align: center;
+    width: 150px;
+    margin: auto;
+    line-height: 60px;
 }
 
+.assignGroup form button[type="submit"] {
+    background-color: #f8e5e7; 
+}
+
+.assignGroup form button[type="button"] {
+    background-color: #98fb98; 
+}
+
+/** css for remove group */
+
+.removeGroup form button[type="submit"], .removeGroup form button[type="button"] {
+    font-weight: bold;
+    list-style: none;
+    text-align: center;
+    width: 150px;
+    margin: auto;
+    line-height: 60px;
+}
+
+.removeGroup form button[type="submit"] {
+    background-color: #f8e5e7; 
+}
+
+.removeGroup form button[type="button"] {
+    background-color: #98fb98; 
+}
+
+
+/* css for create task */
+
 .createTask form button[type="submit"], .createTask form button[type="button"] {
-    color: black; 
-    font-weight: bold; 
-    width: 10%; 
-    padding: 14px 20px; 
-    margin: auto; 
-    cursor: pointer;
+    font-weight: bold;
+    list-style: none;
+    text-align: center;
+    width: 150px;
+    margin: auto;
+    line-height: 60px;
 }
 
 .createTask form button[type="submit"] {
@@ -217,23 +203,13 @@ nav {
 
 /* css for create application */
 
-.createApplication form input[type="text"] {
-    padding: 12px; 
-    border-radius: 4px; 
-    margin: 5px 0; 
-    opacity: 0.85; 
-    display: inline-block; 
-    font-size: 17px; 
-    line-height: 20px;
-}
-
 .createApplication form button[type="submit"], .createApplication form button[type="button"] {
-    color: black; 
-    font-weight: bold; 
-    width: 10%; 
-    padding: 14px 20px; 
-    margin: auto; 
-    cursor: pointer;
+    font-weight: bold;
+    list-style: none;
+    text-align: center;
+    width: 150px;
+    margin: auto;
+    line-height: 60px;
 }
 
 .createApplication form button[type="submit"] {
@@ -246,23 +222,13 @@ nav {
 
 /* css for create plan */
 
-.createPlan form input[type="text"] {
-    padding: 12px; 
-    border-radius: 4px; 
-    margin: 5px 0; 
-    opacity: 0.85; 
-    display: inline-block; 
-    font-size: 17px; 
-    line-height: 20px;
-}
-
 .createPlan form button[type="submit"], .createPlan form button[type="button"] {
-    color: black; 
-    font-weight: bold; 
-    width: 10%; 
-    padding: 14px 20px; 
-    margin: auto; 
-    cursor: pointer;
+    font-weight: bold;
+    list-style: none;
+    text-align: center;
+    width: 150px;
+    margin: auto;
+    line-height: 60px;
 }
 
 .createPlan form button[type="submit"] {
@@ -270,5 +236,62 @@ nav {
 }
 
 .createPlan form button[type="button"] {
+    background-color: #98fb98; 
+}
+
+/* css for edit application */
+
+.editApplication form button[type="submit"], .editApplication form button[type="button"] {
+    font-weight: bold;
+    list-style: none;
+    text-align: center;
+    width: 150px;
+    margin: auto;
+    line-height: 60px;
+}
+
+.editApplication form button[type="submit"] {
+    background-color: #f8e5e7; 
+}
+
+.editApplication form button[type="button"] {
+    background-color: #98fb98; 
+}
+
+/* css for edit plan */
+
+.editPlan form button[type="submit"], .editPlan form button[type="button"] {
+    font-weight: bold;
+    list-style: none;
+    text-align: center;
+    width: 150px;
+    margin: auto;
+    line-height: 60px;
+}
+
+.editPlan form button[type="submit"] {
+    background-color: #f8e5e7; 
+}
+
+.editPlan form button[type="button"] {
+    background-color: #98fb98; 
+}
+
+/* css for edit task */
+
+.editTask form button[type="submit"], .editTask form button[type="button"] {
+    font-weight: bold;
+    list-style: none;
+    text-align: center;
+    width: 150px;
+    margin: auto;
+    line-height: 60px;
+}
+
+.editTask form button[type="submit"] {
+    background-color: #f8e5e7; 
+}
+
+.editTask form button[type="button"] {
     background-color: #98fb98; 
 }
