@@ -24,11 +24,11 @@ html
             div(class="form-group")
               div(class="col-sm-8")
                 label(class="form-label")="Task Description:"
-                textarea(class="form-control" name="tdescription" placeholder=`${task.description}` value=`${task.description}` rows="3")
+                textarea(class="form-control" name="tdescription" rows="3")=`${task.description}`
             div(class="form-group")
               div(class="col-sm-8")
                 label(class="form-label")="Task Current Notes:"
-                textarea(class="form-control" name="tnotes" placeholder=`${task.notes}` value=`${task.notes}` rows="3" readonly)
+                textarea(class="form-control" name="tnotes" rows="3" readonly)=`${task.notes}`
             div(class="form-group")
               div(class="col-sm-8")
                 label(class="form-label")="Add Notes:"
@@ -36,8 +36,8 @@ html
             if task.tplan
               div(class="form-group")
                 div(class="col-sm-8")
-                    label(class="form-label")="Assigned Plan:"
-                    input(type="text" class="form-control" name="tplan" value=`${task.tplan}` readonly)
+                  label(class="form-label")="Assigned Plan:"
+                  input(type="text" class="form-control" name="tplan" value=`${task.tplan}` readonly)
             div(class="form-group")
               div(class="col-sm-8")
                 label(class="form-label")="Assigned Application:"

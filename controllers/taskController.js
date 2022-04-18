@@ -210,37 +210,36 @@ exports.get_edit_task = async function(req, res) {
 exports.post_edit_task = async function(req, res) {
     var tid = req.params.tid;
     const {tdescription, notes, t_state} = req.body;
-    if (!tdescription) {
-        res.render('editTask', { 
-            error: 'Please enter the task description!', "task": tid, "taskList": taskList, "inputs": inputs
+    if (tdescription && notes && t_state) { // check for empty fields
+        task_notes = req.body.tnotes;
+        //console.log("current task notes >>>", task_notes);
+        var date = new Date().toLocaleString();
+        var new_note = `${notes}, ${req.session.username}, ${t_state}, ${date}`;
+        //console.log("added new task notes >>>", new_note);
+        task_notes += `\n${new_note}`;
+        //console.log("finalised task notes >>>", task_notes);
+
+        const sql = "UPDATE task SET task_description = ?, task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
+        db.query(sql, [tdescription, task_notes, t_state, req.session.username, tid], function(err, result) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                db.query("SELECT * FROM task WHERE task_id = ?", [tid], function(err, rows, fields) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                        task = rows;
+                    }
+                });
+            }
+            console.log("Task successfuly updated!")
+            res.redirect('/taskList');
+            /* res.render('editTask', { 
+                success: 'Task details successfully updated!', "task": tid, "taskList": "taskList", "inputs": inputs
+            }); // Render editTask.pug page using array  */
         });
-    }
-    else if (!notes) {
-        res.render('editTask', { 
-            error: 'Please enter the task notes!', "task": tid, "taskList": taskList, "inputs": inputs
-        });
-    }
-    if (tdescription && notes && t_state) {
-        db.query('SELECT * FROM task WHERE task_id = ?', [tid], function(err, result) {
-            if (err) throw err;
-            // retrieve the current task notes from db
-            task_notes = result[0].task_notes;
-            // format the new notes with username, current state, date & timestamp
-            var date = new Date().toLocaleString();
-            var new_note = `${notes}, ${req.session.username}, ${t_state}, ${date}`;
-            // add new notes to the current task notes
-            task_notes += `\n${new_note}`;
-            console.log(task_notes);
-            const sql = "UPDATE task SET task_description = ?, task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
-            db.query(sql, [tdescription, task_notes, t_state, req.session.username, tid], function(err, result) {
-                if (err) throw err;
-                console.log("Task successfuly updated!")
-                res.redirect('/taskList');
-                /* res.render('editTask', { 
-                    success: 'Task details successfully updated!', "task": tid, "taskList": "taskList", "inputs": inputs
-                }) // Render editTask.pug page using array  */
-            });
-        }); 
 
         /** 
          * team member have to send email notification to lead when the task has been promoted to done state
@@ -257,7 +256,7 @@ exports.post_edit_task = async function(req, res) {
                     }
                 }
                 console.log(sendList); 
-            });
+            }); 
 
             /**
              * get project lead data
@@ -289,5 +288,10 @@ exports.post_edit_task = async function(req, res) {
                 }
             });
         }
+    }  
+    else { // display error message if fields are empty
+        res.render('editTask', { 
+            error: 'Please enter the task details!', "task": tid, "taskList": taskList, "inputs": inputs
+        });
     }
 }

@@ -24,15 +24,15 @@ html
             div(class="form-group")
               div(class="col-sm-8")
                 label(class="form-label")="Application Description:"
-                textarea(class="form-control" name="appdescription" placeholder=`${app.description}` value=`${app.description}` rows="3")
+                textarea(class="form-control" name="appdescription" rows="3")=`${app.description}` 
             div(class="form-group")
               div(class="col-sm-8")
                 label(class="form-label")="Start Date:"
-                input(type="date" class="form-control" name="startdate" placeholder=`${app.startdate}` value=`${app.startdate}`)
+                input(type="date" class="form-control" name="startdate")
             div(class="form-group")
               div(class="col-sm-8")
                 label(class="form-label")="End Date:"
-                input(type="date" class="form-control" name="enddate" placeholder=`${app.enddate}` value=`${app.enddate}`)
+                input(type="date" class="form-control" name="enddate")
           div(class="form-group")
             label(class="form-label")="Create Task Permit:"
             div(class="col-sm-8")
