@@ -234,11 +234,9 @@ exports.post_edit_task = async function(req, res) {
                     }
                 });
             }
-            console.log("Task successfuly updated!")
-            res.redirect('/taskList');
-            /* res.render('editTask', { 
-                success: 'Task details successfully updated!', "task": tid, "taskList": "taskList", "inputs": inputs
-            }); // Render editTask.pug page using array  */
+            res.render('editTask', { 
+                success: 'Task details successfully updated!', "task": tid, "taskList": taskList, "inputs": inputs
+            }); // Render editTask.pug page using array 
         });
 
         /** 
