@@ -40,7 +40,7 @@ html
             label(class="form-label")="Task Plan:"
             div(class="col-sm-8")
               select(class="form-select" name="pname")
-                option(value="" disabled selected)="-- Select plan --"
+                option(value="" disabled selected)=""
                 if planArray
                   each plan in planArray 
                     option(value=`${plan.pname}`)=`${plan.pname}`

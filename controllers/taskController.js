@@ -119,7 +119,6 @@ exports.task_list = async function(req, res) {
                     tempArray.push(task); // Add object into array
                 }
                 taskList = tempArray;
-
                 res.render('taskList', {
                     isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username, "taskList": taskList
                 }); // Render taskList.pug page using array 
@@ -135,54 +134,110 @@ exports.task_list = async function(req, res) {
 /** Display edit task page */
 exports.get_edit_task = async function(req, res) {
     var tid = req.params.tid;
-    db.query('SELECT * FROM task WHERE task_id = ?', [tid], async function(err, rows, fields) {
-            if (err) {
-                console.log(err);
+    db.query("SELECT * FROM task WHERE task_id = ?", [tid], async function(err, rows, fields) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            task = rows;
+            taskList = [];
+            // Loop check on each row
+            for (var i = 0; i < rows.length; i++) {
+                // Create an object to save current row's data
+                var task = {
+                    'tid': rows[i].task_id,
+                    'name': rows[i].task_name,
+                    'description': rows[i].task_description, 
+                    'notes': rows[i].task_notes,
+                    'tplan': rows[i].task_plan,
+                    'tappname': rows[i].task_app_acronym,
+                    'state': rows[i].task_state,
+                    'creator': rows[i].task_creator,
+                    'owner': rows[i].task_owner,
+                    'createDate': moment(rows[i].task_createDate).format("DD/MM/YYYY hh:mm:ss")
+                }
+                taskList.push(task); // Add object into array
             }
-            else {
-                console.log(req.body.tappname);
+            db.query("SELECT * FROM application WHERE app_acronym = ?", [rows[0].task_app_acronym], async function(err, result, fields) {
+                if (task.task_state == 'open' && await group.checkGroup(req.session.username, result[0].app_permit_open)) {
+                    inputs = [{
+                        label: `Task State:`,
+                        name: "t_state",
+                        type: "select",
+                        class: "form-select",
+                        options: ["todolist"]
+                    }]
+                }
+                else if (task.task_state === 'todolist' && await group.checkGroup(req.session.username, result[0].app_permit_toDoList)) {
+                    inputs = [{
+                        label: `Task State:`,
+                        name: "t_state",
+                        type: "select",
+                        class: "form-select",
+                        options: ["doing"]
+                    }]
+                }
+                else if (task.state === 'doing' && await group.checkGroup(req.session.username, result[0].app_permit_doing)) {
+                    inputs = [{
+                        label: `Task State:`,
+                        name: "t_state",
+                        type: "select",
+                        class: "form-select",
+                        options: ["todolist", "done"]
+                    }]
+                }
+                else if (task.state === 'done' && await group.checkGroup(req.session.username, result[0].app_permit_done)) {
+                    console.log(">>>", inputs);
+                    inputs = [{
+                        label: `Task State:`,
+                        name: "t_state",
+                        type: "select",
+                        class: "form-select",
+                        options: ["doing", "close"]
+                    }]
+                }
+                console.log(">>>", task.state);
                 res.render('editTask', {
                     isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username,
                     "task": tid, "taskList": taskList, "inputs": inputs
                 });
-            }
-        });
-        /* db.query('SELECT * FROM application', async function(error, result, fields) {
-            if (error) throw error;
-            var tid = req.params.tid;
-            db.query('SELECT * FROM task WHERE task_id = ?', [tid], async function(err, rows, fields) {
-                if (err) {
-                    console.log(err);
-                } 
-                else {
-                    task = rows;
-                    taskList = [];
-                    for (var i = 0; i < rows.length; i++) {
-                        var task = {
-                            'tid': rows[i].task_id,
-                            'name': rows[i].task_name,
-                            'description': rows[i].task_description, 
-                            'notes': rows[i].task_notes,
-                            'tplan': rows[i].task_plan,
-                            'tappname': rows[i].task_app_acronym,
-                            'state': rows[i].task_state,
-                            'creator': rows[i].task_creator,
-                            'owner': rows[i].task_owner,
-                            'createDate': moment(rows[i].task_createDate).format("DD/MM/YYYY hh:mm:ss")
-                        }
-                        taskList.push(task); // Add object into array */
-
-                        /** Check the task current state and the app permit */
-                        /* if (rows[i].task_state == 'open' && await group.checkGroup(req.session.username, result[0].app_permit_open)) {
-                            inputs = [{
-                                label: `Task State:`,
-                                name: "t_state",
-                                type: "select",
-                                class: "form-select",
-                                options: ["todolist"]
-                            }]
-                        }
-                        else if (rows[i].task_state === 'todolist' && await group.checkGroup(req.session.username, result[0].app_permit_toDoList)) {
+            });
+        }
+    });
+    /* db.query('SELECT * FROM application', async function(error, result, fields) {
+        var tid = req.params.tid;
+        db.query('SELECT * FROM task WHERE task_id = ?', [tid], async function(err, rows, fields) {
+            if (err) {
+                console.log(err);
+            } 
+            else {
+                task = rows;
+                taskList = [];
+                for (var i = 0; i < rows.length; i++) {
+                    var task = {
+                        'tid': rows[i].task_id,
+                        'name': rows[i].task_name,
+                        'description': rows[i].task_description, 
+                        'notes': rows[i].task_notes,
+                        'tplan': rows[i].task_plan,
+                        'tappname': rows[i].task_app_acronym,
+                        'state': rows[i].task_state,
+                        'creator': rows[i].task_creator,
+                        'owner': rows[i].task_owner,
+                        'createDate': moment(rows[i].task_createDate).format("DD/MM/YYYY hh:mm:ss")
+                    }
+                    taskList.push(task); // Add object into array 
+                    
+                    if (rows[i].task_state == 'open' && await group.checkGroup(req.session.username, result[0].app_permit_open)) {
+                        inputs = [{
+                            label: `Task State:`,
+                            name: "t_state",
+                            type: "select",
+                            class: "form-select",
+                            options: ["todolist"]
+                        }]
+                    }
+                    else if (rows[i].task_state === 'todolist' && await group.checkGroup(req.session.username, result[0].app_permit_toDoList)) {
                         inputs = [{
                             label: `Task State:`,
                             name: "t_state",
@@ -216,13 +271,28 @@ exports.get_edit_task = async function(req, res) {
                 }); // Render editTask.pug page using array  
             }
         });
-    }); */
+    });  */
 }
 
 /** Handle form submit for edit task */
 exports.post_edit_task = async function(req, res) {
     var tid = req.params.tid;
     const {tdescription, notes, t_state} = req.body;
+    if (!tdescription) {
+        res.render('editTask', { 
+            error: 'Please enter task description!', "task": tid, "taskList": taskList, "inputs": inputs
+        });
+    }
+    else if (!notes) {
+        res.render('editTask', { 
+            error: 'Please enter a new note!', "task": tid, "taskList": taskList, "inputs": inputs
+        });
+    }
+    else if (!t_state) {
+        res.render('editTask', { 
+            error: 'Please select a state!', "task": tid, "taskList": taskList, "inputs": inputs
+        });
+    }
     if (tdescription && notes && t_state) { // check for empty fields
         task_notes = req.body.tnotes;
         //console.log("current task notes >>>", task_notes);
@@ -249,8 +319,9 @@ exports.post_edit_task = async function(req, res) {
             }
             res.render('editTask', { 
                 success: 'Task details successfully updated!', "task": tid, "taskList": taskList, "inputs": inputs
-            }); // Render editTask.pug page using array 
+            });  // Render editTask.pug page using array 
         });
+
 
         /** 
          * team member have to send email notification to lead when the task has been promoted to done state
@@ -300,9 +371,9 @@ exports.post_edit_task = async function(req, res) {
             });
         }
     }  
-    else { // display error message if fields are empty
+    /* else { // display error message if fields are empty
         res.render('editTask', { 
             error: 'Please enter the task details!', "task": tid, "taskList": taskList, "inputs": inputs
         });
-    }
+    } */
 }
