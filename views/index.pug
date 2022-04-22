@@ -8,3 +8,13 @@ html
     link(type="text/css" href="style.css" rel="stylesheet")
   body
     include ./navbar.pug
+    div(style="display:flex;")
+      div(style="height: 100%; width: 20%; float: left; border-right: 2px solid black; height: 500; margin-left:1%;")
+        h5="Application"
+        button(type="button" style="background-color: #f8e5e7; " class="btn btn mb-3" onclick=`window.location='/createApplication'`)="Create Application"
+      div(style="height: 100%; width: 20%; float: left; border-right: 2px solid black; height: 500; margin-left:1%;")
+        h5="Plan"
+        button(type="button" style="background-color: #f8e5e7; " class="btn btn mb-3" onclick=`window.location='/createPlan'`)="Create Plan"
+      div(style="height: 100%; width: 20%; float: left; height: 500; margin-left:1%;")
+        h5="Task"
+        button(type="button" style="background-color: #f8e5e7; " class="btn btn mb-3" onclick=`window.location='/createTask'`)="Create Task"
