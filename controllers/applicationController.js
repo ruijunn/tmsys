@@ -68,6 +68,28 @@ exports.post_create_application = function(req, res) {
     }
 }
 
+exports.appList2 = async function(req, res) {
+    db.query('SELECT * FROM application', function(err, rows, fields) {
+        if (err) {
+            console.log(err);
+        } else {
+            var tempArray = [];
+            // Loop check on each row
+            for (var i = 0; i < rows.length; i++) {
+                // Create an object to save current row's data
+                var app = {
+                    'appname': rows[i].app_acronym
+                }
+                tempArray.push(app); // Add object into array
+            }
+            appList = tempArray;
+            res.render('appList2', {
+                "appList": appList
+            }); // Render applicationList.pug page using array 
+        }
+    });
+}
+
 /** Display application list page */
 exports.application_list = async function(req, res) {
     // check if username belongs to project lead group
