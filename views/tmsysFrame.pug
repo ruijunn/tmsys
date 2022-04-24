@@ -1,15 +1,26 @@
 <!DOCTYPE html>
 <html>
+
+<head>
+script.
+  //- control-k-c for comment, control-k-u for uncomment
+  //- function loadCreateAppForm() {
+  //-   document.getElementById('createAppFrame').src="/createApplication";
+  //- }
+  //- function loadCreatePlanForm() {
+  //-   document.getElementById('createPlanFrame').src="/createPlan";
+  //- }
+  //- function loadCreateTaskForm() {
+  //-   document.getElementById('createTaskFrame').src="/createTask";
+  //- }
+</head>
 <body>
 
-//button(type="button" style="background-color: #f8e5e7; margin-right: 5px;" class="btn btn mb-3" onclick=`window.location='/createApplication'`)="Create Application"
-//button(type="button" style="background-color: #f8e5e7; margin-right: 5px;" class="btn btn mb-3" onclick=`window.location='/createPlan'`)="Create Plan"
-//button(type="button" style="background-color: #f8e5e7;" class="btn btn mb-3" onclick=`window.location='/createTask'`)="Create Task"
-
-<div>
-  <iframe width="150" height="1024" style="display: inline-block; box-sizing: border-box; border: 1px solid black;" src="/appList2"></iframe>
-  //<iframe width="1024" height="1024" style="display: inline-block; box-sizing: border-box; border: 1px solid black;" src="/taskList"></iframe>
+<div style="margin: 10; margin-bottom: 0;">
+  button(type="button" style="background-color: #f8e5e7; margin-right: 5px;" class="btn btn mb-3" onclick=`window.location='/createApplication'`)="Create Application"
+  button(type="button" style="background-color: #f8e5e7; margin-right: 5px;" class="btn btn mb-3" onclick=`window.location='/createPlan'`)="Create Plan"
+  button(type="button" style="background-color: #f8e5e7;" class="btn btn mb-3" onclick=`window.location='/createTask'`)="Create Task"
 </div>
 
-</body>
-</html>
+<div style="margin-left: 1%;">
+  <iframe id="appListFrame" width="900" height="420" style="box-sizing: border-box; border: 1px solid black;" src="/appList2">
