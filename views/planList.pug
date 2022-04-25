@@ -9,7 +9,7 @@ html
     style 
       include ../public/list.css
   body
-    include ./navbar.pug
+      include ./navbar.pug
       h1="Plan List"
       table(class="planList")  
         thead
@@ -30,3 +30,5 @@ html
               td #{plan.createDate}
               td 
                 a(href="/editPlan/"+plan.pname type="submit")="Edit"
+      <br/>
+      button(type="button" style="background-color: #f8e5e7;" class="btn btn mb-3" onclick=`window.location='/home'`)="Back"

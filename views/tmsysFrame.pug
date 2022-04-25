@@ -13,14 +13,19 @@ script.
   //- function loadCreateTaskForm() {
   //-   document.getElementById('createTaskFrame').src="/createTask";
   //- }
+  var frame1 = document.getElementById('frame1');
 </head>
 <body>
 
 <div style="margin: 10; margin-bottom: 0;">
   button(type="button" style="background-color: #f8e5e7; margin-right: 5px;" class="btn btn mb-3" onclick=`window.location='/createApplication'`)="Create Application"
   button(type="button" style="background-color: #f8e5e7; margin-right: 5px;" class="btn btn mb-3" onclick=`window.location='/createPlan'`)="Create Plan"
-  button(type="button" style="background-color: #f8e5e7;" class="btn btn mb-3" onclick=`window.location='/createTask'`)="Create Task"
+  button(type="button" style="background-color: #f8e5e7; margin-right: 5px;" class="btn btn mb-3" onclick=`window.location='/createTask'`)="Create Task"
+  button(type="button" style="background-color: #f8e5e7;" class="btn btn mb-3" onclick=`window.location='/planList'`)="Plan List"
 </div>
 
 <div style="margin-left: 1%;">
-  <iframe id="appListFrame" width="900" height="420" style="box-sizing: border-box; border: 1px solid black;" src="/appList2">
+ <iframe id="frame3" src="/tmsysLeftFrame" scrolling="yes" style="overflow: hidden; height: 100%; width: 20%; float: left;" height="100%" width="49%" align="left"></iframe>
+  <iframe id="frame1" src="/appList2" scrolling="yes" style="overflow: hidden; height: 100%; width: 30%; float: left;" height="100%" width="49%" align="left"></iframe>
+  <iframe id="frame2" src="/taskList" scrolling="yes" style="overflow: hidden; height: 100%; width: 49%; float: left; " height="100%" width="49%" align="left"></iframe>
+</div>
