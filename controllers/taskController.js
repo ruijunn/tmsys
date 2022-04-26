@@ -61,7 +61,8 @@ exports.post_create_task = function(req, res) {
             const logonUID = req.session.username;
             const currentState = "open";
             const date = new Date().toLocaleString();
-            const auditlog = `${tasknotes}, ${logonUID}, ${currentState}, ${date}`;
+            /* const auditlog = `${tasknotes}, ${logonUID}, ${currentState}, ${date}`; */
+            const auditlog = `User ${logonUID} added:\n ${tasknotes}, ${currentState}, ${date}`;
             console.log(auditlog);
             const taskCreateDate = new Date();
             const sql2 = `INSERT INTO task (task_id, task_name, task_description, task_notes, task_plan, 
@@ -91,7 +92,13 @@ exports.post_create_task = function(req, res) {
 
 /** Display task list page */
 exports.task_list = async function(req, res) {
-    db.query('SELECT * FROM task ORDER BY task_state', function(err, rows, fields) {
+    let myquery = 'SELECT * FROM task';
+    let {requestapp} = req.query;
+    if(requestapp){
+        myquery += " WHERE `task_app_acronym` = '" + requestapp + "'";
+    }
+    //myquery += ' ORDER BY task_state';
+    db.query(myquery, function(err, rows, fields) {
         if (err) {
             console.log(err);
         } else {
@@ -224,9 +231,10 @@ exports.post_edit_task = async function(req, res) {
             currentState = state;
         }
         var date = new Date().toLocaleString();
-        var new_note = `${notes}, ${req.session.username}, ${currentState}, ${date}`;
-        task_notes += `\n${new_note}`;
-        db.query("UPDATE task SET task_description = ?, task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?", [tdescription, task_notes, currentState, req.session.username, tid], function(err, result) {
+        var audit_log =  `User ${req.session.username} updated: ${notes}, ${currentState}, ${date}\n ${task_notes}`;
+        /* var new_note = `${notes}, ${req.session.username}, ${currentState}, ${date}`;
+        task_notes += `\n${new_note}`; */
+        db.query("UPDATE task SET task_description = ?, task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?", [tdescription, audit_log, currentState, req.session.username, tid], function(err, result) {
             if (err) {
                 console.log(err);
             }

@@ -65,7 +65,13 @@ exports.post_create_plan = async function(req, res) {
 
 /** Display plan list page */
 exports.plan_list = async function(req, res) {
-    db.query('SELECT * FROM plan', async function(err, rows, fields) {
+    let myquery = 'SELECT * FROM plan';
+    let {requestapp} = req.query;
+    if(requestapp){
+        myquery += " WHERE `plan_MVP_name` = '" + requestapp + "'";
+    }
+    myquery += ' ORDER BY plan_app_acronym';
+    db.query(myquery, async function(err, rows, fields) {
         if (err) {
             console.log(err);
         } else {
@@ -118,7 +124,6 @@ exports.get_edit_plan = async function(req, res) {
     }
     else {
         alert("You are not authorized to view this page!");
-        res.redirect('/home');
     }
 }
 

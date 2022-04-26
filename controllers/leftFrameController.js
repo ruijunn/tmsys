@@ -7,7 +7,7 @@ const alert = require('alert');
 var appList = [];
 
 exports.appList2 = async function(req, res) {
-    db.query('SELECT * FROM application', function(err, rows, fields) {
+    db.query('SELECT * FROM application ORDER BY app_acronym', function(err, rows, fields) {
         if (err) {
             console.log(err);
         } else {
