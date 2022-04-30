@@ -215,6 +215,9 @@ exports.get_edit_task = async function(req, res) {
             }
         });
     }
+    else {
+        alert("You are not authorized to view this page!");
+    }
 }
 
 /** Handle form submit for edit task */
