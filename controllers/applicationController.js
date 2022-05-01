@@ -133,9 +133,14 @@ exports.application_list = async function(req, res) {
                 tempArray.push(app); // Add object into array
             }
             appList = tempArray;
-            res.render('applicationList', {
+            /* res.render('applicationList', {
                 isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username, "appList": appList
-            }); // Render applicationList.pug page using array 
+            });  */// Render applicationList.pug page using array 
+            res.status(200).json( { 
+                isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username,
+                "appList": appList
+                /* token: jsontoken */
+            });
         }
     });
 }
