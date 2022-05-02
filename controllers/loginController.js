@@ -23,18 +23,21 @@ exports.user_loginAuth = function(req, res) {
                 console.log(validPwd); // true
                 if (validPwd) {
                     if (results[0].status === 1) { // status = 1 means account is active
-                        // Authenticate the user
-                        /* const jsontoken = jwt.sign({ id: results[0].id }, process.env.SESSION_SECRET, { expiresIn: '1h' });
-                        res.cookie('token', jsontoken, { httpOnly: true, secure: true }); */
+                        
+                        //  JWT + Cookies
+                        const jsontoken = 
+                            jwt.sign({ userID: results[0].id, username: results[0].username }, process.env.SESSION_SECRET, { expiresIn: '1h'}
+                        );
+                        res.cookie("token", jsontoken, { httpOnly: true });
+
                         req.session.isLoggedIn = true;
                         req.session.username = username; // store the username in session
                         req.session.userID = results[0].id; // store the id in session
                         console.log("Login Successful!");
-                        //console.log(req.session.userID);
-                        //res.redirect('/home') // redirect to home page 
+
                         res.status(200).json({ 
-                            message: `User ${req.session.username} logged in successfully!`
-                            /* token: jsontoken */
+                            message: `User ${req.session.username} logged in successfully!`,
+                            token: jsontoken
                         });
                     }
                     else { // status = 0 means account is disabled
@@ -57,9 +60,8 @@ exports.user_loginAuth = function(req, res) {
 
 /** Display logout page */
 exports.user_logout = async function(req, res) {
-    //res.clearCookie("token", {path: '/', domain: 'localhost', maxAge: 0});
+    res.clearCookie("token", {path: '/', domain: 'localhost', maxAge: 0});
     req.session.isLoggedIn = false;
     console.log("Logout Successful!")
-    //res.redirect('/login'); // redirect back to login page
     res.status(200).json({ message: "Logout Successful!" });
 }
