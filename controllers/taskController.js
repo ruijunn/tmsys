@@ -35,14 +35,10 @@ exports.get_create_task = async function(req, res) {
                     }
                     planArray = pArray;
                 }
-               /*  res.render('createTask', {
+                res.render('createTask', {
                     isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username,
                     "applicationArray": applicationArray, "planArray": planArray
-                }); */ // Render createTask.pug page using array 
-                res.status(200).json({ 
-                    isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username,
-                    "applicationArray": applicationArray, "planArray": planArray
-                });
+                }); // Render createTask.pug page using array 
             });
         }
         else {
@@ -58,11 +54,9 @@ exports.post_create_task = function(req, res) {
     const sql = "SELECT * FROM application WHERE app_acronym = ?";
     db.query(sql, [appname], function(error, result) {
         if (error) {
-            res.status(500).json({
-                message: "Internal Server Error Occured!"
-            })
+            console.log(error);
         }
-        if (result.length > 0) {
+        else {
             // task id need to be in the format <app_acronym>_<app_Rnumber>
             const newTaskID = `${result[0].app_acronym}_${result[0].app_Rnumber+1}`;
             console.log(newTaskID);
@@ -74,6 +68,7 @@ exports.post_create_task = function(req, res) {
             const auditlog = `User ${logonUID} added:\n${tasknotes}, ${currentState}, ${date}`;
             console.log(auditlog);
             const taskCreateDate = new Date();
+    
             const sql2 = `INSERT INTO task (task_id, task_name, task_description, task_notes, task_plan, 
                 task_app_acronym, task_state, task_creator, task_owner, task_createDate) 
                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -90,30 +85,11 @@ exports.post_create_task = function(req, res) {
                         console.log("AppRnumber updated!");
                     })
                 }
-                /* res.render('createTask', {
+                res.render('createTask', {
                     success: 'Task created successfully!', userLoggedIn: req.session.username,
                      "applicationArray": applicationArray, "planArray": planArray
-                }); // Render createTask.pug page using array  */
-                res.status(200).json({ 
-                    success: 'Task created successfully!', userLoggedIn: req.session.username,
-                     "applicationArray": applicationArray, "planArray": planArray
-                });
-            });
-        }
-    });
-}
-
-exports.task_list2 = async function(req, res) {
-    let myquery = 'SELECT * FROM task';
-    let {requeststate} = req.query;
-    if(requeststate){
-        myquery += " WHERE `task_state` = '" + requeststate + "'";
-    }
-    db.query("myquery", function(err, rows, fields) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.send(rows)
+                }); // Render createTask.pug page using array 
+           });
         }
     });
 }

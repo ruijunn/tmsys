@@ -16,12 +16,7 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public')); // Static files to serve CSS file
 app.use(bodyParser.urlencoded({extended: true})); // Setup the body parser to handle form submits
 app.use(cookieParser()); // Setup cookie parser
-app.use(session({
-    secret: process.env.SESSION_SECRET // a random unique string key used to authenticate a session
-    /* resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: 1000 * 60 * 60 * 24} */  // sets the cookie expiry time 
-})); // Session setup
+app.use(session({ secret: process.env.SESSION_SECRET })); // Session setup
 
 // Add the routes to middleware chain
 app.use('/api', apiRouter);
