@@ -19,25 +19,24 @@ exports.task_by_state = async function(req, res) {
         if (results.length > 0) {
             const validPwd = await bcrypt.compare(password, results[0].password); 
             if (username && validPwd) {
-                db.query('SELECT groupname FROM usergrp_list WHERE username = ?', [username], function(err, result2, fields) {
-                    if (results[0].status === 1) { 
-                        const state = req.body.state;
-                        db.query("SELECT * FROM task WHERE task_state = ?", [state], function(err, rows, fields) {
-                            if (err) {
-                                res.status(500).json({ message: "Internal Server Error Occured!" });
-                            } 
-                            else {
-                                res.status(200).json({ username, usergroup: result2, taskDetails: rows });
-                            }
-                        });
-                    }
-                    else {
-                        res.status(400).json({ message: "Your account has been disabled" });
-                    }
-                })
+                if (results[0].status === 1) { 
+                    req.session.username = username;
+                    const state = req.body.state;
+                    db.query("SELECT * FROM task WHERE task_state = ?", [state], function(err, rows, fields) {
+                        if (err) {
+                            res.status(500).json({ message: "Internal Server Error Occured!" });
+                        } 
+                        else {
+                            res.status(200).json({ username: req.session.username, taskDetails: rows });
+                        }
+                    });
+                }
+                else {
+                    res.status(400).json({ message: "Your account has been disabled", username });
+                }
             }
             else {
-                res.status(401).json({ message: 'Invalid Authentication Credentials' });
+                res.status(401).json({ message: 'Invalid Authentication Credentials', username });
             }
         }
         else {
@@ -48,43 +47,166 @@ exports.task_by_state = async function(req, res) {
 
 /** Create a new task */
 exports.post_create_task = function(req, res) {
-    const {appname, taskname, taskdescription, tasknotes, pname} = req.body;
-    console.log(appname, taskname, taskdescription, tasknotes, pname)
-    const sql = "SELECT * FROM application WHERE app_acronym = ?";
-    db.query(sql, [appname], function(error, result) {
-        if (error) {
-            res.status(500).json({
-                message: "Internal Server Error Occured!"
-            })
-        }
-        else {
-            const newTaskID = `${result[0].app_acronym}_${result[0].app_Rnumber+1}`;
-            const logonUID = req.session.username;
-            const currentState = "open";
-            const date = new Date().toLocaleString();
-            const auditlog = `User ${logonUID} added:\n${tasknotes}, ${currentState}, ${date}`;
-            const taskCreateDate = new Date();
+
+    // check for basic auth header
+    if (!req.headers.authorization || req.headers.authorization.indexOf('Basic ') === -1) {
+        return res.status(401).json({ message: 'Missing Authorization Header' });
+    }
+    // verify auth credentials
+    const base64Credentials =  req.headers.authorization.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+    const [username, password] = credentials.split(':');
     
-            const sql2 = `INSERT INTO task (task_id, task_name, task_description, task_notes, task_plan, 
-                task_app_acronym, task_state, task_creator, task_owner, task_createDate) 
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            db.query(sql2, [newTaskID, taskname, taskdescription, auditlog, pname, appname, currentState, 
-                req.session.username, req.session.username, taskCreateDate], async function(error, row, fields) {
-                if (error) {
-                    console.log(error);
+    db.query("SELECT * FROM accounts WHERE username = ?", [username], async (error, results, fields) => {
+        if (error) throw error;
+        if (results.length > 0) {
+            const validPwd = await bcrypt.compare(password, results[0].password); 
+            if (username && validPwd) {
+                if (results[0].status === 1) { 
+                    req.session.username = username;
+                    const {appname, taskname, taskdescription, tasknotes, pname} = req.body;
+                    console.log(appname, taskname, taskdescription, tasknotes, pname)
+                    db.query("SELECT * FROM application WHERE app_acronym = ?", [appname], async function(error, rows) {
+                        if (await group.checkGroup(req.session.username, rows[0].app_permit_createTask)) {
+                            const newTaskID = `${rows[0].app_acronym}_${rows[0].app_Rnumber+1}`;
+                            const logonUID = req.session.username;
+                            const currentState = "open";
+                            const date = new Date().toLocaleString();
+                            const auditlog = `User ${logonUID} added:\n${tasknotes}, ${currentState}, ${date}`;
+                            const taskCreateDate = new Date();
+                    
+                            const sql2 = `INSERT INTO task (task_id, task_name, task_description, task_notes, task_plan, 
+                                task_app_acronym, task_state, task_creator, task_owner, task_createDate) 
+                                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+                            db.query(sql2, [newTaskID, taskname, taskdescription, auditlog, pname, appname, currentState, 
+                                req.session.username, req.session.username, taskCreateDate], async function(error, row, fields) {
+                                if (error) {
+                                    console.log(error);
+                                }
+                                else {
+                                    const newRnumber = rows[0].app_Rnumber + 1;
+                                    const sql4 = "UPDATE application SET app_Rnumber = ? WHERE app_acronym = ?";
+                                    db.query(sql4, [newRnumber, appname], async function(error, result) {
+                                        if (error) throw error;
+                                        console.log("AppRnumber updated!");
+                                    })
+                                }
+                                res.status(200).json({ 
+                                    message: 'Task created successfully!', username: req.session.username
+                                });
+                            });
+                        }
+                        else {
+                            res.status(401).json({ message: 'You are not authorized to perform this action!', username });
+                        }
+                    });
                 }
                 else {
-                    const newRnumber = result[0].app_Rnumber + 1;
-                    const sql4 = "UPDATE application SET app_Rnumber = ? WHERE app_acronym = ?";
-                    db.query(sql4, [newRnumber, appname], async function(error, result) {
-                        if (error) throw error;
-                        console.log("AppRnumber updated!");
-                    })
+                    res.status(400).json({ message: "Your account has been disabled", username });
                 }
-                res.status(200).json({ 
-                    message: 'Task created successfully!', userLoggedIn: req.session.username
-                });
-           });
+            }
+            else {
+                res.status(401).json({ message: 'Invalid Authentication Credentials', username });
+            }
+        }
+        else {
+            res.status(401).json({ message: 'Username not exist in database!' });
+        }
+    });
+}
+
+exports.promote_task = async function(req, res) {
+
+    // check for basic auth header
+    if (!req.headers.authorization || req.headers.authorization.indexOf('Basic ') === -1) {
+        return res.status(401).json({ message: 'Missing Authorization Header' });
+    }
+    // verify auth credentials
+    const base64Credentials =  req.headers.authorization.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+    const [username, password] = credentials.split(':');
+    
+    db.query("SELECT * FROM accounts WHERE username = ?", [username], async (error, results, fields) => {
+        if (error) throw error;
+        if (results.length > 0) {
+            const validPwd = await bcrypt.compare(password, results[0].password); 
+            if (username && validPwd) {
+                if (results[0].status === 1) { 
+                    req.session.username = username;
+                    if (await group.checkGroup(req.session.username, "project lead") ||  await group.checkGroup(req.session.username, "project manager") ||
+                    (await group.checkGroup(req.session.username, "team member")) ) {
+                        const { tid, notes, tgtState } = req.body;
+                        console.log(tid);
+                        db.query("SELECT * FROM task WHERE task_id = ?", [tid], function(error, result2) {
+                            db.query("SELECT * FROM application WHERE app_acronym = ?", [result2[0].task_app_acronym], async function(error, result3, fields) {
+                                let task_notes = result2[0].task_notes;
+                                let targetState;
+                                let currentState = result2[0].task_state;
+                                if (tgtState) {
+                                    targetState = tgtState
+                                }
+                                else {
+                                    targetState = currentState;
+                                }
+                                var date = new Date().toLocaleString();
+                                var audit_log = `User ${req.session.username} updated: ${notes}, ${targetState}, ${date}\n${task_notes}`;
+                                console.log(audit_log);
+
+                                if (result2[0].task_state === 'open' && await group.checkGroup(req.session.username, result3[0].app_permit_open)) {
+                                    const sqlQuery = "UPDATE task SET task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
+                                    db.query(sqlQuery, [audit_log, targetState, req.session.username, tid], async function(error, result4) {
+                                        if (error) throw error;
+                                        res.status(200).json({ tid, task_notes, existingState: result2[0].task_state, targetState });
+                                    });
+                                }
+                                else if (result2[0].task_state === 'todolist' && await group.checkGroup(req.session.username, result3[0].app_permit_toDoList)) {
+                                    const sqlQuery = "UPDATE task SET task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
+                                    db.query(sqlQuery, [audit_log, targetState, req.session.username, tid], async function(error, result4) {
+                                        if (error) throw error;
+                                        res.status(200).json({ tid, task_notes, existingState: result2[0].task_state, targetState });
+                                    });
+                                }
+                                else if (result2[0].task_state === 'doing' && await group.checkGroup(req.session.username, result3[0].app_permit_doing)) {
+                                    const sqlQuery = "UPDATE task SET task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
+                                    db.query(sqlQuery, [audit_log, targetState, req.session.username, tid], async function(error, result4) {
+                                        if (error) throw error;
+                                        res.status(200).json({ tid, task_notes, existingState: result2[0].task_state, targetState });
+                                    });
+                                }
+                                else if (result2[0].task_state === 'done' && await group.checkGroup(req.session.username, result3[0].app_permit_done)) {
+                                    const sqlQuery = "UPDATE task SET task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
+                                    db.query(sqlQuery, [audit_log, targetState, req.session.username, tid], async function(error, result4) {
+                                        if (error) throw error;
+                                        res.status(200).json({ tid, task_notes, existingState: result2[0].task_state, targetState });
+                                    });
+                                }
+                                else if (result2[0].task_state === 'close') {
+                                    const sqlQuery = "UPDATE task SET task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
+                                    db.query(sqlQuery, [audit_log, targetState, req.session.username, tid], async function(error, result4) {
+                                        if (error) throw error;
+                                        res.status(200).json({ tid, task_notes, existingState: targetState });
+                                    });
+                                }
+                                else {
+                                    res.status(401).json({ message: 'You are not authorized to update the state!', username });
+                                }
+                            });
+                        });
+                    }
+                    else {
+                        res.status(401).json({ message: 'You are not authorized to perform this action!', username });
+                    }
+                }
+                else {
+                    res.status(400).json({ message: "Your account has been disabled", username });
+                }
+            }
+            else {
+                res.status(401).json({ message: 'Invalid Authentication Credentials', username });
+            }
+        }
+        else {
+            res.status(401).json({ message: 'Username not exist in database!' });
         }
     });
 }

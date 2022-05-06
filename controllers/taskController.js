@@ -166,7 +166,7 @@ exports.get_edit_task = async function(req, res) {
                 //console.log("check task list array >>>", taskList);
                 db.query("SELECT * FROM application WHERE app_acronym = ?", [task[0].task_app_acronym], async function(err, result, fields) {
                     console.log("check the task app acronym >>>", task[0].task_app_acronym);
-                    if (task[0].task_state == 'open' && await group.checkGroup(req.session.username, result[0].app_permit_open)) {
+                    if (task[0].task_state === 'open' && await group.checkGroup(req.session.username, result[0].app_permit_open)) {
                         /* console.log("check open permit >>>", await group.checkGroup(req.session.username, result[0].app_permit_open));
                         console.log("check the optionns >>>", inputs); */
                         inputs = [{
@@ -238,7 +238,7 @@ exports.post_edit_task = async function(req, res) {
             currentState = state;
         }
         var date = new Date().toLocaleString();
-        var audit_log =  `User ${req.session.username} updated: ${notes}, ${currentState}, ${date}\n ${task_notes}`;
+        var audit_log = `User ${req.session.username} updated: ${notes}, ${currentState}, ${date}\n${task_notes}`;
         /* var new_note = `${notes}, ${req.session.username}, ${currentState}, ${date}`;
         task_notes += `\n${new_note}`; */
         db.query("UPDATE task SET task_description = ?, task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?", [tdescription, audit_log, currentState, req.session.username, tid], function(err, result) {
