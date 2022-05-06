@@ -7,7 +7,6 @@ html
     link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
     link(type="text/css" href="/style.css" rel="stylesheet")
   body
-    include ./navbar.pug
       h2(style="text-align: left")=`Edit Task: ${task}`
       if error
         p(class="alert alert-danger")=error
@@ -63,4 +62,4 @@ html
                 input(type="text" class="form-control" name="towner" value=`${task.owner}` readonly)
           div(class="form-group")
             button(type="submit" class="btn btn mb-3")="Confirm"
-            button(type="button" class="btn btn mb-3" onclick=`window.location='/taskList'`)="Back"
+            //button(type="button" class="btn btn mb-3" onclick=`window.location='/tmsysFrame'`)="Back"

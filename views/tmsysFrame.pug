@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+script.
+  //- control-k-c for comment, control-k-u for uncomment
+  //- function loadCreateAppForm() {
+  //-   document.getElementById('createAppFrame').src="/createApplication";
+  //- }
+  //- function loadCreatePlanForm() {
+  //-   document.getElementById('createPlanFrame').src="/createPlan";
+  //- }
+  //- function loadCreateTaskForm() {
+  //-   document.getElementById('createTaskFrame').src="/createTask";
+  //- }
+  var frame1 = document.getElementById('frame1');
+</head>
+<body>
+
+<div style="margin: 10; margin-bottom: 0;">
+  button(type="button" style="background-color: #f8e5e7; margin-right: 5px;" class="btn btn mb-3" onclick=`window.location='/createApplication'`)="Create Application"
+  button(type="button" style="background-color: #f8e5e7; margin-right: 5px;" class="btn btn mb-3" onclick=`window.location='/createPlan'`)="Create Plan"
+  button(type="button" style="background-color: #f8e5e7; margin-right: 5px;" class="btn btn mb-3" onclick=`window.location='/createTask'`)="Create Task"
+  //button(type="button" style="background-color: #f8e5e7;" class="btn btn mb-3" onclick=`window.location='/planList'`)="Plan List"
+</div>
+
+<div style="margin-left: 1%;">
+  <iframe id="frame3" src="/tmsysLeftFrame" scrolling="yes" style="overflow: hidden; height: 100%; width: 15%; float: left;" height="100%" width="49%" align="left"></iframe>
+  //<iframe id="frame1" src="/appList2" scrolling="yes" style="overflow: hidden; height: 100%; width: 30%; float: left;" height="100%" width="49%" align="left"></iframe>
+  <iframe id="frame2" scrolling="yes" style="overflow: hidden; height: 100%; width: 80%; float: left; " height="100%" width="49%" align="left"></iframe>
+</div>

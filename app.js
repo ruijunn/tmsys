@@ -14,6 +14,7 @@ var groupRouter = require('./routes/group');
 var taskRouter = require('./routes/task');
 var applicationRouter = require('./routes/application');
 var planRouter = require('./routes/plan');
+var leftFrameRouter = require('./routes/leftFrame');
 
 // Inititalize the app and add middleware
 app.set('view engine', 'pug'); // Setup the pug
@@ -30,6 +31,7 @@ app.use('/', groupRouter);
 app.use('/', taskRouter);
 app.use('/', applicationRouter);
 app.use('/', planRouter);
+app.use('/', leftFrameRouter);
 
 /** App listening on port */
 app.listen(port, () => {

@@ -21,7 +21,7 @@ exports.get_create_task = async function(req, res) {
                 }
                 applicationArray.push(app); 
             }
-            db.query('SELECT plan_MVP_name FROM plan', function(err, rows, fields) {
+            db.query('SELECT plan_MVP_name FROM plan', async function(err, rows, fields) {
                 if (err) { 
                     console.log(err); 
                 }
@@ -43,7 +43,6 @@ exports.get_create_task = async function(req, res) {
         }
         else {
             alert("You are not authorized to view this page!");
-            res.redirect('/home');
         }
     });
 }
@@ -62,21 +61,22 @@ exports.post_create_task = function(req, res) {
             const logonUID = req.session.username;
             const currentState = "open";
             const date = new Date().toLocaleString();
-            const auditlog = `${tasknotes}, ${logonUID}, ${currentState}, ${date}`;
+            /* const auditlog = `${tasknotes}, ${logonUID}, ${currentState}, ${date}`; */
+            const auditlog = `User ${logonUID} added:\n ${tasknotes}, ${currentState}, ${date}`;
             console.log(auditlog);
             const taskCreateDate = new Date();
             const sql2 = `INSERT INTO task (task_id, task_name, task_description, task_notes, task_plan, 
                 task_app_acronym, task_state, task_creator, task_owner, task_createDate) 
                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             db.query(sql2, [newTaskID, taskname, taskdescription, auditlog, pname, appname, currentState, 
-                req.session.username, req.session.username, taskCreateDate], function(error, row, fields) {
+                req.session.username, req.session.username, taskCreateDate], async function(error, row, fields) {
                 if (error) {
                     console.log(error);
                 }
                 else {
                     const newRnumber = result[0].app_Rnumber + 1;
                     const sql4 = "UPDATE application SET app_Rnumber = ? WHERE app_acronym = ?";
-                    db.query(sql4, [newRnumber, appname], function(error, result) {
+                    db.query(sql4, [newRnumber, appname], async function(error, result) {
                         if (error) throw error;
                         console.log("AppRnumber updated!");
                     })
@@ -92,61 +92,21 @@ exports.post_create_task = function(req, res) {
 
 /** Display task list page */
 exports.task_list = async function(req, res) {
-    // check if username belongs to project lead, project manager or team member group
-    if (await group.checkGroup(req.session.username, "project lead") || 
-    (await group.checkGroup(req.session.username, "project manager") ||
-    (await group.checkGroup(req.session.username, "team member")))) {
-        db.query('SELECT * FROM task', function(err, rows, fields) {
-            if (err) {
-                console.log(err);
-            } else {
-                var tempArray = [];
-                // Loop check on each row
-                for (var i = 0; i < rows.length; i++) {
-                    // Create an object to save current row's data
-                    var task = {
-                        'tid': rows[i].task_id,
-                        'name': rows[i].task_name,
-  				        'description': rows[i].task_description, 
-				        'notes': rows[i].task_notes,
-                        'tplan': rows[i].task_plan,
-                        'tappname': rows[i].task_app_acronym,
-                        'state': rows[i].task_state,
-                        'creator': rows[i].task_creator,
-                        'owner': rows[i].task_owner,
-                        'createDate': moment(rows[i].task_createDate).format("DD/MM/YYYY hh:mm:ss")
-                    }
-                    tempArray.push(task); // Add object into array
-                }
-                taskList = tempArray;
-                res.render('taskList', {
-                    isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username, "taskList": taskList
-                }); // Render taskList.pug page using array 
-            }
-        });
+    let myquery = 'SELECT * FROM task';
+    let {requestapp} = req.query;
+    if(requestapp){
+        myquery += " WHERE `task_app_acronym` = '" + requestapp + "'";
     }
-    else { // if username not belong to project lead, project manager or team member group
-        alert("You are not authorized to view this page!");
-        res.redirect('/home');
-    }
-}
-
-/** Display edit task page */
-exports.get_edit_task = async function(req, res) {
-    var tid = req.params.tid;
-    db.query("SELECT * FROM task WHERE task_id = ?", [tid], async function(err, rows, fields) {
+    //myquery += ' ORDER BY task_state';
+    db.query(myquery, function(err, rows, fields) {
         if (err) {
             console.log(err);
-        }
-        else {
-            task = rows;
-            taskList = [];
-            inputs = [];
+        } else {
+            var tempArray = [];
             // Loop check on each row
-            console.log("check row length >>>", rows.length)
             for (var i = 0; i < rows.length; i++) {
                 // Create an object to save current row's data
-                var temptask = {
+                var task = {
                     'tid': rows[i].task_id,
                     'name': rows[i].task_name,
                     'description': rows[i].task_description, 
@@ -158,63 +118,103 @@ exports.get_edit_task = async function(req, res) {
                     'owner': rows[i].task_owner,
                     'createDate': moment(rows[i].task_createDate).format("DD/MM/YYYY hh:mm:ss")
                 }
-                taskList.push(temptask); // Add object into array
+                tempArray.push(task); // Add object into array
             }
-            //console.log("check task list array >>>", taskList);
-            db.query("SELECT * FROM application WHERE app_acronym = ?", [task[0].task_app_acronym], async function(err, result, fields) {
-                console.log("check the task app acronym >>>", task[0].task_app_acronym);
-                if (task[0].task_state == 'open' && await group.checkGroup(req.session.username, result[0].app_permit_open)) {
-                    /* console.log("check open permit >>>", await group.checkGroup(req.session.username, result[0].app_permit_open));
-                    console.log("check the optionns >>>", inputs); */
-                    inputs = [{
-                        label: `Task State:`,
-                        name: "t_state",
-                        type: "select",
-                        class: "form-select",
-                        options: ["todolist"]
-                    }]
-                }
-                else if (task[0].task_state === 'todolist' && await group.checkGroup(req.session.username, result[0].app_permit_toDoList)) {
-                    /* console.log("check to-do-list permit >>>", await group.checkGroup(req.session.username, result[0].app_permit_toDoList));
-                    console.log("check the optionns >>>", inputs); */
-                    inputs = [{
-                        label: `Task State:`,
-                        name: "t_state",
-                        type: "select",
-                        class: "form-select",
-                        options: ["doing"]
-                    }]
-                }
-                else if (task[0].task_state === 'doing' && await group.checkGroup(req.session.username, result[0].app_permit_doing)) {
-                    /* console.log("check doing permit >>>", await group.checkGroup(req.session.username, result[0].app_permit_doing));
-                    console.log("check the optionns >>>", inputs); */
-                    inputs = [{
-                        label: `Task State:`,
-                        name: "t_state",
-                        type: "select",
-                        class: "form-select",
-                        options: ["todolist", "done"]
-                    }]
-                }
-                else if (task[0].task_state === 'done' && await group.checkGroup(req.session.username, result[0].app_permit_done)) {
-                    /* console.log("check done permit >>>", await group.checkGroup(req.session.username, result[0].app_permit_done));
-                    console.log("check the optionns >>>", inputs); */
-                    inputs = [{
-                        label: `Task State:`,
-                        name: "t_state",
-                        type: "select",
-                        class: "form-select",
-                        options: ["doing", "close"]
-                    }]
-                }
-                //console.log(">>>", task[0].task_state);
-                res.render('editTask', {
-                    isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username,
-                    "task": tid, "taskList": taskList, "inputs": inputs
-                });
-            });
+            taskList = tempArray;
+            res.render('taskList', {
+                isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username, "taskList": taskList
+            }); // Render taskList.pug page using array 
         }
     });
+}
+
+/** Display edit task page */
+exports.get_edit_task = async function(req, res) {
+    if (await group.checkGroup(req.session.username, "project lead") ||  await group.checkGroup(req.session.username, "project manager") ||
+    (await group.checkGroup(req.session.username, "team member")) ) {
+        var tid = req.params.tid;
+        db.query("SELECT * FROM task WHERE task_id = ?", [tid], async function(err, rows, fields) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                task = rows;
+                taskList = [];
+                inputs = [];
+                // Loop check on each row
+                console.log("check row length >>>", rows.length)
+                for (var i = 0; i < rows.length; i++) {
+                    // Create an object to save current row's data
+                    var temptask = {
+                        'tid': rows[i].task_id,
+                        'name': rows[i].task_name,
+                        'description': rows[i].task_description, 
+                        'notes': rows[i].task_notes,
+                        'tplan': rows[i].task_plan,
+                        'tappname': rows[i].task_app_acronym,
+                        'state': rows[i].task_state,
+                        'creator': rows[i].task_creator,
+                        'owner': rows[i].task_owner,
+                        'createDate': moment(rows[i].task_createDate).format("DD/MM/YYYY hh:mm:ss")
+                    }
+                    taskList.push(temptask); // Add object into array
+                }
+                //console.log("check task list array >>>", taskList);
+                db.query("SELECT * FROM application WHERE app_acronym = ?", [task[0].task_app_acronym], async function(err, result, fields) {
+                    console.log("check the task app acronym >>>", task[0].task_app_acronym);
+                    if (task[0].task_state == 'open' && await group.checkGroup(req.session.username, result[0].app_permit_open)) {
+                        /* console.log("check open permit >>>", await group.checkGroup(req.session.username, result[0].app_permit_open));
+                        console.log("check the optionns >>>", inputs); */
+                        inputs = [{
+                            label: `Task State:`,
+                            name: "t_state",
+                            type: "select",
+                            class: "form-select",
+                            options: ["todolist"]
+                        }]
+                    }
+                    else if (task[0].task_state === 'todolist' && await group.checkGroup(req.session.username, result[0].app_permit_toDoList)) {
+                        /* console.log("check to-do-list permit >>>", await group.checkGroup(req.session.username, result[0].app_permit_toDoList));
+                        console.log("check the optionns >>>", inputs); */
+                        inputs = [{
+                            label: `Task State:`,
+                            name: "t_state",
+                            type: "select",
+                            class: "form-select",
+                            options: ["doing"]
+                        }]
+                    }
+                    else if (task[0].task_state === 'doing' && await group.checkGroup(req.session.username, result[0].app_permit_doing)) {
+                        /* console.log("check doing permit >>>", await group.checkGroup(req.session.username, result[0].app_permit_doing));
+                        console.log("check the optionns >>>", inputs); */
+                        inputs = [{
+                            label: `Task State:`,
+                            name: "t_state",
+                            type: "select",
+                            class: "form-select",
+                            options: ["todolist", "done"]
+                        }]
+                    }
+                    else if (task[0].task_state === 'done' && await group.checkGroup(req.session.username, result[0].app_permit_done)) {
+                        /* console.log("check done permit >>>", await group.checkGroup(req.session.username, result[0].app_permit_done));
+                        console.log("check the optionns >>>", inputs); */
+                        inputs = [{
+                            label: `Task State:`,
+                            name: "t_state",
+                            type: "select",
+                            class: "form-select",
+                            options: ["doing", "close"]
+                        }]
+                    }
+                    //console.log(">>>", task[0].task_state);
+                    res.render('editTask', {
+                        isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username,
+                        "task": tid, "taskList": taskList, "inputs": inputs
+                    });
+                });
+            }
+        });
+    }
 }
 
 /** Handle form submit for edit task */
@@ -231,9 +231,10 @@ exports.post_edit_task = async function(req, res) {
             currentState = state;
         }
         var date = new Date().toLocaleString();
-        var new_note = `${notes}, ${req.session.username}, ${currentState}, ${date}`;
-        task_notes += `\n${new_note}`;
-        db.query("UPDATE task SET task_description = ?, task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?", [tdescription, task_notes, currentState, req.session.username, tid], function(err, result) {
+        var audit_log =  `User ${req.session.username} updated: ${notes}, ${currentState}, ${date}\n ${task_notes}`;
+        /* var new_note = `${notes}, ${req.session.username}, ${currentState}, ${date}`;
+        task_notes += `\n${new_note}`; */
+        db.query("UPDATE task SET task_description = ?, task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?", [tdescription, audit_log, currentState, req.session.username, tid], function(err, result) {
             if (err) {
                 console.log(err);
             }

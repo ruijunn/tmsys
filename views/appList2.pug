@@ -7,5 +7,11 @@ html
     link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
     link(type="text/css" href="style.css" rel="stylesheet")
   body
-    include ./navbar.pug
-    include ./tmsysFrame.pug
+    h1="Application"
+    table(cellspacing="0" cellpadding="0" style="border: none;")
+      for app in appList
+        tr
+          td
+            button(type="button" style="background-color: #f8e5e7;" class="btn btn mb-3")
+              a(style="text-decoration: none; color: black;" href="/editApplication/"+app.appname type="submit")=app.appname
+            
