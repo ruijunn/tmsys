@@ -1,6 +1,5 @@
 const db = require('../dbServer'); 
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken'); 
 
 /** Display login page */
 exports.user_login = async function(req, res) {
