@@ -23,45 +23,28 @@ exports.user_loginAuth = function(req, res) {
                 console.log(validPwd); // true
                 if (validPwd) {
                     if (results[0].status === 1) { // status = 1 means account is active
-                        // JWT + Cookies
-                        // Create and assign token
-                        /* let payload = { userID: results[0].id, username: results[0].username };
-                        const token = jwt.sign(payload, process.env.SESSION_SECRET, { expiresIn: '1h'}
-                        );
-                        res.cookie("token", token, { httpOnly: true }); */
-
                         req.session.isLoggedIn = true;
                         req.session.username = username; // store the username in session
                         req.session.userID = results[0].id; // store the id in session
                         console.log("Login Successful!");
-
-                        res.status(200).json({ 
-                            message: "Login Successful!"/* ,
-                            token: token */
-                        });
                     }
                     else { // status = 0 means account is disabled
-                        //res.render('login', {error: 'Your account has been disabled!'});
-                        res.status(400).json({ message: "Your account has been disabled" });
+                        res.render('login', {error: 'Your account has been disabled!'});
                     }
                 }
 		    else {
-                //res.render('login', {error: 'Incorrect Username and/or Password!'});
-                res.status(400).json({message: "Incorrect Username and/or Password!" });
+                res.render('login', {error: 'Incorrect Username and/or Password!'});
 		    }			
 		  }
 	  });
 	} 
     else {
-        //res.render('login', {error: 'Please enter Username and Password!'});
-        res.status(400).json({ message: "Please enter Username and Password!" });
+        res.render('login', {error: 'Please enter Username and Password!'});
 	}
 }
 
 /** Display logout page */
 exports.user_logout = async function(req, res) {
-    //res.clearCookie("token", {path: '/', domain: 'localhost', maxAge: 0});
     req.session.isLoggedIn = false;
-    console.log("Logout Successful!")
-    res.status(200).json({ message: "Logout Successful!" });
+    console.log("Logout Successful!");
 }

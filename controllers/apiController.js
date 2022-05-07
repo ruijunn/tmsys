@@ -5,14 +5,10 @@ const bcrypt = require('bcrypt');
 
 /** Retrieve tasks in a particular state */
 exports.task_by_state = async function(req, res) {
-    // check for basic auth header
-    if (!req.headers.authorization || req.headers.authorization.indexOf('Basic ') === -1) {
-        return res.status(401).json({ message: 'Missing Authorization Header' });
-    }
     // verify auth credentials
     const base64Credentials =  req.headers.authorization.split(' ')[1];
     const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
-    const [username, password] = credentials.split(':');
+    const [username, password] = credentials.split(':'); 
     
     db.query("SELECT * FROM accounts WHERE username = ?", [username], async (error, results, fields) => {
         if (error) throw error;
@@ -21,8 +17,8 @@ exports.task_by_state = async function(req, res) {
             if (username && validPwd) {
                 if (results[0].status === 1) { 
                     req.session.username = username;
-                    const state = req.body.state;
-                    db.query("SELECT * FROM task WHERE task_state = ?", [state], function(err, rows, fields) {
+                    const state = req.params.state;
+                    db.query("SELECT * FROM task WHERE task_state = ? ORDER BY task_id", [state], function(err, rows, fields) {
                         if (err) {
                             res.status(500).json({ message: "Internal Server Error Occured!" });
                         } 
@@ -47,11 +43,6 @@ exports.task_by_state = async function(req, res) {
 
 /** Create a new task */
 exports.post_create_task = function(req, res) {
-
-    // check for basic auth header
-    if (!req.headers.authorization || req.headers.authorization.indexOf('Basic ') === -1) {
-        return res.status(401).json({ message: 'Missing Authorization Header' });
-    }
     // verify auth credentials
     const base64Credentials =  req.headers.authorization.split(' ')[1];
     const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
@@ -65,7 +56,6 @@ exports.post_create_task = function(req, res) {
                 if (results[0].status === 1) { 
                     req.session.username = username;
                     const {appname, taskname, taskdescription, tasknotes, pname} = req.body;
-                    console.log(appname, taskname, taskdescription, tasknotes, pname)
                     db.query("SELECT * FROM application WHERE app_acronym = ?", [appname], async function(error, rows) {
                         if (await group.checkGroup(req.session.username, rows[0].app_permit_createTask)) {
                             const newTaskID = `${rows[0].app_acronym}_${rows[0].app_Rnumber+1}`;
@@ -74,7 +64,7 @@ exports.post_create_task = function(req, res) {
                             const date = new Date().toLocaleString();
                             const auditlog = `User ${logonUID} added:\n${tasknotes}, ${currentState}, ${date}`;
                             const taskCreateDate = new Date();
-                    
+
                             const sql2 = `INSERT INTO task (task_id, task_name, task_description, task_notes, task_plan, 
                                 task_app_acronym, task_state, task_creator, task_owner, task_createDate) 
                                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -115,12 +105,8 @@ exports.post_create_task = function(req, res) {
     });
 }
 
+/** Perform state transition for task */
 exports.promote_task = async function(req, res) {
-
-    // check for basic auth header
-    if (!req.headers.authorization || req.headers.authorization.indexOf('Basic ') === -1) {
-        return res.status(401).json({ message: 'Missing Authorization Header' });
-    }
     // verify auth credentials
     const base64Credentials =  req.headers.authorization.split(' ')[1];
     const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
@@ -135,15 +121,15 @@ exports.promote_task = async function(req, res) {
                     req.session.username = username;
                     if (await group.checkGroup(req.session.username, "project lead") ||  await group.checkGroup(req.session.username, "project manager") ||
                     (await group.checkGroup(req.session.username, "team member")) ) {
-                        const { tid, notes, tgtState } = req.body;
+                        const { tid, notes, t_state } = req.body;
                         console.log(tid);
                         db.query("SELECT * FROM task WHERE task_id = ?", [tid], function(error, result2) {
                             db.query("SELECT * FROM application WHERE app_acronym = ?", [result2[0].task_app_acronym], async function(error, result3, fields) {
                                 let task_notes = result2[0].task_notes;
                                 let targetState;
                                 let currentState = result2[0].task_state;
-                                if (tgtState) {
-                                    targetState = tgtState
+                                if (t_state) {
+                                    targetState = t_state
                                 }
                                 else {
                                     targetState = currentState;
@@ -153,39 +139,97 @@ exports.promote_task = async function(req, res) {
                                 console.log(audit_log);
 
                                 if (result2[0].task_state === 'open' && await group.checkGroup(req.session.username, result3[0].app_permit_open)) {
-                                    const sqlQuery = "UPDATE task SET task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
-                                    db.query(sqlQuery, [audit_log, targetState, req.session.username, tid], async function(error, result4) {
-                                        if (error) throw error;
-                                        res.status(200).json({ tid, task_notes, existingState: result2[0].task_state, targetState });
-                                    });
+                                    if (t_state === 'todolist') {
+                                        const sqlQuery = "UPDATE task SET task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
+                                        db.query(sqlQuery, [audit_log, t_state, req.session.username, tid], async function(error, result4) {
+                                            if (error) throw error;
+                                            res.status(200).json({ tid, task_notes, existingState: result2[0].task_state, targetState: t_state });
+                                        });
+                                    }
                                 }
                                 else if (result2[0].task_state === 'todolist' && await group.checkGroup(req.session.username, result3[0].app_permit_toDoList)) {
-                                    const sqlQuery = "UPDATE task SET task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
-                                    db.query(sqlQuery, [audit_log, targetState, req.session.username, tid], async function(error, result4) {
-                                        if (error) throw error;
-                                        res.status(200).json({ tid, task_notes, existingState: result2[0].task_state, targetState });
-                                    });
+                                    if (t_state === 'doing') {
+                                        const sqlQuery = "UPDATE task SET task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
+                                        db.query(sqlQuery, [audit_log, t_state, req.session.username, tid], async function(error, result4) {
+                                            if (error) throw error;
+                                            res.status(200).json({ tid, task_notes, existingState: result2[0].task_state, targetState: t_state });
+                                        });
+                                    }
                                 }
                                 else if (result2[0].task_state === 'doing' && await group.checkGroup(req.session.username, result3[0].app_permit_doing)) {
-                                    const sqlQuery = "UPDATE task SET task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
-                                    db.query(sqlQuery, [audit_log, targetState, req.session.username, tid], async function(error, result4) {
-                                        if (error) throw error;
-                                        res.status(200).json({ tid, task_notes, existingState: result2[0].task_state, targetState });
-                                    });
+                                    if (t_state === 'todolist') {
+                                        const sqlQuery = "UPDATE task SET task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
+                                        db.query(sqlQuery, [audit_log, t_state, req.session.username, tid], async function(error, result4) {
+                                            if (error) throw error;
+                                            res.status(200).json({ tid, task_notes, existingState: result2[0].task_state, targetState: t_state });
+                                        });
+                                    }
+                                    else if (t_state === 'done') {
+                                        const sqlQuery = "UPDATE task SET task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
+                                        db.query(sqlQuery, [audit_log, t_state, req.session.username, tid], async function(error, result4) {
+                                            if (error) throw error;
+                                            res.status(200).json({ tid, task_notes, existingState: result2[0].task_state, targetState: t_state });
+                                        });
+
+                                        var emailSQL = "SELECT email FROM accounts WHERE username = ?";
+                                        var sendList = [];
+                                        db.query(emailSQL, [req.session.username], async function(err, result5, fields) {
+                                            for (x in result5) {
+                                                if (await group.checkGroup(req.session.username, "team member")) {
+                                                    sendList.push(result5[x].email)
+                                                }
+                                            }
+                                            console.log(sendList); 
+                                        }); 
+
+                                        const sql = 'SELECT email FROM accounts where username IN (SELECT username FROM usergrp_list WHERE groupname = "project lead")';
+                                        var toList = [];
+                                        db.query(sql, function(err, result6, fields) {
+                                            for (k in result6) {
+                                                toList.push(result6[k].email);
+                                            }
+                                            console.log(toList);
+                                        });
+                                
+                                        var message = {
+                                            from: sendList,
+                                            to: toList,
+                                            subject: "Seeking task to be approved",
+                                            text: "Task has been promoted to done state, waiting for task to be approved"
+                                        }
+                                
+                                        transporter.sendMail(message, function(err, info) {
+                                            if (err) {
+                                                console.log(err)
+                                            } else {
+                                                console.log(info);
+                                            }
+                                        });
+                                    }
                                 }
                                 else if (result2[0].task_state === 'done' && await group.checkGroup(req.session.username, result3[0].app_permit_done)) {
-                                    const sqlQuery = "UPDATE task SET task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
-                                    db.query(sqlQuery, [audit_log, targetState, req.session.username, tid], async function(error, result4) {
-                                        if (error) throw error;
-                                        res.status(200).json({ tid, task_notes, existingState: result2[0].task_state, targetState });
-                                    });
+                                    if (t_state === 'doing') {
+                                        const sqlQuery = "UPDATE task SET task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
+                                        db.query(sqlQuery, [audit_log, t_state, req.session.username, tid], async function(error, result4) {
+                                            if (error) throw error;
+                                            res.status(200).json({ tid, task_notes, existingState: result2[0].task_state, targetState: t_state });
+                                        });
+                                    }
+                                    else if (t_state === 'close') {
+                                        const sqlQuery = "UPDATE task SET task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
+                                        db.query(sqlQuery, [audit_log, t_state, req.session.username, tid], async function(error, result4) {
+                                            if (error) throw error;
+                                            res.status(200).json({ tid, task_notes, existingState: result2[0].task_state, targetState: t_state });
+                                        });
+                                    }
+                                    
                                 }
                                 else if (result2[0].task_state === 'close') {
                                     const sqlQuery = "UPDATE task SET task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?";
                                     db.query(sqlQuery, [audit_log, targetState, req.session.username, tid], async function(error, result4) {
                                         if (error) throw error;
                                         res.status(200).json({ tid, task_notes, existingState: targetState });
-                                    });
+                                    }); 
                                 }
                                 else {
                                     res.status(401).json({ message: 'You are not authorized to update the state!', username });
