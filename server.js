@@ -24,7 +24,7 @@ app.use(session({
 app.use(basicAuth);
 
 // Add the routes to middleware chain
-app.use('/api', apiRouter);
+app.use('/api/task', apiRouter);
 
 /** App listening on port */
 app.listen(port, () => {
