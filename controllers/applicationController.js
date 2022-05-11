@@ -135,7 +135,7 @@ exports.application_list = async function(req, res) {
             appList = tempArray;
             res.render('applicationList', {
                 isLoggedIn: req.session.isLoggedIn, userLoggedIn: req.session.username, "appList": appList
-            }); // Render applicationList.pug page using array 
+            });  // Render applicationList.pug page using array 
         }
     });
 }

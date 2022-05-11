@@ -50,10 +50,13 @@ exports.get_create_task = async function(req, res) {
 /** Handle form submit for create task */
 exports.post_create_task = function(req, res) {
     const {appname, taskname, taskdescription, tasknotes, pname} = req.body;
+    console.log(appname, taskname, taskdescription, tasknotes, pname)
     const sql = "SELECT * FROM application WHERE app_acronym = ?";
     db.query(sql, [appname], function(error, result) {
-        if (error) throw error;
-        if (result.length > 0) {
+        if (error) {
+            console.log(error);
+        }
+        else {
             // task id need to be in the format <app_acronym>_<app_Rnumber>
             const newTaskID = `${result[0].app_acronym}_${result[0].app_Rnumber+1}`;
             console.log(newTaskID);
@@ -61,10 +64,11 @@ exports.post_create_task = function(req, res) {
             const logonUID = req.session.username;
             const currentState = "open";
             const date = new Date().toLocaleString();
-            /* const auditlog = `${tasknotes}, ${logonUID}, ${currentState}, ${date}`; */
-            const auditlog = `User ${logonUID} added:\n ${tasknotes}, ${currentState}, ${date}`;
+            //const auditlog = `${tasknotes}, ${logonUID}, ${currentState}, ${date}`;
+            const auditlog = `User ${logonUID} added:\n${tasknotes}, ${currentState}, ${date}`;
             console.log(auditlog);
             const taskCreateDate = new Date();
+    
             const sql2 = `INSERT INTO task (task_id, task_name, task_description, task_notes, task_plan, 
                 task_app_acronym, task_state, task_creator, task_owner, task_createDate) 
                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -85,7 +89,7 @@ exports.post_create_task = function(req, res) {
                     success: 'Task created successfully!', userLoggedIn: req.session.username,
                      "applicationArray": applicationArray, "planArray": planArray
                 }); // Render createTask.pug page using array 
-            });
+           });
         }
     });
 }
@@ -162,7 +166,7 @@ exports.get_edit_task = async function(req, res) {
                 //console.log("check task list array >>>", taskList);
                 db.query("SELECT * FROM application WHERE app_acronym = ?", [task[0].task_app_acronym], async function(err, result, fields) {
                     console.log("check the task app acronym >>>", task[0].task_app_acronym);
-                    if (task[0].task_state == 'open' && await group.checkGroup(req.session.username, result[0].app_permit_open)) {
+                    if (task[0].task_state === 'open' && await group.checkGroup(req.session.username, result[0].app_permit_open)) {
                         /* console.log("check open permit >>>", await group.checkGroup(req.session.username, result[0].app_permit_open));
                         console.log("check the optionns >>>", inputs); */
                         inputs = [{
@@ -215,6 +219,9 @@ exports.get_edit_task = async function(req, res) {
             }
         });
     }
+    else {
+        alert("You are not authorized to view this page!");
+    }
 }
 
 /** Handle form submit for edit task */
@@ -231,7 +238,7 @@ exports.post_edit_task = async function(req, res) {
             currentState = state;
         }
         var date = new Date().toLocaleString();
-        var audit_log =  `User ${req.session.username} updated: ${notes}, ${currentState}, ${date}\n ${task_notes}`;
+        var audit_log = `User ${req.session.username} updated: ${notes}, ${currentState}, ${date}\n${task_notes}`;
         /* var new_note = `${notes}, ${req.session.username}, ${currentState}, ${date}`;
         task_notes += `\n${new_note}`; */
         db.query("UPDATE task SET task_description = ?, task_notes = ?, task_state = ?, task_owner = ? WHERE task_id = ?", [tdescription, audit_log, currentState, req.session.username, tid], function(err, result) {

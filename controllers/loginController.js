@@ -22,14 +22,10 @@ exports.user_loginAuth = function(req, res) {
                 console.log(validPwd); // true
                 if (validPwd) {
                     if (results[0].status === 1) { // status = 1 means account is active
-                        // Authenticate the user
                         req.session.isLoggedIn = true;
                         req.session.username = username; // store the username in session
                         req.session.userID = results[0].id; // store the id in session
-                        const userid = req.session.userID;
                         console.log("Login Successful!");
-                        console.log(userid);
-                        res.redirect('/home') // redirect to home page
                     }
                     else { // status = 0 means account is disabled
                         res.render('login', {error: 'Your account has been disabled!'});
@@ -49,6 +45,5 @@ exports.user_loginAuth = function(req, res) {
 /** Display logout page */
 exports.user_logout = async function(req, res) {
     req.session.isLoggedIn = false;
-    console.log("Logout Successful!")
-    res.redirect('/'); // redirect back to login page
+    console.log("Logout Successful!");
 }
