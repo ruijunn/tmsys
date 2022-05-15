@@ -3,11 +3,7 @@
     "version": "1.0.0",
     "description": "Task Management System",
     "main": "index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start-tmsys": "nodemon app.js",
-        "start-tmsysAPI": "nodemon server.js"
-    },
+    "scripts": {},
     "author": "Me",
     "license": "ISC",
     "dependencies": {
