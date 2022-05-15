@@ -1,9 +1,13 @@
 {
     "name": "nodejs-open-redirect",
     "version": "1.0.0",
-    "description": "An example app to learn about open redirect vulnerability",
+    "description": "Task Management System",
     "main": "index.js",
-    "scripts": {},
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start-tmsys": "nodemon app.js",
+        "start-tmsysAPI": "nodemon server.js"
+    },
     "author": "Me",
     "license": "ISC",
     "dependencies": {
