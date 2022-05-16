@@ -2,11 +2,11 @@
     "name": "nodejs-open-redirect",
     "version": "1.0.0",
     "description": "Task Management System",
-    "main": "index.js",
+    "main": "app.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
         "start-tmsys": "nodemon app.js",
-        "start-tmsysAPI": "nodemon server.js"
+        "start-tmsysAPI": "nodemon server.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Me",
     "license": "ISC",
