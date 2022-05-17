@@ -15,6 +15,8 @@ var taskRouter = require('./routes/task');
 var applicationRouter = require('./routes/application');
 var planRouter = require('./routes/plan');
 var leftFrameRouter = require('./routes/leftFrame');
+var apiRouter = require('./routes/apiRouter');
+const { basicAuth } = require('./basicAuth'); 
 
 // Inititalize the app and add middleware
 app.set('view engine', 'pug'); // Setup the pug
@@ -28,6 +30,7 @@ app.use(session({
 })); // Session setup
 
 // Add the routes to middleware chain
+app.use('/api/task', basicAuth, apiRouter); // use basic HTTP auth to secure the api => middleware to authenticate before apiRouter
 app.use('/', loginRouter);
 app.use('/', indexRouter);
 app.use('/', accountRouter);
