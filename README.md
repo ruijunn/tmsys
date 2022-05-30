@@ -47,4 +47,9 @@ All users required to log in before accessing the features of the app.
 docker build -t tmsys_img .
 
 <h3>Run Docker Container with env file:</h3>
-docker run --env-file ./sample.env --name tmsys -p 3000:3000 --rm tmsys_img
+docker run --env-file ./sample.env --name tmsys -p 3000:3000 tmsys_img
+
+<h3>Start/Stop Docker Container</h3>
+docker ps -> find the container 
+docker stop tmsys -> stop container
+docker start tmsys -> start container
