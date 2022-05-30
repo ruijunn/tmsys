@@ -40,3 +40,11 @@ All users required to log in before accessing the features of the app.
     <li>Work on the task or return task to "to-do-list" state</li>
     <li>Send an email notification to project lead when promoted the task from "doing" to "done" state</li>
 </ul>
+
+<h2>Docker Commands</h2>
+
+<h3>Build Docker Container:</h3>
+docker build -t tmsys_img .
+
+<h3>Run Docker Container with env file:</h3>
+docker run --env-file ./sample.env --name tmsys -p 3000:3000 --rm tmsys_img
