@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # define the port number the container should expose
-EXPOSE 3000
+EXPOSE $PORT
 
 # run the application
 CMD ["node", "app.js"]
