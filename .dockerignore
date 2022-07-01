@@ -3,4 +3,3 @@ node_modules
 .gitignore
 Dockerfile
 README.MD
-sample.env
